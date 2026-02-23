@@ -1,0 +1,3372 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ระบบทะเบียนคุมเอกสาร</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #dbe4f0;
+      --primary: #2563eb;
+      --primary-2: #1d4ed8;
+      --danger: #dc2626;
+      --success: #15803d;
+      --warning: #b45309;
+      --shadow: 0 16px 38px rgba(15, 23, 42, 0.10);
+      --home-topbar-top-offset: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans Thai", sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 10% -10%, #dbeafe, rgba(219, 234, 254, 0)), var(--bg);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .muted { color: var(--muted); }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 5px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 0.83rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    input, select {
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0 12px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .btn {
+      border: none;
+      height: 38px;
+      border-radius: 999px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(180deg, var(--primary), var(--primary-2));
+    }
+
+    .btn.secondary { background: #334155; }
+    .btn.success { background: #15803d; }
+    .btn.danger { background: var(--danger); }
+    .btn.outline {
+      color: var(--primary-2);
+      background: #fff;
+      border: 1px solid #93c5fd;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.80rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: #f8fbff;
+    }
+
+    .status-pill.ok {
+      color: var(--success);
+      border-color: rgba(21, 128, 61, 0.28);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .status-pill.warn {
+      color: var(--warning);
+      border-color: rgba(180, 83, 9, 0.28);
+      background: rgba(180, 83, 9, 0.08);
+    }
+
+    .status-pill.error {
+      color: var(--danger);
+      border-color: rgba(220, 38, 38, 0.28);
+      background: rgba(220, 38, 38, 0.08);
+    }
+
+    .hidden { display: none !important; }
+
+    .alert {
+      border: 1px solid rgba(220, 38, 38, 0.24);
+      background: rgba(220, 38, 38, 0.08);
+      color: var(--danger);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: #f8fbff;
+      padding: 4px;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      border: none;
+      border-radius: 999px;
+      height: 32px;
+      padding: 0 12px;
+      cursor: pointer;
+      font: inherit;
+      font-size: .86rem;
+      font-weight: 700;
+      color: #334155;
+      background: transparent;
+    }
+
+    .tab-btn.active {
+      color: #1d4ed8;
+      background: #dbeafe;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+      background: #fff;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 9px 10px;
+      text-align: left;
+      font-size: 0.87rem;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f8fbff;
+      color: #334155;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #f8fbff;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: #f8fbff;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .status-badge.stored {
+      border-color: rgba(21, 128, 61, 0.32);
+      color: var(--success);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .login-wrap {
+      width: min(560px, 100%) !important;
+      margin: 0 auto;
+      padding: 24px 22px 20px !important;
+      border-radius: 32px !important;
+      background: rgba(255, 255, 255, 0.52) !important;
+      border: 1px solid rgba(255, 255, 255, 0.68) !important;
+      backdrop-filter: saturate(165%) blur(24px) !important;
+      -webkit-backdrop-filter: saturate(165%) blur(24px) !important;
+      box-shadow: 0 22px 56px rgba(15, 23, 42, 0.14) !important;
+    }
+
+    .login-stage {
+      width: 100%;
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      padding: 2px 0;
+    }
+
+    .login-brand {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: flex-start;
+      column-gap: 12px;
+      margin-bottom: 10px;
+      padding: 0 2px 6px;
+    }
+
+    .login-brand-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+      padding-top: 3px;
+    }
+
+    .login-shield {
+      position: relative;
+      width: 82px;
+      height: 82px;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.62rem;
+      background: linear-gradient(180deg, #59b3ff 0%, #0a84ff 58%, #0064d2 100%);
+      box-shadow: 0 14px 32px rgba(10, 132, 255, 0.30);
+      flex: 0 0 auto;
+    }
+
+    .login-shield::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      pointer-events: none;
+    }
+
+    .login-kicker {
+      margin: 0;
+      color: #5f6c80;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .login-title {
+      margin: 0;
+      color: #111827;
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .login-subtitle {
+      margin: 2px 0 0;
+      color: #64748b;
+      font-size: 0.94rem;
+      line-height: 1.4;
+      font-weight: 600;
+      max-width: 34ch;
+    }
+
+    .login-form .field {
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+
+    .login-form label {
+      color: #6b7280;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      font-weight: 700;
+    }
+
+    .login-input {
+      display: block;
+      width: 100% !important;
+      min-width: 0;
+      height: 56px !important;
+      border-radius: 22px !important;
+      border: 1px solid rgba(148, 163, 184, 0.4) !important;
+      background: rgba(255, 255, 255, 0.8) !important;
+      color: #111827 !important;
+      padding: 0 18px !important;
+      font-size: 1.04rem;
+      font-weight: 600;
+    }
+
+    .login-input::placeholder {
+      color: rgba(17, 24, 39, 0.46) !important;
+      font-weight: 600;
+    }
+
+    .login-input:focus {
+      border-color: rgba(10, 132, 255, 0.65) !important;
+      box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.14) !important;
+    }
+
+    .pass-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .pass-wrap .login-input {
+      padding-right: 52px !important;
+    }
+
+    .pass-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 11px;
+      background: rgba(148, 163, 184, 0.1);
+      color: #6b7280;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.24s ease, border-color 0.24s ease, color 0.24s ease;
+    }
+
+    .pass-eye:hover {
+      transform: translateY(calc(-50% - 1px));
+      background: rgba(10, 132, 255, 0.14);
+      border-color: rgba(10, 132, 255, 0.3);
+      color: #0a84ff;
+    }
+
+    .login-submit {
+      margin-top: 10px;
+      width: 100%;
+      height: 58px !important;
+      border-radius: 999px !important;
+      font-size: 1rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0;
+    }
+
+    .login-foot {
+      margin-top: 12px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.73rem;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      text-transform: none;
+    }
+
+    body.login-mode {
+      min-height: 100vh;
+    }
+
+    body.login-mode .shell {
+      width: min(1160px, 100%) !important;
+      max-width: none !important;
+      min-height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 10px;
+      padding: 24px 14px !important;
+    }
+
+    body.login-mode #homeTopbar {
+      display: none !important;
+    }
+
+    body.login-mode #appCard {
+      display: none !important;
+    }
+
+    body.login-mode #settingsCard,
+    body.login-mode #errorBox {
+      width: min(560px, 100%);
+      margin: 0 auto;
+    }
+
+    body.login-mode #settingsCard {
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    body.login-mode #errorBox {
+      border-radius: 14px;
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    /* login-mode: lock contrast and spacing so theme override does not wash text out */
+    body.login-mode #loginCard.login-wrap {
+      background: rgba(255, 255, 255, 0.58) !important;
+      border-color: rgba(255, 255, 255, 0.72) !important;
+      box-shadow: 0 24px 58px rgba(15, 23, 42, 0.16) !important;
+    }
+
+    body.login-mode #loginCard .login-kicker,
+    body.login-mode #loginCard .login-subtitle,
+    body.login-mode #loginCard .login-form label,
+    body.login-mode #loginCard .login-foot {
+      color: #5f6b7d !important;
+    }
+
+    body.login-mode #loginCard .login-title {
+      color: #0f172a !important;
+    }
+
+    body.login-mode #loginCard .login-input {
+      background: rgba(255, 255, 255, 0.88) !important;
+      border-color: rgba(148, 163, 184, 0.5) !important;
+      color: #111827 !important;
+    }
+
+    body.login-mode #loginCard .login-input::placeholder {
+      color: rgba(100, 116, 139, 0.86) !important;
+    }
+
+    body.login-mode #loginCard .pass-eye {
+      color: #64748b !important;
+      background: rgba(148, 163, 184, 0.12) !important;
+      border-color: rgba(148, 163, 184, 0.24) !important;
+    }
+
+    body.login-mode #loginCard .pass-eye:hover {
+      background: rgba(10, 132, 255, 0.14) !important;
+      border-color: rgba(10, 132, 255, 0.32) !important;
+      color: #0a84ff !important;
+    }
+
+    body.login-mode.dark-mode #loginCard.login-wrap {
+      background: rgba(13, 21, 33, 0.74) !important;
+      border-color: rgba(148, 163, 184, 0.34) !important;
+      box-shadow: 0 36px 88px rgba(2, 8, 20, 0.62) !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .login-kicker,
+    body.login-mode.dark-mode #loginCard .login-subtitle,
+    body.login-mode.dark-mode #loginCard .login-form label,
+    body.login-mode.dark-mode #loginCard .login-foot {
+      color: rgba(226, 232, 240, 0.84) !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .login-title {
+      color: #f8fafc !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .login-input {
+      background: rgba(15, 23, 42, 0.84) !important;
+      border-color: rgba(148, 163, 184, 0.5) !important;
+      color: #f8fafc !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .login-input::placeholder {
+      color: rgba(203, 213, 225, 0.72) !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .pass-eye {
+      color: rgba(226, 232, 240, 0.86) !important;
+      background: rgba(148, 163, 184, 0.14) !important;
+      border-color: rgba(148, 163, 184, 0.24) !important;
+    }
+
+    body.login-mode.dark-mode #loginCard .pass-eye:hover {
+      background: rgba(90, 200, 250, 0.24) !important;
+      border-color: rgba(125, 211, 252, 0.42) !important;
+      color: #d5f4ff !important;
+    }
+
+    body.login-mode.dark-mode #settingsCard {
+      background: rgba(15, 23, 42, 0.64) !important;
+      border-color: rgba(148, 163, 184, 0.34) !important;
+    }
+
+    body.login-mode.dark-mode #errorBox {
+      background: rgba(127, 29, 29, 0.38) !important;
+      border-color: rgba(248, 113, 113, 0.5) !important;
+      color: #fecaca !important;
+    }
+
+    .empty {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .link-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .link-btn:hover { text-decoration: underline; }
+
+    .config-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .config-link {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 0.80rem;
+      color: #1e3a8a;
+      text-decoration: none;
+      background: #eff6ff;
+      font-weight: 700;
+    }
+
+    .config-link:hover {
+      text-decoration: underline;
+      background: #dbeafe;
+    }
+
+    #homeTopbar {
+      --follow-progress: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 14px 18px !important;
+      border-radius: 0 0 26px 26px !important;
+      background: rgba(241, 249, 255, 0.95) !important;
+      border: 1px solid rgba(148, 163, 184, 0.3) !important;
+      border-top: none !important;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.12) !important;
+      gap: 14px;
+      backdrop-filter: saturate(170%) blur(20px);
+      -webkit-backdrop-filter: saturate(170%) blur(20px);
+      transform: translate3d(0, calc(-6px * var(--follow-progress)), 0) scale(calc(1 - (0.012 * var(--follow-progress))));
+      transform-origin: top center;
+      will-change: transform, box-shadow, background, border-color;
+      transition:
+        transform 140ms linear,
+        box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+        background 260ms ease,
+        border-color 260ms ease;
+    }
+
+    #homeTopbar.is-sticky {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border-color: rgba(148, 163, 184, 0.38) !important;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16) !important;
+    }
+
+    #homeTopbar.is-fixed {
+      position: fixed !important;
+      top: calc(env(safe-area-inset-top, 0px) + var(--home-topbar-top-offset));
+      left: 0;
+      right: 0;
+      width: min(1220px, calc(100vw - 32px));
+      z-index: 1400;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      transform-origin: top center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #homeTopbar {
+        transition: none !important;
+        transform: none !important;
+      }
+    }
+
+    .search-head-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .search-brand-badge {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #3ea2ff 0%, #0a84ff 60%, #0469d6 100%);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.62rem;
+      box-shadow: 0 12px 30px rgba(10, 132, 255, 0.34);
+      flex: 0 0 auto;
+    }
+
+    .search-brand-copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    #homeTopbar .title {
+      font-size: clamp(1.55rem, 3.1vw, 2.18rem);
+      line-height: 1.18;
+      font-weight: 850;
+      margin: 0;
+      letter-spacing: -0.005em;
+      color: #0f172a;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .app-subtitle {
+      font-size: clamp(0.98rem, 1.45vw, 1.2rem) !important;
+      color: #64748b !important;
+      font-weight: 650;
+      line-height: 1.32;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .header-status {
+      font-size: clamp(0.84rem, 1.2vw, 0.95rem);
+      line-height: 1.26;
+      font-weight: 750;
+      color: #64748b;
+      margin-top: 0;
+    }
+
+    .header-status[data-status="ok"] { color: #15803d; }
+    .header-status[data-status="warn"] { color: #b45309; }
+    .header-status[data-status="error"] { color: #dc2626; }
+
+    .search-head-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .session-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 360px;
+      min-height: 60px;
+      padding: 7px 14px 7px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.42);
+      background: rgba(255, 255, 255, 0.58);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    }
+
+    .session-avatar-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 1.4px solid rgba(59, 130, 246, 0.34);
+      background: rgba(219, 234, 254, 0.68);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1d4ed8;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .session-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .session-avatar-fallback {
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .session-meta {
+      min-width: 0;
+      display: grid;
+      gap: 1px;
+    }
+
+    .session-name {
+      font-size: 1.02rem;
+      font-weight: 800;
+      line-height: 1.18;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .session-role {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748b;
+      line-height: 1.14;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #homeTopbar .btn-logout {
+      height: 46px !important;
+      padding: 0 18px !important;
+      border-radius: 999px !important;
+      border: 1.4px solid rgba(239, 68, 68, 0.42) !important;
+      background: rgba(255, 255, 255, 0.58) !important;
+      color: #dc2626 !important;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+      font-size: 0.95rem !important;
+      font-weight: 760 !important;
+      letter-spacing: 0.005em;
+    }
+
+    #homeTopbar .btn-logout:hover {
+      background: rgba(254, 242, 242, 0.86) !important;
+      border-color: rgba(239, 68, 68, 0.56) !important;
+      color: #be123c !important;
+      box-shadow: 0 10px 22px rgba(239, 68, 68, 0.14) !important;
+    }
+
+    #homeTopbar .app-settings-btn {
+      height: 42px !important;
+      padding: 0 14px !important;
+      border-radius: 999px !important;
+      font-size: 0.82rem !important;
+    }
+
+    body.app-home-page #homeTopbar .dash-search-wrap {
+      transition:
+        transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        filter 240ms ease;
+      will-change: transform;
+    }
+
+    body.app-home-page #homeTopbar .search-box {
+      transition:
+        border-color 260ms ease,
+        background 260ms ease,
+        box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body.app-home-page #homeTopbar.is-sticky .dash-search-wrap {
+      transform: translateY(-1px);
+      filter: saturate(1.03);
+    }
+
+    body.app-home-page #homeTopbar.is-sticky .search-box {
+      background: rgba(255, 255, 255, 0.9) !important;
+      border-color: rgba(148, 163, 184, 0.46) !important;
+      box-shadow:
+        0 14px 30px rgba(15, 23, 42, 0.11),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+      transform: translateY(-1px);
+    }
+
+    .search-panel {
+      margin-bottom: 12px;
+      padding: 12px !important;
+      border-radius: 22px !important;
+      background: rgba(245, 250, 255, 0.52) !important;
+      border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    }
+
+    .search-main {
+      height: 72px;
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(255, 255, 255, 0.72);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 0 18px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    }
+
+    .search-main .search-icon {
+      font-size: 1.48rem;
+      color: #64748b;
+      flex: 0 0 auto;
+    }
+
+    #searchQuery.search-main-input {
+      flex: 1 1 auto;
+      min-width: 140px;
+      height: 100% !important;
+      border: none !important;
+      background: transparent !important;
+      color: #0f172a;
+      font-size: 1.42rem;
+      font-weight: 600;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
+      outline: none;
+    }
+
+    #searchQuery.search-main-input::placeholder {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    #searchQuery.search-main-input:focus {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+
+    .search-trigger {
+      height: 52px !important;
+      padding: 0 20px !important;
+      border-radius: 16px !important;
+      font-size: 0.98rem !important;
+      flex: 0 0 auto;
+    }
+
+    .search-tools {
+      margin-top: 11px;
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-tools .field {
+      min-width: 170px;
+      gap: 4px;
+    }
+
+    .search-tools label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    .search-tools select {
+      height: 40px;
+      border-radius: 12px;
+      font-size: 0.89rem;
+      font-weight: 600;
+    }
+
+    .search-actions {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-actions .btn {
+      height: 40px !important;
+      padding: 0 14px !important;
+      border-radius: 999px !important;
+      font-size: 0.86rem !important;
+      font-weight: 800 !important;
+    }
+
+    body.dark-mode #homeTopbar {
+      background: rgba(16, 24, 38, 0.72) !important;
+      border-color: rgba(148, 163, 184, 0.34) !important;
+      box-shadow: 0 18px 40px rgba(2, 8, 20, 0.52) !important;
+    }
+
+    body.dark-mode #homeTopbar .title {
+      color: #f8fafc;
+    }
+
+    body.dark-mode .app-subtitle {
+      color: rgba(226, 232, 240, 0.86) !important;
+    }
+
+    body.dark-mode .header-status {
+      color: rgba(203, 213, 225, 0.82);
+    }
+
+    body.dark-mode .session-chip {
+      background: rgba(15, 23, 42, 0.74);
+      border-color: rgba(148, 163, 184, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark-mode .session-avatar-wrap {
+      background: rgba(30, 41, 59, 0.86);
+      border-color: rgba(125, 211, 252, 0.4);
+      color: #93c5fd;
+    }
+
+    body.dark-mode .session-name {
+      color: #f8fafc;
+    }
+
+    body.dark-mode .session-role {
+      color: rgba(203, 213, 225, 0.78);
+    }
+
+    body.dark-mode #homeTopbar .btn-logout {
+      background: rgba(127, 29, 29, 0.24) !important;
+      border-color: rgba(248, 113, 113, 0.52) !important;
+      color: #fda4af !important;
+      box-shadow: 0 10px 20px rgba(2, 8, 20, 0.3) !important;
+    }
+
+    body.dark-mode #homeTopbar .btn-logout:hover {
+      background: rgba(127, 29, 29, 0.4) !important;
+      border-color: rgba(248, 113, 113, 0.64) !important;
+      color: #fecdd3 !important;
+      box-shadow: 0 12px 24px rgba(2, 8, 20, 0.34) !important;
+    }
+
+    body.dark-mode .search-panel {
+      background: rgba(16, 24, 38, 0.68) !important;
+      border-color: rgba(148, 163, 184, 0.34) !important;
+    }
+
+    body.dark-mode .search-main {
+      background: rgba(15, 23, 42, 0.76);
+      border-color: rgba(148, 163, 184, 0.42);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark-mode.app-home-page #homeTopbar.is-sticky .dash-search-wrap {
+      filter: saturate(1.06);
+    }
+
+    body.dark-mode.app-home-page #homeTopbar.is-sticky .search-box {
+      background: rgba(15, 23, 42, 0.86) !important;
+      border-color: rgba(125, 211, 252, 0.44) !important;
+      box-shadow:
+        0 18px 38px rgba(2, 8, 20, 0.44),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    body.dark-mode .search-main .search-icon {
+      color: rgba(203, 213, 225, 0.86);
+    }
+
+    body.dark-mode #searchQuery.search-main-input {
+      color: #f8fafc;
+    }
+
+    body.dark-mode #searchQuery.search-main-input::placeholder {
+      color: rgba(203, 213, 225, 0.72);
+    }
+
+    body.dark-mode .search-tools label {
+      color: rgba(203, 213, 225, 0.84);
+    }
+
+    body.dark-mode #boxesWrap .box-card {
+      border-color: rgba(148, 163, 184, 0.42) !important;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.78), rgba(15, 23, 42, 0.7)) !important;
+      box-shadow: 0 16px 34px rgba(2, 8, 20, 0.46) !important;
+    }
+
+    body.dark-mode #boxesWrap .box-card::before {
+      background: rgba(125, 211, 252, 0.18);
+    }
+
+    body.dark-mode #boxesWrap .box-card:hover {
+      border-color: rgba(125, 211, 252, 0.56) !important;
+      box-shadow: 0 20px 42px rgba(2, 8, 20, 0.58) !important;
+    }
+
+    body.dark-mode #boxesWrap .box-card-icon {
+      background: rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+      border-color: rgba(125, 211, 252, 0.35);
+    }
+
+    body.dark-mode #boxesWrap .box-name {
+      color: #93c5fd;
+    }
+
+    body.dark-mode #boxesWrap .box-count {
+      color: #cbd5e1;
+    }
+
+    body.dark-mode #boxesWrap .box-count i,
+    body.dark-mode #boxesWrap .box-card-arrow {
+      color: rgba(191, 219, 254, 0.74);
+    }
+
+    .box-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .box-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #f8fbff;
+      padding: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .16s ease, box-shadow .2s ease;
+    }
+
+    .box-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(15,23,42,.12);
+    }
+
+    .box-name {
+      font-size: .96rem;
+      font-weight: 800;
+      color: #1d4ed8;
+      word-break: break-word;
+    }
+
+    .box-count {
+      margin-top: 3px;
+      color: #475569;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    #boxesWrap.box-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    #boxesWrap .box-card {
+      position: relative;
+      overflow: hidden;
+      padding: 14px 14px 13px !important;
+      border-radius: 22px !important;
+      border: 1px solid rgba(148, 163, 184, 0.38) !important;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.42)) !important;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.09) !important;
+      transform: translateY(0);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.24s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    #boxesWrap .box-card::before {
+      content: "";
+      position: absolute;
+      right: -34px;
+      top: -36px;
+      width: 128px;
+      height: 128px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.14);
+      transition: transform 0.22s ease;
+      z-index: 0;
+    }
+
+    #boxesWrap .box-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(59, 130, 246, 0.5) !important;
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.13) !important;
+    }
+
+    #boxesWrap .box-card:hover::before {
+      transform: translate(-4px, 4px) scale(1.03);
+    }
+
+    .box-card-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .box-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37, 99, 235, 0.14);
+      color: #1d4ed8;
+      font-size: 1.14rem;
+      border: 1px solid rgba(59, 130, 246, 0.24);
+    }
+
+    .box-card-arrow {
+      color: rgba(30, 64, 175, 0.52);
+      font-size: 1rem;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    #boxesWrap .box-card:hover .box-card-arrow {
+      transform: translate(2px, -2px);
+      color: rgba(29, 78, 216, 0.86);
+    }
+
+    #boxesWrap .box-name {
+      position: relative;
+      z-index: 1;
+      font-size: 1.08rem;
+      font-weight: 850;
+      color: #1d4ed8;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    #boxesWrap .box-count {
+      position: relative;
+      z-index: 1;
+      margin-top: 6px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #475569;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #boxesWrap .box-count i {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    #statsRow.stats-grid {
+      gap: 14px;
+    }
+
+    #statsRow .stat-card {
+      --mx: 16%;
+      --my: 18%;
+      --rx: 0deg;
+      --ry: 0deg;
+      --ix: 0px;
+      --iy: 0px;
+      --orb-x: 0px;
+      --orb-y: 0px;
+      --stat-border: rgba(59, 130, 246, 0.52);
+      --stat-color: #1f4fd8;
+      --stat-icon: rgba(30, 78, 216, 0.22);
+      --stat-grad-a: rgba(191, 219, 254, 0.52);
+      --stat-grad-b: rgba(255, 255, 255, 0.4);
+      --stat-orb: rgba(96, 165, 250, 0.24);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+      min-height: 150px;
+      padding: 20px 22px !important;
+      border-radius: 26px !important;
+      border: 1.6px solid var(--stat-border) !important;
+      color: var(--stat-color) !important;
+      background:
+        radial-gradient(160px 140px at var(--mx) var(--my), rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0) 72%),
+        linear-gradient(130deg, var(--stat-grad-a) 0%, var(--stat-grad-b) 56%, rgba(255, 255, 255, 0.2) 100%) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.68),
+        0 12px 34px rgba(15, 23, 42, 0.11) !important;
+      transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
+      transform-style: preserve-3d;
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.34s ease, border-color 0.26s ease;
+      will-change: transform;
+    }
+
+    #statsRow .stat-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #statsRow .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      top: -36px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--stat-orb);
+      transform: translate3d(var(--orb-x), var(--orb-y), 0);
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.34s ease;
+      opacity: 0.78;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #statsRow .stat-card:hover {
+      transform: translateY(-3px) scale(1.006) rotateX(var(--rx)) rotateY(var(--ry));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.78),
+        0 18px 42px rgba(15, 23, 42, 0.16) !important;
+    }
+
+    #statsRow .stat-card:focus-visible {
+      outline: 2px solid rgba(10, 132, 255, 0.48);
+      outline-offset: 2px;
+    }
+
+    #statsRow .stat-icon {
+      position: absolute;
+      right: 18px;
+      top: 10px;
+      font-size: 3.9rem;
+      line-height: 1;
+      color: var(--stat-icon);
+      opacity: 0.52;
+      transform: translate3d(var(--ix), var(--iy), 24px) rotate(-8deg);
+      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.34s ease;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    #statsRow .stat-card:hover .stat-icon {
+      opacity: 0.72;
+    }
+
+    #statsRow .stat-label {
+      margin: 0;
+      max-width: none;
+      font-size: clamp(0.96rem, 1.2vw, 1.08rem);
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+      line-height: 1.22;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      color: var(--stat-color) !important;
+      position: relative;
+      z-index: 2;
+    }
+
+    #statsRow .stat-num,
+    #statsRow .stat-number {
+      margin: 0;
+      margin-top: 2px;
+      font-size: 3.08rem;
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--stat-color) !important;
+      position: relative;
+      z-index: 2;
+    }
+
+    #statsRow .stat-card.s-total {
+      --stat-border: rgba(59, 130, 246, 0.66);
+      --stat-color: #2563eb;
+      --stat-icon: rgba(37, 99, 235, 0.23);
+      --stat-grad-a: rgba(147, 197, 253, 0.5);
+      --stat-grad-b: rgba(219, 234, 254, 0.28);
+      --stat-orb: rgba(59, 130, 246, 0.24);
+    }
+
+    #statsRow .stat-card.s-stored {
+      --stat-border: rgba(34, 197, 94, 0.66);
+      --stat-color: #16a34a;
+      --stat-icon: rgba(22, 163, 74, 0.24);
+      --stat-grad-a: rgba(187, 247, 208, 0.5);
+      --stat-grad-b: rgba(220, 252, 231, 0.26);
+      --stat-orb: rgba(34, 197, 94, 0.24);
+    }
+
+    #statsRow .stat-card.s-completed {
+      --stat-border: rgba(20, 184, 166, 0.66);
+      --stat-color: #0f766e;
+      --stat-icon: rgba(15, 118, 110, 0.24);
+      --stat-grad-a: rgba(153, 246, 228, 0.48);
+      --stat-grad-b: rgba(204, 251, 241, 0.25);
+      --stat-orb: rgba(20, 184, 166, 0.24);
+    }
+
+    #statsRow .stat-card.s-pending {
+      --stat-border: rgba(245, 158, 11, 0.7);
+      --stat-color: #d97706;
+      --stat-icon: rgba(217, 119, 6, 0.24);
+      --stat-grad-a: rgba(253, 230, 138, 0.46);
+      --stat-grad-b: rgba(254, 243, 199, 0.25);
+      --stat-orb: rgba(245, 158, 11, 0.23);
+    }
+
+    #statsRow .stat-card.s-inprogress {
+      --stat-border: rgba(14, 165, 233, 0.66);
+      --stat-color: #0ea5e9;
+      --stat-icon: rgba(14, 165, 233, 0.24);
+      --stat-grad-a: rgba(125, 211, 252, 0.5);
+      --stat-grad-b: rgba(224, 242, 254, 0.24);
+      --stat-orb: rgba(14, 165, 233, 0.22);
+    }
+
+    #statsRow .stat-card.s-assigned {
+      --stat-border: rgba(236, 72, 153, 0.66);
+      --stat-color: #db2777;
+      --stat-icon: rgba(219, 39, 119, 0.22);
+      --stat-grad-a: rgba(249, 168, 212, 0.5);
+      --stat-grad-b: rgba(252, 231, 243, 0.24);
+      --stat-orb: rgba(236, 72, 153, 0.22);
+    }
+
+    #statsRow .stat-card.s-return {
+      --stat-border: rgba(107, 114, 128, 0.66);
+      --stat-color: #6b7280;
+      --stat-icon: rgba(107, 114, 128, 0.22);
+      --stat-grad-a: rgba(191, 219, 254, 0.4);
+      --stat-grad-b: rgba(226, 232, 240, 0.3);
+      --stat-orb: rgba(148, 163, 184, 0.24);
+    }
+
+    #statsRow .stat-card.s-cancel {
+      --stat-border: rgba(239, 68, 68, 0.66);
+      --stat-color: #dc2626;
+      --stat-icon: rgba(220, 38, 38, 0.22);
+      --stat-grad-a: rgba(254, 202, 202, 0.5);
+      --stat-grad-b: rgba(254, 226, 226, 0.24);
+      --stat-orb: rgba(239, 68, 68, 0.22);
+    }
+
+    body.dark-mode #statsRow .stat-card {
+      background:
+        radial-gradient(170px 150px at var(--mx) var(--my), rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 74%),
+        linear-gradient(132deg, var(--stat-grad-a) 0%, var(--stat-grad-b) 58%, rgba(15, 23, 42, 0.62) 100%) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 16px 44px rgba(2, 8, 20, 0.52) !important;
+    }
+
+    body.dark-mode #statsRow .stat-card.s-total {
+      --stat-color: #93c5fd;
+      --stat-icon: rgba(147, 197, 253, 0.28);
+      --stat-grad-a: rgba(30, 64, 175, 0.42);
+      --stat-grad-b: rgba(30, 41, 59, 0.52);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-stored {
+      --stat-color: #86efac;
+      --stat-icon: rgba(134, 239, 172, 0.26);
+      --stat-grad-a: rgba(21, 128, 61, 0.42);
+      --stat-grad-b: rgba(22, 30, 44, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-completed {
+      --stat-color: #5eead4;
+      --stat-icon: rgba(94, 234, 212, 0.26);
+      --stat-grad-a: rgba(13, 148, 136, 0.42);
+      --stat-grad-b: rgba(22, 30, 44, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-pending {
+      --stat-color: #fbbf24;
+      --stat-icon: rgba(251, 191, 36, 0.24);
+      --stat-grad-a: rgba(146, 64, 14, 0.4);
+      --stat-grad-b: rgba(30, 41, 59, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-inprogress {
+      --stat-color: #7dd3fc;
+      --stat-icon: rgba(125, 211, 252, 0.26);
+      --stat-grad-a: rgba(3, 105, 161, 0.4);
+      --stat-grad-b: rgba(30, 41, 59, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-assigned {
+      --stat-color: #f9a8d4;
+      --stat-icon: rgba(249, 168, 212, 0.26);
+      --stat-grad-a: rgba(157, 23, 77, 0.4);
+      --stat-grad-b: rgba(30, 41, 59, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-return {
+      --stat-color: #cbd5e1;
+      --stat-icon: rgba(203, 213, 225, 0.26);
+      --stat-grad-a: rgba(71, 85, 105, 0.42);
+      --stat-grad-b: rgba(30, 41, 59, 0.54);
+    }
+
+    body.dark-mode #statsRow .stat-card.s-cancel {
+      --stat-color: #fca5a5;
+      --stat-icon: rgba(252, 165, 165, 0.28);
+      --stat-grad-a: rgba(153, 27, 27, 0.4);
+      --stat-grad-b: rgba(30, 41, 59, 0.54);
+    }
+
+    @media (max-width: 1200px) {
+      #statsRow .stat-label {
+        font-size: 0.98rem;
+      }
+
+      #statsRow .stat-num,
+      #statsRow .stat-number {
+        font-size: 2.6rem;
+      }
+
+      #statsRow .stat-icon {
+        font-size: 3.25rem;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .box-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #boxesWrap.box-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 900px) {
+      .row, .row.three { grid-template-columns: 1fr; }
+      .shell { padding: 10px; }
+      .box-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #boxesWrap.box-grid { grid-template-columns: 1fr; }
+      #homeTopbar {
+        align-items: stretch;
+      }
+      .search-head-right {
+        justify-content: flex-start;
+      }
+      .session-chip {
+        max-width: 100%;
+      }
+      .search-main {
+        height: 64px;
+      }
+      #searchQuery.search-main-input {
+        font-size: 1.12rem;
+      }
+      .search-actions {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .box-grid { grid-template-columns: 1fr; }
+      #homeTopbar {
+        padding: 12px !important;
+        border-radius: 20px !important;
+      }
+      .search-head-left {
+        gap: 10px;
+      }
+      .search-brand-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        font-size: 1.28rem;
+      }
+      #homeTopbar .title {
+        font-size: 1.28rem;
+        line-height: 1.2;
+      }
+      .app-subtitle {
+        font-size: 0.84rem !important;
+        line-height: 1.28;
+      }
+      .header-status {
+        font-size: 0.76rem;
+      }
+      .session-chip {
+        width: 100%;
+        min-height: 52px;
+      }
+      #homeTopbar .btn-logout {
+        width: 100%;
+        height: 44px !important;
+      }
+      .search-panel {
+        padding: 10px !important;
+      }
+      .search-main {
+        height: 56px;
+        border-radius: 16px;
+        padding: 0 8px 0 12px;
+        gap: 8px;
+      }
+      .search-main .search-icon {
+        font-size: 1.2rem;
+      }
+      #searchQuery.search-main-input {
+        font-size: 0.98rem;
+      }
+      .search-trigger {
+        height: 42px !important;
+        padding: 0 12px !important;
+        font-size: 0.82rem !important;
+      }
+      .search-tools .field {
+        min-width: 100%;
+      }
+      .search-actions {
+        width: 100%;
+      }
+      .search-actions .btn {
+        flex: 1 1 calc(50% - 8px);
+      }
+      #statsRow .stat-card {
+        min-height: 128px;
+        padding: 16px 16px !important;
+        border-radius: 22px !important;
+      }
+      #statsRow .stat-label {
+        max-width: none;
+        font-size: 0.9rem;
+        line-height: 1.18;
+      }
+      #statsRow .stat-num,
+      #statsRow .stat-number {
+        font-size: 2.36rem;
+      }
+      #statsRow .stat-icon {
+        right: 12px;
+        top: 10px;
+        font-size: 2.58rem;
+      }
+      .login-wrap {
+        padding: 18px 12px 14px;
+        border-radius: 24px;
+      }
+      .login-brand {
+        column-gap: 8px;
+        margin-bottom: 8px;
+        padding: 0 1px 4px;
+      }
+      .login-shield {
+        width: 62px;
+        height: 62px;
+        border-radius: 20px;
+        font-size: 1.08rem;
+      }
+      .login-title {
+        font-size: 1.72rem;
+        line-height: 1.06;
+      }
+      .login-subtitle {
+        margin-top: 2px;
+        font-size: 0.82rem;
+        line-height: 1.32;
+      }
+      .login-kicker {
+        font-size: 0.6rem;
+        letter-spacing: 0.16em;
+      }
+      .login-input {
+        height: 50px !important;
+        border-radius: 18px !important;
+      }
+      .login-submit {
+        height: 52px !important;
+        font-size: 1.02rem;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-17">
+</head>
+<body class="app-home-page">
+  <div class="shell">
+    <div id="topbarSpacer" aria-hidden="true"></div>
+    <div id="homeTopbar" class="top-bar search-head hidden">
+      <div class="container">
+        <div class="dash-head-row">
+          <div class="dash-brand">
+            <div class="dash-brand-icon"><i class="bi bi-folder2-open text-white fs-5"></i></div>
+            <div>
+              <h1 id="appTitle" class="dash-title">ระบบจัดการเอกสาร</h1>
+              <div id="appSubtitle" class="dash-subtitle">ค้นหา เพิ่ม แก้ไข และจัดการเอกสาร</div>
+              <div id="connectStatus" class="header-status" data-status="warn">พร้อมเข้าสู่ระบบ</div>
+              <div id="configLinks" class="config-links hidden">
+                <a id="linkSpreadsheet" class="config-link hidden" target="_blank" rel="noopener">Spreadsheet</a>
+                <a id="linkAppsScript" class="config-link hidden" target="_blank" rel="noopener">Apps Script</a>
+                <a id="linkDriveFolder" class="config-link hidden" target="_blank" rel="noopener">Drive Folder</a>
+                <a id="linkManual" class="config-link hidden" target="_blank" rel="noopener">คู่มือ</a>
+              </div>
+            </div>
+          </div>
+          <div class="dash-user-wrap">
+            <button id="btnOpenSettings" class="btn outline app-settings-btn hidden" type="button">ตั้งค่า API</button>
+            <div id="sessionUserChip" class="login-user-chip hidden">
+              <div class="session-avatar-wrap">
+                <img id="sessionUserAvatar" class="session-avatar hidden" alt="ผู้ใช้งานระบบ">
+                <span id="sessionUserAvatarFallback" class="session-avatar-fallback">U</span>
+              </div>
+              <div class="session-meta">
+                <div id="sessionUserName" class="login-user-name">-</div>
+                <div id="sessionUserRole" class="login-user-pos">ยังไม่ได้เข้าสู่ระบบ</div>
+              </div>
+            </div>
+            <button id="btnLogout" class="btn outline logout-btn hidden" type="button"><i class="bi bi-box-arrow-right me-1"></i>ออกจากระบบ</button>
+          </div>
+        </div>
+        <div class="dash-search-wrap">
+          <i id="searchIcon" class="bi bi-search"></i>
+          <input type="text" id="searchInput" class="search-box" placeholder="ค้นหาด้วยเลขที่, เรื่อง, ผู้ส่ง...">
+        </div>
+      </div>
+    </div>
+
+    <div id="settingsCard" class="card hidden">
+      <div class="settings-grid">
+        <div class="field full">
+          <label for="scriptUrl">Apps Script Web App URL (/exec)</label>
+          <input id="scriptUrl" placeholder="วางลิงก์ Web App ที่ลงท้ายด้วย /exec" />
+        </div>
+        <div class="field">
+          <label for="deviceKey">Device Key (ระบบสร้างให้อัตโนมัติได้)</label>
+          <input id="deviceKey" placeholder="dk_xxxxxxxxx" />
+        </div>
+        <div class="actions">
+          <button id="btnGenerateDevice" class="btn secondary" type="button">สุ่ม Device Key</button>
+          <button id="btnSaveSettings" class="btn" type="button">บันทึกการตั้งค่า</button>
+        </div>
+        <div class="muted" style="font-size:0.82rem;">
+          ตั้งค่าครั้งเดียว ระบบจะจำไว้ในเบราว์เซอร์เครื่องนี้
+        </div>
+      </div>
+    </div>
+
+    <div id="errorBox" class="alert hidden"></div>
+
+    <div id="loginCard" class="card login-wrap hidden">
+      <div class="login-stage">
+        <div class="login-brand">
+          <div class="login-shield"><i class="bi bi-shield-lock-fill"></i></div>
+          <div class="login-brand-copy">
+            <p class="login-kicker">ระบบทะเบียนคุมเอกสาร</p>
+            <h2 class="login-title">เข้าสู่ระบบ</h2>
+            <p class="login-subtitle">ยินดีต้อนรับกลับมา กรุณายืนยันตัวตนเพื่อใช้งาน</p>
+          </div>
+        </div>
+
+        <div class="login-form" style="width:100%;">
+          <div class="field full">
+            <label for="username">Username</label>
+            <input id="username" class="login-input" placeholder="Username" autocomplete="username" />
+          </div>
+          <div class="field full">
+            <label for="password">Password</label>
+            <div class="pass-wrap">
+              <input id="password" class="login-input" type="password" placeholder="Password" autocomplete="current-password" />
+              <button id="btnTogglePassword" class="pass-eye" type="button" aria-label="แสดง/ซ่อนรหัสผ่าน">
+                <i id="passwordEyeIcon" class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button id="btnLogin" class="btn login-submit" type="button">
+            <i class="bi bi-box-arrow-in-right"></i> เข้าสู่ระบบ
+          </button>
+        </div>
+
+        <div class="login-foot">Secure Access</div>
+      </div>
+    </div>
+
+    <div id="appCard" class="hidden">
+      <div id="readOnlyNotice" class="alert hidden"></div>
+
+      <div id="statsRow" class="stats-grid"></div>
+
+      <div class="tabs-bar dashboard-tabs">
+        <button id="tabDocs" class="tab-btn active" type="button"><i class="bi bi-file-text me-1"></i>รายการเอกสาร</button>
+        <button id="tabBoxes" class="tab-btn" type="button"><i class="bi bi-archive me-1"></i>ตรวจสอบกล่อง</button>
+        <button id="tabBoxScan" class="tab-btn" type="button"><i class="bi bi-qr-code-scan me-1"></i>สแกนจัดเก็บ</button>
+        <button id="tabInspector" class="tab-btn" type="button"><i class="bi bi-clipboard-check me-1"></i>ตรวจสอบผลงาน</button>
+      </div>
+
+      <div id="docsTab">
+        <div class="docs-toolbar">
+          <div class="docs-toolbar-left">
+            <button id="btnOpenFilter" class="btn advanced-filter-btn" type="button"><i class="bi bi-funnel-fill me-1"></i>ตัวกรองขั้นสูง</button>
+            <button id="btnPrintAll" class="btn print-all-report-btn" type="button"><i class="bi bi-printer-fill me-1"></i>พิมพ์รายงานทั้งหมด</button>
+            <span id="activeFilterBadge" class="badge hidden"></span>
+          </div>
+          <div class="docs-toolbar-right">
+            <span class="small text-muted fw-bold">แสดง:</span>
+            <select id="itemsPerPage" class="form-select form-select-sm">
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="filterModal" class="filter-modal">
+          <div class="filter-modal-backdrop" id="filterBackdrop"></div>
+          <div class="filter-modal-content">
+            <div class="filter-modal-header">
+              <h5><i class="bi bi-funnel-fill me-2"></i>ตัวกรองขั้นสูง</h5>
+              <button id="btnCloseFilter" class="filter-close-btn" type="button"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="filter-modal-body">
+              <div class="filter-section">
+                <p class="filter-section-title"><i class="bi bi-calendar3 me-1"></i>ปีงบประมาณ</p>
+                <div id="filterFiscalOptions" class="filter-options compact"></div>
+              </div>
+
+              <div class="filter-section">
+                <p class="filter-section-title"><i class="bi bi-calendar-month me-1"></i>ช่วงวันที่รับเอกสาร</p>
+                <div class="filter-date-range">
+                  <div class="filter-date-item">
+                    <label class="filter-date-label">จากวันที่</label>
+                    <div class="thai-date-input" onclick="openCalendar('filterDateFrom')">
+                      <input type="hidden" id="filterDateFrom" value="">
+                      <div class="form-control filter-date-display" id="filterDateFromDisplay">เลือกวันที่...</div>
+                      <i class="bi bi-calendar3 cal-icon"></i>
+                    </div>
+                  </div>
+                  <div class="filter-date-item">
+                    <label class="filter-date-label">ถึงวันที่</label>
+                    <div class="thai-date-input" onclick="openCalendar('filterDateTo')">
+                      <input type="hidden" id="filterDateTo" value="">
+                      <div class="form-control filter-date-display" id="filterDateToDisplay">เลือกวันที่...</div>
+                      <i class="bi bi-calendar3 cal-icon"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="filter-section">
+                <p class="filter-section-title"><i class="bi bi-archive me-1"></i>สถานที่เก็บ (กล่อง)</p>
+                <select id="filterLocation" class="form-select form-select-sm">
+                  <option value="">ทั้งหมด</option>
+                </select>
+              </div>
+
+              <div class="filter-section">
+                <p class="filter-section-title"><i class="bi bi-wallet2 me-1"></i>ประเภทเงินงบประมาณ</p>
+                <div id="filterBudgetOptions" class="filter-options compact"></div>
+              </div>
+
+              <div class="filter-section">
+                <p class="filter-section-title"><i class="bi bi-tags me-1"></i>สถานะเอกสาร</p>
+                <div class="filter-options">
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterInProgress" value="inprogress">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-hourglass-split me-1" style="color:#5AC8FA"></i>กำลังดำเนินการ</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterAssigned" value="assigned">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-person-check-fill me-1" style="color:#EC4899"></i>มอบผู้รับผิดชอบ</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterCompleted" value="completed">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-check-circle-fill me-1" style="color:#10B981"></i>ดำเนินการเสร็จ</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterPending" value="pending">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-clock me-1" style="color:#F59E0B"></i>รอจัดเก็บ</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterStored" value="stored">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-archive-fill me-1" style="color:#007AFF"></i>จัดเก็บแล้ว</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterCancelled" value="cancelled">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-x-circle-fill me-1" style="color:#FF3B30"></i>ยกเลิก</span>
+                  </label>
+                  <label class="filter-option">
+                    <input type="checkbox" id="filterReturned" value="returned">
+                    <span class="checkmark"></span>
+                    <span class="filter-label"><i class="bi bi-arrow-return-left me-1" style="color:#8E8E93"></i>ส่งคืนฯ</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="filter-modal-footer">
+              <button id="btnResetFilter" class="btn secondary" type="button">รีเซ็ต</button>
+              <button id="btnApplyFilter" class="btn" type="button"><i class="bi bi-check-lg me-1"></i>ตกลง</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="docsList"><div class="loading-state"><div class="spinner-border text-primary mb-2"></div><p>กำลังโหลดข้อมูล...</p></div></div>
+
+        <div id="paginationControls" class="pagination-controls" style="display:none">
+          <button class="pagination-btn" id="btnPrev" type="button"><i class="bi bi-chevron-left"></i></button>
+          <span class="pagination-info" id="pageInfo">หน้า <input type="number" id="jumpPageInline" class="pagination-inline-input" min="1" value="1"> / <span id="totalPagesLabel">1</span> (<span id="totalItemsLabel">0</span> รายการ)</span>
+          <button class="pagination-btn" id="btnNext" type="button"><i class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+
+      <div id="boxesTab" style="display:none">
+        <div class="boxes-toolbar">
+          <div class="muted" id="boxSummaryLabel">กล่องเอกสารที่มีการจัดเก็บ</div>
+          <button id="btnReloadBoxes" class="btn outline" type="button">รีโหลดข้อมูลกล่อง</button>
+        </div>
+        <div id="boxesWrap" class="box-grid"></div>
+      </div>
+    </div>
+  </div>
+  <button id="btnAddFab" class="fab hidden" type="button" title="เพิ่มเอกสาร"><i class="bi bi-plus-lg"></i></button>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js?v=20260221-6"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var DEFAULT_BUDGET_ORDER = ['กองทุน ววน.', 'กองทุนเงินทดแทน', 'เงินบำรุง', 'เงินงบประมาณ'];
+      var routeQuery = C.parseQuery();
+
+      var state = {
+        api: null,
+        user: null,
+        config: null,
+        settings: null,
+        loading: false,
+        page: 1,
+        itemsPerPage: 20,
+        totalPages: 1,
+        totalItems: 0,
+        currentSearch: '',
+        currentFilter: 'all',
+        lastTotalPages: 1,
+        searchTimer: null,
+        boxSummary: [],
+        lastSystemReport: null,
+        infoOptions: { fiscalYears: [], locations: [] },
+        budgetTypeOptions: DEFAULT_BUDGET_ORDER.slice(),
+        selectedFilters: [],
+        selectedFiscalYears: [],
+        selectedDateFrom: '',
+        selectedDateTo: '',
+        selectedLocation: '',
+        selectedBudgetTypes: [],
+        isReadOnly: false
+      };
+
+      var els = {
+        homeTopbar: document.getElementById('homeTopbar'),
+        appTitle: document.getElementById('appTitle'),
+        appSubtitle: document.getElementById('appSubtitle'),
+        configLinks: document.getElementById('configLinks'),
+        linkSpreadsheet: document.getElementById('linkSpreadsheet'),
+        linkAppsScript: document.getElementById('linkAppsScript'),
+        linkDriveFolder: document.getElementById('linkDriveFolder'),
+        linkManual: document.getElementById('linkManual'),
+        connectStatus: document.getElementById('connectStatus'),
+        btnOpenSettings: document.getElementById('btnOpenSettings'),
+        btnLogout: document.getElementById('btnLogout'),
+        settingsCard: document.getElementById('settingsCard'),
+        scriptUrl: document.getElementById('scriptUrl'),
+        deviceKey: document.getElementById('deviceKey'),
+        btnGenerateDevice: document.getElementById('btnGenerateDevice'),
+        btnSaveSettings: document.getElementById('btnSaveSettings'),
+        errorBox: document.getElementById('errorBox'),
+        loginCard: document.getElementById('loginCard'),
+        username: document.getElementById('username'),
+        password: document.getElementById('password'),
+        btnTogglePassword: document.getElementById('btnTogglePassword'),
+        passwordEyeIcon: document.getElementById('passwordEyeIcon'),
+        btnLogin: document.getElementById('btnLogin'),
+        appCard: document.getElementById('appCard'),
+        sessionUserChip: document.getElementById('sessionUserChip'),
+        sessionUserAvatar: document.getElementById('sessionUserAvatar'),
+        sessionUserAvatarFallback: document.getElementById('sessionUserAvatarFallback'),
+        sessionUserName: document.getElementById('sessionUserName'),
+        sessionUserRole: document.getElementById('sessionUserRole'),
+        readOnlyNotice: document.getElementById('readOnlyNotice'),
+        searchInput: document.getElementById('searchInput'),
+        btnAddFab: document.getElementById('btnAddFab'),
+        tabDocs: document.getElementById('tabDocs'),
+        tabBoxes: document.getElementById('tabBoxes'),
+        tabBoxScan: document.getElementById('tabBoxScan'),
+        tabInspector: document.getElementById('tabInspector'),
+        docsTab: document.getElementById('docsTab'),
+        boxesTab: document.getElementById('boxesTab'),
+        btnOpenFilter: document.getElementById('btnOpenFilter'),
+        btnPrintAll: document.getElementById('btnPrintAll'),
+        activeFilterBadge: document.getElementById('activeFilterBadge'),
+        itemsPerPage: document.getElementById('itemsPerPage'),
+        filterModal: document.getElementById('filterModal'),
+        filterBackdrop: document.getElementById('filterBackdrop'),
+        btnCloseFilter: document.getElementById('btnCloseFilter'),
+        btnResetFilter: document.getElementById('btnResetFilter'),
+        btnApplyFilter: document.getElementById('btnApplyFilter'),
+        filterFiscalOptions: document.getElementById('filterFiscalOptions'),
+        filterBudgetOptions: document.getElementById('filterBudgetOptions'),
+        filterLocation: document.getElementById('filterLocation'),
+        filterDateFrom: document.getElementById('filterDateFrom'),
+        filterDateTo: document.getElementById('filterDateTo'),
+        filterInProgress: document.getElementById('filterInProgress'),
+        filterAssigned: document.getElementById('filterAssigned'),
+        filterCompleted: document.getElementById('filterCompleted'),
+        filterPending: document.getElementById('filterPending'),
+        filterStored: document.getElementById('filterStored'),
+        filterCancelled: document.getElementById('filterCancelled'),
+        filterReturned: document.getElementById('filterReturned'),
+        statsRow: document.getElementById('statsRow'),
+        docsList: document.getElementById('docsList'),
+        paginationControls: document.getElementById('paginationControls'),
+        pageInfo: document.getElementById('pageInfo'),
+        jumpPageInline: document.getElementById('jumpPageInline'),
+        totalPagesLabel: document.getElementById('totalPagesLabel'),
+        totalItemsLabel: document.getElementById('totalItemsLabel'),
+        btnPrev: document.getElementById('btnPrev'),
+        btnNext: document.getElementById('btnNext'),
+        btnReloadBoxes: document.getElementById('btnReloadBoxes'),
+        boxSummaryLabel: document.getElementById('boxSummaryLabel'),
+        boxesWrap: document.getElementById('boxesWrap')
+      };
+
+      function showError(message) {
+        var msg = C.safeTrim(message || '');
+        if (!msg) {
+          els.errorBox.classList.add('hidden');
+          els.errorBox.textContent = '';
+          return;
+        }
+        els.errorBox.textContent = msg;
+        els.errorBox.classList.remove('hidden');
+      }
+
+      function setStatus(label, type) {
+        if (!els.connectStatus) return;
+        els.connectStatus.textContent = C.safeText(label || '');
+        if (type) els.connectStatus.setAttribute('data-status', type);
+        else els.connectStatus.removeAttribute('data-status');
+      }
+
+      function setLoading(isLoading) {
+        var disabled = !!isLoading;
+        state.loading = disabled;
+
+        var lockEls = [
+          els.btnLogin,
+          els.btnTogglePassword,
+          els.btnSaveSettings,
+          els.btnGenerateDevice,
+          els.btnOpenFilter,
+          els.btnPrintAll,
+          els.btnResetFilter,
+          els.btnApplyFilter,
+          els.btnCloseFilter,
+          els.btnReloadBoxes,
+          els.itemsPerPage,
+          els.btnPrev,
+          els.btnNext,
+          els.jumpPageInline,
+          els.btnAddFab
+        ];
+
+        for (var i = 0; i < lockEls.length; i++) {
+          if (lockEls[i]) lockEls[i].disabled = disabled;
+        }
+
+        if (els.btnPrev) els.btnPrev.disabled = disabled || state.page <= 1;
+        if (els.btnNext) els.btnNext.disabled = disabled || state.page >= state.totalPages;
+        if (els.jumpPageInline) {
+          els.jumpPageInline.disabled = disabled || state.totalPages <= 1;
+        }
+      }
+
+      function syncPagination() {
+        if (state.totalPages < 1) state.totalPages = 1;
+        if (state.page < 1) state.page = 1;
+        if (state.page > state.totalPages) state.page = state.totalPages;
+
+        if (els.jumpPageInline && document.activeElement !== els.jumpPageInline) {
+          els.jumpPageInline.value = String(state.page);
+          els.jumpPageInline.setAttribute('max', String(state.totalPages));
+        }
+        if (els.totalPagesLabel) els.totalPagesLabel.textContent = String(state.totalPages);
+        if (els.totalItemsLabel) els.totalItemsLabel.textContent = String(state.totalItems);
+
+        if (els.paginationControls) {
+          var show = state.totalPages > 1 || state.totalItems > 0;
+          els.paginationControls.style.display = show ? 'flex' : 'none';
+        }
+        if (els.btnPrev) els.btnPrev.disabled = state.loading || state.page <= 1;
+        if (els.btnNext) els.btnNext.disabled = state.loading || state.page >= state.totalPages;
+      }
+
+      function goToPage() {
+        if (!els.jumpPageInline || state.loading) return;
+        var page = parseInt(els.jumpPageInline.value, 10);
+        if (!page || page < 1) page = 1;
+        if (state.lastTotalPages && page > state.lastTotalPages) page = state.lastTotalPages;
+        if (page === state.page) {
+          syncPagination();
+          return;
+        }
+        state.page = page;
+        els.jumpPageInline.value = String(page);
+        loadDocs(true).catch(function (err) {
+          showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+        });
+      }
+
+      function bindConfigLinks(config) {
+        var links = (config && config.links) ? config.links : {};
+        var hasAnyLink = false;
+
+        function bindLink(el, url) {
+          if (!el) return;
+          if (!url) {
+            el.classList.add('hidden');
+            el.removeAttribute('href');
+            return;
+          }
+          hasAnyLink = true;
+          el.href = url;
+          el.classList.remove('hidden');
+        }
+
+        bindLink(els.linkSpreadsheet, links.spreadsheet || '');
+        bindLink(els.linkAppsScript, links.appsScriptProject || '');
+        bindLink(els.linkDriveFolder, links.driveFolder || '');
+        bindLink(els.linkManual, links.manual || '');
+
+        if (els.configLinks) els.configLinks.classList.toggle('hidden', !hasAnyLink);
+      }
+
+      function applyConfigToUI(config) {
+        if (config.appName && els.appTitle) els.appTitle.textContent = config.appName;
+        if (config.subtitle && els.appSubtitle) els.appSubtitle.textContent = config.subtitle;
+        if (config.appName) document.title = config.appName;
+        bindConfigLinks(config);
+      }
+
+      function applyLockMode(config) {
+        if (!config || !config.lockSettings) return;
+        if (els.btnOpenSettings) els.btnOpenSettings.classList.add('hidden');
+        if (els.btnGenerateDevice) els.btnGenerateDevice.classList.add('hidden');
+        if (els.btnSaveSettings) els.btnSaveSettings.classList.add('hidden');
+        if (els.scriptUrl) els.scriptUrl.readOnly = true;
+        if (els.deviceKey) els.deviceKey.readOnly = true;
+        if (els.settingsCard) els.settingsCard.classList.add('hidden');
+      }
+
+      function createClientFromInputs() {
+        var scriptUrl = C.normalizeScriptUrl(els.scriptUrl.value || '');
+        var deviceKey = C.safeTrim(els.deviceKey.value || '');
+
+        if (!scriptUrl) throw new Error('กรุณาตั้งค่า Apps Script URL');
+        if (!deviceKey) throw new Error('กรุณาระบุ Device Key');
+
+        state.settings = C.persistSettings(scriptUrl, deviceKey);
+        state.api = C.createApiClient(state.settings);
+        return state.api;
+      }
+
+      function switchTab(name) {
+        var docsMode = name !== 'boxes';
+        if (els.tabDocs) els.tabDocs.classList.toggle('active', docsMode);
+        if (els.tabBoxes) els.tabBoxes.classList.toggle('active', !docsMode);
+        if (els.docsTab) els.docsTab.style.display = docsMode ? 'block' : 'none';
+        if (els.boxesTab) els.boxesTab.style.display = docsMode ? 'none' : 'block';
+      }
+
+      function setSessionChip(user) {
+        var name = C.safeText((user && (user.displayName || user.username)) || '-');
+        var role = C.safeText((user && user.position) || (user && user.accessRoleLabel) || 'ผู้ใช้งานระบบ');
+        var avatarUrl = C.safeTrim((user && (user.imageUrl || user.avatar)) || '');
+
+        if (els.sessionUserName) els.sessionUserName.textContent = name;
+        if (els.sessionUserRole) els.sessionUserRole.textContent = role;
+
+        if (els.sessionUserAvatar && els.sessionUserAvatarFallback) {
+          if (avatarUrl) {
+            els.sessionUserAvatar.src = avatarUrl;
+            els.sessionUserAvatar.classList.remove('hidden');
+            els.sessionUserAvatarFallback.classList.add('hidden');
+          } else {
+            els.sessionUserAvatar.removeAttribute('src');
+            els.sessionUserAvatar.classList.add('hidden');
+            els.sessionUserAvatarFallback.textContent = (name.charAt(0) || 'U').toUpperCase();
+            els.sessionUserAvatarFallback.classList.remove('hidden');
+          }
+        }
+      }
+
+      function setLoggedIn(user) {
+        state.user = user || null;
+
+        if (state.user) {
+          state.isReadOnly = !!(state.user.isReadOnly || state.user.canEdit === false || state.user.accessRole === 'read_only');
+          document.body.classList.remove('login-mode');
+          if (els.homeTopbar) els.homeTopbar.classList.remove('hidden');
+          if (els.loginCard) els.loginCard.classList.add('hidden');
+          if (els.appCard) els.appCard.classList.remove('hidden');
+          if (els.btnLogout) els.btnLogout.classList.remove('hidden');
+          if (els.sessionUserChip) els.sessionUserChip.classList.remove('hidden');
+          if (els.btnOpenSettings && state.config && !state.config.lockSettings) {
+            els.btnOpenSettings.classList.remove('hidden');
+          }
+
+          setSessionChip(state.user);
+
+          if (els.readOnlyNotice) {
+            if (state.isReadOnly) {
+              els.readOnlyNotice.innerHTML = '<i class="bi bi-eye me-2"></i>บัญชีผู้มีสิทธิ์อ่าน: สามารถดูข้อมูลได้เท่านั้น';
+              els.readOnlyNotice.classList.remove('hidden');
+            } else {
+              els.readOnlyNotice.classList.add('hidden');
+            }
+          }
+
+          if (els.appSubtitle) {
+            els.appSubtitle.textContent = state.isReadOnly
+              ? 'ค้นหาและดูข้อมูลเอกสาร (สิทธิ์อ่าน)'
+              : 'ค้นหา เพิ่ม แก้ไข และจัดการเอกสาร';
+          }
+
+          if (els.tabBoxScan) els.tabBoxScan.classList.toggle('hidden', state.isReadOnly);
+          if (els.btnAddFab) els.btnAddFab.classList.toggle('hidden', state.isReadOnly);
+
+          setStatus('เข้าสู่ระบบแล้ว', 'ok');
+          return;
+        }
+
+        state.isReadOnly = false;
+        document.body.classList.add('login-mode');
+        if (els.homeTopbar) els.homeTopbar.classList.add('hidden');
+        if (els.appCard) els.appCard.classList.add('hidden');
+        if (els.loginCard) els.loginCard.classList.remove('hidden');
+        if (els.btnLogout) els.btnLogout.classList.add('hidden');
+        if (els.sessionUserChip) els.sessionUserChip.classList.add('hidden');
+        if (els.btnOpenSettings) els.btnOpenSettings.classList.add('hidden');
+        if (els.tabBoxScan) els.tabBoxScan.classList.remove('hidden');
+        if (els.btnAddFab) els.btnAddFab.classList.add('hidden');
+        if (els.readOnlyNotice) els.readOnlyNotice.classList.add('hidden');
+        setStatus('พร้อมเข้าสู่ระบบ', 'warn');
+      }
+
+      function buildDocLink(doc) {
+        var docId = C.safeTrim((doc && (doc.docId || doc.amDocNoAk || doc.receiveNo || doc.amDocNo)) || '');
+        if (!docId) return '#';
+        return C.buildPageUrl('document-view.html', { id: docId });
+      }
+
+      function getDocStatusClass(status, storedLoc) {
+        var st = C.safeTrim(status || '');
+        var hasStored = !!C.safeTrim(storedLoc || '');
+        if (st === 'ยกเลิก') return 'status-cancelled';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return 'status-returned';
+        if (hasStored) return 'status-stored';
+        if (st === 'กำลังดำเนินการ') return 'status-inprogress';
+        if (st === 'มอบผู้รับผิดชอบ') return 'status-assigned';
+        return 'status-completed';
+      }
+
+      function getDocBgIcon(status, storedLoc) {
+        var st = C.safeTrim(status || '');
+        var hasStored = !!C.safeTrim(storedLoc || '');
+        if (st === 'ยกเลิก') return 'bi-x-circle';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return 'bi-arrow-return-left';
+        if (hasStored) return 'bi-archive-fill';
+        if (st === 'กำลังดำเนินการ') return 'bi-hourglass-split';
+        if (st === 'มอบผู้รับผิดชอบ') return 'bi-person-check-fill';
+        return 'bi-check-circle-fill';
+      }
+
+      function getStatusBadge(status) {
+        var st = C.safeTrim(status || '');
+        if (st === 'ยกเลิก') return '<span class="badge-status badge-cancel"><i class="bi bi-x-circle-fill"></i>ยกเลิก</span>';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="badge-status badge-return"><i class="bi bi-arrow-return-left"></i>ส่งคืนฯ</span>';
+        if (st === 'กำลังดำเนินการ') return '<span class="badge-status badge-inprogress"><i class="bi bi-hourglass-split"></i>กำลังดำเนินการ</span>';
+        if (st === 'มอบผู้รับผิดชอบ') return '<span class="badge-status badge-assigned"><i class="bi bi-person-check-fill"></i>มอบผู้รับผิดชอบ</span>';
+        return '<span class="badge-status badge-active"><i class="bi bi-check-circle-fill"></i>ดำเนินการเสร็จ</span>';
+      }
+
+      function getStoredUserChip(doc) {
+        var storedUser = C.safeTrim(doc && doc.storedUser || '');
+        if (!storedUser || !C.safeTrim(doc && doc.storedLoc || '')) return '';
+
+        var img = C.safeTrim(doc && doc.storedUserImg || '');
+        var avatar = img
+          ? '<img src="' + C.escapeHtml(img) + '" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUser) + '" class="rounded-circle" width="24" height="24" style="object-fit:cover;border:1.5px solid rgba(255,255,255,0.8);box-shadow:0 1px 4px rgba(0,0,0,0.12);flex:0 0 24px">'
+          : '<span class="stored-user-avatar" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUser) + '">' + C.escapeHtml((storedUser.charAt(0) || '?').toUpperCase()) + '</span>';
+
+        return '<span class="stored-user-chip" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUser) + '">' + avatar + '<span class="stored-user-name">' + C.escapeHtml(storedUser) + '</span></span>';
+      }
+
+      function getCreatorChip(doc) {
+        var creator = C.safeTrim(doc && doc.createdBy || '');
+        if (!creator) return '';
+        var creatorPos = C.safeTrim(doc && doc.createdByPosition || '');
+        var creatorImg = C.safeTrim(doc && doc.createdByImg || '');
+        var titleText = creatorPos ? (creator + ' (' + creatorPos + ')') : creator;
+        var avatar = creatorImg
+          ? '<img src="' + C.escapeHtml(creatorImg) + '" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '" class="rounded-circle" width="24" height="24" style="object-fit:cover;border:1.5px solid rgba(255,255,255,0.82);box-shadow:0 1px 4px rgba(0,0,0,0.12);flex:0 0 24px">'
+          : '<span class="stored-user-avatar" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '">' + C.escapeHtml((creator.charAt(0) || '?').toUpperCase()) + '</span>';
+        var text = creatorPos ? (creator + ' (' + creatorPos + ')') : creator;
+        return '<span class="created-user-chip" title="ผู้บันทึกเอกสาร: ' + C.escapeHtml(titleText) + '">' + avatar + '<span class="stored-user-name">' + C.escapeHtml(text) + '</span></span>';
+      }
+
+      function renderStats(stats) {
+        var cards = [
+          { key: 'total', label: 'ทั้งหมด', cls: 's-total', icon: 'bi-folder-fill' },
+          { key: 'stored', label: 'จัดเก็บแล้ว', cls: 's-stored', icon: 'bi-archive-fill' },
+          { key: 'completed', label: 'ดำเนินการเสร็จ', cls: 's-completed', icon: 'bi-check-circle-fill' },
+          { key: 'pending', label: 'รอการจัดเก็บ', cls: 's-pending', icon: 'bi-clock-history' },
+          { key: 'inprogress', label: 'กำลังดำเนินการ', cls: 's-inprogress', icon: 'bi-hourglass-split' },
+          { key: 'assigned', label: 'มอบผู้รับผิดชอบ', cls: 's-assigned', icon: 'bi-person-check-fill' },
+          { key: 'returned', label: 'ส่งคืนเจ้าของเรื่อง', cls: 's-return', icon: 'bi-arrow-return-left' },
+          { key: 'cancelled', label: 'ยกเลิก', cls: 's-cancel', icon: 'bi-x-circle' }
+        ];
+
+        var html = '';
+        for (var i = 0; i < cards.length; i++) {
+          var card = cards[i];
+          var value = (stats && stats[card.key] != null) ? stats[card.key] : 0;
+          html += '<div class="stat-card ' + card.cls + '"><i class="bi ' + card.icon + ' stat-icon"></i><div class="stat-content"><div class="stat-label">' + C.escapeHtml(card.label) + '</div><div class="stat-num">' + Number(value || 0) + '</div></div></div>';
+        }
+        if (els.statsRow) els.statsRow.innerHTML = html;
+      }
+
+      function renderDocs(result) {
+        result = result || {};
+        var docs = Array.isArray(result.docs) ? result.docs : [];
+        var pageData = result.pagination || {};
+        var stats = result.stats || {};
+
+        if (pageData.currentPage) state.page = Number(pageData.currentPage);
+        state.totalPages = Number(pageData.totalPages || 1);
+        state.totalItems = Number(pageData.totalItems || 0);
+        state.lastTotalPages = state.totalPages || 1;
+
+        renderStats(stats);
+
+        var html = '';
+        if (!docs.length) {
+          html = '<div class="text-center py-5 text-muted"><i class="bi bi-search fs-1 d-block mb-2"></i><p>ไม่พบเอกสาร</p></div>';
+          if (els.docsList) els.docsList.innerHTML = html;
+          syncPagination();
+          return;
+        }
+
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i] || {};
+          var statusClass = getDocStatusClass(d.docStatus, d.storedLoc);
+          var bgIcon = getDocBgIcon(d.docStatus, d.storedLoc);
+          var stBadge = getStatusBadge(d.docStatus);
+          var locBadge = '';
+          var storedLoc = C.safeTrim(d.storedLoc || '');
+          if (storedLoc) {
+            locBadge = '<span class="badge-status badge-stored"><i class="bi bi-archive-fill me-1"></i>' + C.escapeHtml(storedLoc) + '</span>';
+          } else if (d.docStatus !== 'ยกเลิก' && d.docStatus !== 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง' && d.docStatus !== 'กำลังดำเนินการ' && d.docStatus !== 'มอบผู้รับผิดชอบ') {
+            locBadge = '<span class="badge-status badge-pending"><i class="bi bi-clock-history"></i>รอจัดเก็บ</span>';
+          }
+
+          var ppBadge = '';
+          if (C.safeTrim(d.purpose || '')) {
+            ppBadge = '<span class="badge-status badge-purpose me-1"><i class="bi bi-tag-fill me-1"></i>' + C.escapeHtml(d.purpose) + '</span>';
+          }
+
+          var budgetLabel = C.safeTrim(d.budgetType || '') || 'ไม่ระบุงบประมาณ';
+          var budgetBadge = '<span class="badge-status badge-budget"><i class="bi bi-wallet2 me-1"></i>' + C.escapeHtml(budgetLabel) + '</span>';
+          var groupLabel = C.safeTrim(d.group || '') || '-';
+          var senderLabel = C.safeTrim(d.sender || '') || '-';
+          var receivedDateLabel = C.safeTrim(d.dateRec || '') || '-';
+          var creatorChip = getCreatorChip(d);
+
+          var destroyInfo = '';
+          if (storedLoc) {
+            var destroyDateLabel = C.safeTrim(d.destroyDate || '');
+            if (!destroyDateLabel || destroyDateLabel === '-') destroyDateLabel = 'ยังไม่ระบุ';
+            destroyInfo = '<div class="doc-destroy"><i class="bi bi-clock-history"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(destroyDateLabel) + '</div>';
+          }
+
+          var sdhText = C.safeTrim(d.docNoSdh || '');
+          var docHref = buildDocLink(d);
+          html += '<a class="doc-card ' + statusClass + ' mb-2 d-block text-decoration-none" href="' + C.escapeHtml(docHref) + '">';
+          html += '<i class="bi ' + C.escapeHtml(bgIcon) + ' doc-bg-icon" aria-hidden="true"></i>';
+          html += '<div class="doc-top">';
+          html += '<div class="doc-left"><div style="min-width:0"><div class="doc-title text-primary">' + C.escapeHtml(d.amDocNo || d.amDocNoAk || '-') + '</div><div class="doc-subtitle">' + (sdhText ? ('(สธ ' + C.escapeHtml(sdhText) + ')') : '') + '</div></div></div>';
+          html += '<div class="doc-tags">' + ppBadge + budgetBadge + stBadge + locBadge + '</div>';
+          html += '</div>';
+          html += '<p class="doc-subject">' + C.escapeHtml(C.safeText(d.subject || '-')) + '</p>';
+          html += '<div class="doc-meta-lines">';
+          html += '<div class="doc-meta-line"><i class="bi bi-diagram-3"></i><span class="meta-key">กลุ่มงาน:</span><span class="meta-value">' + C.escapeHtml(groupLabel) + '</span></div>';
+          html += '<div class="doc-meta-line"><i class="bi bi-person-lines-fill"></i><span class="meta-key">ชื่อผู้ส่ง:</span><span class="meta-value">' + C.escapeHtml(senderLabel) + '</span></div>';
+          if (creatorChip) {
+            html += '<div class="doc-meta-line creator"><i class="bi bi-person-vcard"></i><span class="meta-key">ผู้บันทึกเอกสาร:</span>' + creatorChip + '</div>';
+          }
+          html += '</div>';
+          html += destroyInfo;
+          html += '<div class="doc-foot"><small><i class="bi bi-calendar2-week me-1"></i>วันที่รับ: ' + C.escapeHtml(receivedDateLabel) + '</small><div class="doc-foot-right"><small>รับ: ' + C.escapeHtml(d.receiveNo || '-') + '</small>' + getStoredUserChip(d) + '</div></div>';
+          html += '</a>';
+        }
+
+        if (els.docsList) els.docsList.innerHTML = html;
+        syncPagination();
+      }
+
+      function aggregateBoxes(reportDocs) {
+        var docs = Array.isArray(reportDocs) ? reportDocs : [];
+        var map = {};
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i] || {};
+          var loc = C.safeTrim(d.storedLoc || '');
+          if (!loc) continue;
+          if (!Object.prototype.hasOwnProperty.call(map, loc)) map[loc] = 0;
+          map[loc] += 1;
+        }
+
+        var out = [];
+        for (var key in map) {
+          if (!Object.prototype.hasOwnProperty.call(map, key)) continue;
+          out.push({ name: key, count: Number(map[key] || 0) });
+        }
+        out.sort(function (a, b) {
+          if (b.count !== a.count) return b.count - a.count;
+          return String(a.name).localeCompare(String(b.name), 'th');
+        });
+        return out;
+      }
+
+      function renderBoxes() {
+        if (!els.boxesWrap || !els.boxSummaryLabel) return;
+
+        if (!state.boxSummary.length) {
+          els.boxSummaryLabel.textContent = 'ยังไม่พบกล่องที่มีเอกสารถูกจัดเก็บ';
+          els.boxesWrap.innerHTML = '<div class="empty" style="grid-column:1 / -1;">ยังไม่มีกล่องที่มีรายการจัดเก็บจริง</div>';
+          return;
+        }
+
+        var html = '';
+        var totalDocs = 0;
+        for (var i = 0; i < state.boxSummary.length; i++) {
+          var box = state.boxSummary[i] || {};
+          totalDocs += Number(box.count || 0);
+          var url = C.buildPageUrl('storage-box-view.html', { box: box.name, boxName: box.name });
+          html += '<a class="box-card d-block text-decoration-none" data-box-name="' + C.escapeHtml(box.name || '') + '" href="' + C.escapeHtml(url) + '"><i class="bi bi-archive box-icon"></i><div class="box-name">' + C.escapeHtml(box.name || '-') + '</div><div class="box-count">' + Number(box.count || 0) + ' รายการ</div><div class="box-hint"><i class="bi bi-arrow-right-circle me-1"></i>กดเพื่อดูรายละเอียดและ QR ในกล่อง</div></a>';
+        }
+
+        els.boxSummaryLabel.textContent = 'รวม ' + state.boxSummary.length + ' กล่อง | เอกสารที่จัดเก็บแล้ว ' + totalDocs + ' รายการ';
+        els.boxesWrap.innerHTML = html;
+      }
+
+      function collectBudgetTypesFromDocs(docs) {
+        var set = {};
+        var rank = {};
+        var i;
+        for (i = 0; i < DEFAULT_BUDGET_ORDER.length; i++) {
+          rank[DEFAULT_BUDGET_ORDER[i]] = i;
+          set[DEFAULT_BUDGET_ORDER[i]] = true;
+        }
+        docs = Array.isArray(docs) ? docs : [];
+        for (i = 0; i < docs.length; i++) {
+          var budget = C.safeTrim(docs[i] && docs[i].budgetType || '');
+          if (budget) set[budget] = true;
+        }
+
+        var out = Object.keys(set);
+        out.sort(function (a, b) {
+          var hasA = Object.prototype.hasOwnProperty.call(rank, a);
+          var hasB = Object.prototype.hasOwnProperty.call(rank, b);
+          if (hasA && hasB) return rank[a] - rank[b];
+          if (hasA) return -1;
+          if (hasB) return 1;
+          return String(a).localeCompare(String(b), 'th');
+        });
+        return out;
+      }
+
+      function renderFiscalOptions(fiscalYears) {
+        if (!els.filterFiscalOptions) return;
+
+        var years = Array.isArray(fiscalYears) ? fiscalYears.slice() : [];
+        years.sort(function (a, b) {
+          var na = parseInt(a, 10);
+          var nb = parseInt(b, 10);
+          if (!isNaN(na) && !isNaN(nb)) return nb - na;
+          return String(b).localeCompare(String(a), 'th');
+        });
+
+        var selected = {};
+        for (var i = 0; i < state.selectedFiscalYears.length; i++) {
+          selected[state.selectedFiscalYears[i]] = true;
+        }
+
+        var html = '<label class="filter-option compact"><input type="checkbox" id="filterFiscalAll" ' + (state.selectedFiscalYears.length === 0 ? 'checked' : '') + '><span class="checkmark"></span><span class="filter-label">ทั้งหมด</span></label>';
+        for (var j = 0; j < years.length; j++) {
+          var y = C.safeText(years[j]);
+          var checked = selected[y] ? 'checked' : '';
+          html += '<label class="filter-option compact"><input type="checkbox" class="filter-fiscal-option" value="' + C.escapeHtml(y) + '" ' + checked + '><span class="checkmark"></span><span class="filter-label">' + C.escapeHtml(y) + '</span></label>';
+        }
+        els.filterFiscalOptions.innerHTML = html;
+      }
+
+      function renderBudgetOptions(budgets) {
+        if (!els.filterBudgetOptions) return;
+
+        budgets = Array.isArray(budgets) ? budgets : [];
+        var selected = {};
+        for (var i = 0; i < state.selectedBudgetTypes.length; i++) {
+          selected[state.selectedBudgetTypes[i]] = true;
+        }
+
+        var html = '<label class="filter-option compact"><input type="checkbox" id="filterBudgetAll" ' + (state.selectedBudgetTypes.length === 0 ? 'checked' : '') + '><span class="checkmark"></span><span class="filter-label">ทั้งหมด</span></label>';
+        for (var j = 0; j < budgets.length; j++) {
+          var b = C.safeText(budgets[j]);
+          var checked = selected[b] ? 'checked' : '';
+          html += '<label class="filter-option compact"><input type="checkbox" class="filter-budget-option" value="' + C.escapeHtml(b) + '" ' + checked + '><span class="checkmark"></span><span class="filter-label">' + C.escapeHtml(b) + '</span></label>';
+        }
+        els.filterBudgetOptions.innerHTML = html;
+      }
+
+      function renderLocationOptions(locations) {
+        if (!els.filterLocation) return;
+
+        var current = C.safeTrim(state.selectedLocation || '');
+        var html = '<option value="">ทั้งหมด</option>';
+        locations = Array.isArray(locations) ? locations : [];
+        for (var i = 0; i < locations.length; i++) {
+          var value = C.safeText(locations[i]);
+          var selected = current && current === value ? ' selected' : '';
+          html += '<option value="' + C.escapeHtml(value) + '"' + selected + '>' + C.escapeHtml(value) + '</option>';
+        }
+        els.filterLocation.innerHTML = html;
+      }
+
+      function refreshFilterOptions() {
+        renderFiscalOptions(state.infoOptions.fiscalYears || []);
+        renderBudgetOptions(state.budgetTypeOptions || []);
+        renderLocationOptions(state.infoOptions.locations || []);
+
+        if (els.filterDateFrom) els.filterDateFrom.value = state.selectedDateFrom || '';
+        if (els.filterDateTo) els.filterDateTo.value = state.selectedDateTo || '';
+        if (window.updDD) {
+          window.updDD('filterDateFrom');
+          window.updDD('filterDateTo');
+        }
+
+        if (els.filterInProgress) els.filterInProgress.checked = state.selectedFilters.indexOf('inprogress') > -1;
+        if (els.filterAssigned) els.filterAssigned.checked = state.selectedFilters.indexOf('assigned') > -1;
+        if (els.filterCompleted) els.filterCompleted.checked = state.selectedFilters.indexOf('completed') > -1;
+        if (els.filterPending) els.filterPending.checked = state.selectedFilters.indexOf('pending') > -1;
+        if (els.filterStored) els.filterStored.checked = state.selectedFilters.indexOf('stored') > -1;
+        if (els.filterCancelled) els.filterCancelled.checked = state.selectedFilters.indexOf('cancelled') > -1;
+        if (els.filterReturned) els.filterReturned.checked = state.selectedFilters.indexOf('returned') > -1;
+      }
+
+      function mountFilterModalToBody() {
+        if (!els.filterModal || !document.body) return;
+        if (els.filterModal.parentNode !== document.body) {
+          document.body.appendChild(els.filterModal);
+        }
+      }
+
+      function openFilterModal() {
+        if (!els.filterModal) return;
+        mountFilterModalToBody();
+        refreshFilterOptions();
+        els.filterModal.classList.add('active');
+      }
+
+      function closeFilterModal() {
+        if (!els.filterModal) return;
+        els.filterModal.classList.remove('active');
+      }
+
+      function updateFilterBadge(count) {
+        if (!els.activeFilterBadge) return;
+        if (!count) {
+          els.activeFilterBadge.classList.add('hidden');
+          els.activeFilterBadge.textContent = '';
+          return;
+        }
+        els.activeFilterBadge.textContent = count + ' ตัวกรอง';
+        els.activeFilterBadge.classList.remove('hidden');
+      }
+
+      function applyFilterFromModal() {
+        state.selectedFilters = [];
+        if (els.filterInProgress && els.filterInProgress.checked) state.selectedFilters.push('inprogress');
+        if (els.filterAssigned && els.filterAssigned.checked) state.selectedFilters.push('assigned');
+        if (els.filterCompleted && els.filterCompleted.checked) state.selectedFilters.push('completed');
+        if (els.filterPending && els.filterPending.checked) state.selectedFilters.push('pending');
+        if (els.filterStored && els.filterStored.checked) state.selectedFilters.push('stored');
+        if (els.filterCancelled && els.filterCancelled.checked) state.selectedFilters.push('cancelled');
+        if (els.filterReturned && els.filterReturned.checked) state.selectedFilters.push('returned');
+
+        state.selectedFiscalYears = [];
+        var fiscalOptions = document.querySelectorAll('.filter-fiscal-option:checked');
+        for (var i = 0; i < fiscalOptions.length; i++) {
+          state.selectedFiscalYears.push(C.safeText(fiscalOptions[i].value));
+        }
+
+        state.selectedBudgetTypes = [];
+        var budgetOptions = document.querySelectorAll('.filter-budget-option:checked');
+        for (var j = 0; j < budgetOptions.length; j++) {
+          state.selectedBudgetTypes.push(C.safeText(budgetOptions[j].value));
+        }
+
+        state.selectedDateFrom = C.safeTrim((els.filterDateFrom && els.filterDateFrom.value) || '');
+        state.selectedDateTo = C.safeTrim((els.filterDateTo && els.filterDateTo.value) || '');
+
+        if (state.selectedDateFrom && state.selectedDateTo && state.selectedDateFrom > state.selectedDateTo) {
+          var t = state.selectedDateFrom;
+          state.selectedDateFrom = state.selectedDateTo;
+          state.selectedDateTo = t;
+          if (els.filterDateFrom) els.filterDateFrom.value = state.selectedDateFrom;
+          if (els.filterDateTo) els.filterDateTo.value = state.selectedDateTo;
+          if (window.updDD) {
+            window.updDD('filterDateFrom');
+            window.updDD('filterDateTo');
+          }
+        }
+
+        state.selectedLocation = C.safeTrim((els.filterLocation && els.filterLocation.value) || '');
+
+        var parts = [];
+        if (state.selectedFilters.length) parts.push('status:' + state.selectedFilters.join(','));
+        if (state.selectedFiscalYears.length) parts.push('fiscal:' + state.selectedFiscalYears.join(','));
+        if (state.selectedBudgetTypes.length) parts.push('budget:' + state.selectedBudgetTypes.join(','));
+        if (state.selectedDateFrom || state.selectedDateTo) parts.push('date:' + state.selectedDateFrom + ',' + state.selectedDateTo);
+        if (state.selectedLocation) parts.push('loc:' + state.selectedLocation);
+
+        if (parts.length === 0) {
+          state.currentFilter = 'all';
+          updateFilterBadge(0);
+        } else {
+          state.currentFilter = 'adv:' + parts.join('|');
+          var count = state.selectedFilters.length + state.selectedFiscalYears.length + state.selectedBudgetTypes.length + ((state.selectedDateFrom || state.selectedDateTo) ? 1 : 0) + (state.selectedLocation ? 1 : 0);
+          updateFilterBadge(count);
+        }
+      }
+
+      function resetFilterModal() {
+        state.selectedFilters = [];
+        state.selectedFiscalYears = [];
+        state.selectedBudgetTypes = [];
+        state.selectedDateFrom = '';
+        state.selectedDateTo = '';
+        state.selectedLocation = '';
+        refreshFilterOptions();
+      }
+
+      function handleSearch(value) {
+        state.currentSearch = C.safeTrim(value || '');
+        if (state.searchTimer) clearTimeout(state.searchTimer);
+        state.searchTimer = setTimeout(function () {
+          state.page = 1;
+          loadDocs(false).catch(function (err) {
+            showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+          });
+        }, 500);
+      }
+
+      function loadDocs(showOverlay) {
+        if (!state.api) return Promise.reject(new Error('ยังไม่ได้ตั้งค่า API'));
+        if (!state.user) return Promise.reject(new Error('กรุณาเข้าสู่ระบบ'));
+
+        state.itemsPerPage = parseInt((els.itemsPerPage && els.itemsPerPage.value) || '20', 10) || 20;
+        state.currentSearch = C.safeTrim((els.searchInput && els.searchInput.value) || state.currentSearch || '');
+
+        setLoading(true);
+        showError('');
+
+        if (els.docsList) {
+          els.docsList.innerHTML = '<div class="loading-state"><div class="spinner-border text-primary mb-2"></div><p>กำลังค้นหาข้อมูล...</p></div>';
+        }
+
+        return state.api.docsList({
+          page: state.page,
+          itemsPerPage: state.itemsPerPage,
+          searchQuery: state.currentSearch,
+          statusFilter: state.currentFilter
+        }, {
+          loaderMessage: showOverlay ? 'กำลังโหลดข้อมูล...' : '',
+          noPageLoader: !showOverlay
+        }).then(function (res) {
+          renderDocs(res || {});
+          setLoading(false);
+        }).catch(function (err) {
+          setLoading(false);
+          if (els.docsList) {
+            els.docsList.innerHTML = '<div class="text-center py-5 text-danger"><i class="bi bi-exclamation-triangle-fill fs-1 d-block mb-2"></i><p>เกิดข้อผิดพลาดในการเชื่อมต่อ</p><small class="text-muted">' + C.escapeHtml((err && err.message) ? err.message : 'โปรดลองใหม่อีกครั้ง') + '</small></div>';
+          }
+          throw err;
+        });
+      }
+
+      function loadBoxes() {
+        if (!state.api || !state.user) return Promise.resolve();
+
+        return Promise.all([
+          state.api.systemReport({ noPageLoader: true }),
+          state.api.optionsInfo({ noPageLoader: true })
+        ]).then(function (results) {
+          var report = results[0] || {};
+          var optionsRes = results[1] || {};
+          var docs = Array.isArray(report.docs) ? report.docs : [];
+          var info = (optionsRes && optionsRes.data && typeof optionsRes.data === 'object') ? optionsRes.data : { fiscalYears: [], locations: [] };
+
+          state.lastSystemReport = report;
+          state.boxSummary = aggregateBoxes(docs);
+          state.budgetTypeOptions = collectBudgetTypesFromDocs(docs);
+          state.infoOptions = {
+            fiscalYears: Array.isArray(info.fiscalYears) ? info.fiscalYears : [],
+            locations: Array.isArray(info.locations) ? info.locations : []
+          };
+
+          renderBoxes();
+          refreshFilterOptions();
+        }).catch(function (err) {
+          showError((err && err.message) ? err.message : 'โหลดข้อมูลกล่องไม่สำเร็จ');
+        });
+      }
+
+      function trySession() {
+        if (!state.api) return Promise.resolve(false);
+        setStatus('กำลังตรวจสอบ session...', 'warn');
+
+        return state.api.me({ noPageLoader: true }).then(function (res) {
+          if (res && res.success && res.user) {
+            setLoggedIn(res.user);
+            return loadDocs(false)
+              .then(function () { return loadBoxes(); })
+              .then(function () { return true; })
+              .catch(function (err) {
+                showError((err && err.message) ? err.message : 'โหลดข้อมูลหลังเข้าสู่ระบบไม่สำเร็จ');
+                return true;
+              });
+          }
+          setLoggedIn(null);
+          return false;
+        }).catch(function () {
+          setLoggedIn(null);
+          return false;
+        });
+      }
+
+      function saveSettings() {
+        showError('');
+        try {
+          createClientFromInputs();
+          if (els.settingsCard) els.settingsCard.classList.add('hidden');
+          setStatus('ตั้งค่าแล้ว', 'warn');
+          return trySession();
+        } catch (err) {
+          showError(err && err.message ? err.message : String(err));
+          return Promise.resolve(false);
+        }
+      }
+
+      function login() {
+        if (!state.api) {
+          showError('กรุณาตั้งค่า API ก่อนเข้าสู่ระบบ');
+          return;
+        }
+
+        var username = C.safeTrim((els.username && els.username.value) || '');
+        var password = C.safeText((els.password && els.password.value) || '');
+        if (!username || !password) {
+          showError('กรุณากรอก Username และ Password');
+          return;
+        }
+
+        setLoading(true);
+        showError('');
+        setStatus('กำลังเข้าสู่ระบบ...', 'warn');
+
+        state.api.login(username, password, { loaderMessage: 'กำลังตรวจสอบข้อมูล...' }).then(function (res) {
+          if (!res || res.success === false) {
+            throw new Error(res && res.error ? res.error : 'เข้าสู่ระบบไม่สำเร็จ');
+          }
+          setLoggedIn(res.user || { username: username });
+          setStatus('เข้าสู่ระบบสำเร็จ', 'ok');
+          setLoading(false);
+          C.redirect('welcome.html');
+          return null;
+        }).catch(function (err) {
+          setLoading(false);
+          setLoggedIn(null);
+          showError(err && err.message ? err.message : 'เข้าสู่ระบบไม่สำเร็จ');
+          setStatus('เข้าสู่ระบบไม่สำเร็จ', 'error');
+        });
+      }
+
+      function logout() {
+        if (!state.api) {
+          setLoggedIn(null);
+          return;
+        }
+
+        setLoading(true);
+        state.api.logout({ loaderMessage: 'กำลังออกจากระบบ...' }).finally(function () {
+          setLoading(false);
+          state.page = 1;
+          state.totalPages = 1;
+          state.totalItems = 0;
+          state.currentSearch = '';
+          state.currentFilter = 'all';
+          state.boxSummary = [];
+          state.lastSystemReport = null;
+          resetFilterModal();
+          updateFilterBadge(0);
+
+          if (els.searchInput) els.searchInput.value = '';
+          if (els.docsList) els.docsList.innerHTML = '<div class="empty">ยังไม่มีข้อมูล</div>';
+          if (els.boxesWrap) els.boxesWrap.innerHTML = '<div class="empty" style="grid-column:1 / -1;">ยังไม่มีกล่องที่มีรายการจัดเก็บจริง</div>';
+          if (els.boxSummaryLabel) els.boxSummaryLabel.textContent = 'ยังไม่พบกล่องที่มีเอกสารถูกจัดเก็บ';
+          renderStats({});
+          syncPagination();
+          setLoggedIn(null);
+        });
+      }
+
+      function printAllReport() {
+        if (!state.api) return;
+
+        // เปิดหน้าต่างพิมพ์ทันทีจาก user gesture เพื่อลดโอกาสโดน popup blocker
+        var w = window.open('', '', 'width=1280,height=860');
+        if (!w) {
+          showError('ไม่สามารถเปิดหน้าต่างพิมพ์ (Pop-up ถูกบล็อก)');
+          return;
+        }
+        try {
+          w.document.open();
+          w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>กำลังเตรียมรายงาน...</title></head><body style="font-family:IBM Plex Sans Thai,sans-serif;padding:24px;color:#0F172A;">กำลังเตรียมข้อมูลรายงานสำหรับพิมพ์...</body></html>');
+          w.document.close();
+        } catch (_ignore) {}
+
+        var ensureReport = state.lastSystemReport && Array.isArray(state.lastSystemReport.docs)
+          ? Promise.resolve(state.lastSystemReport)
+          : state.api.systemReport({ loaderMessage: 'กำลังเตรียมรายงานทั้งหมด...' });
+
+        ensureReport.then(function (res) {
+          var report = res || {};
+          var docs = Array.isArray(report.docs) ? report.docs : [];
+          if (!docs.length) {
+            try { w.close(); } catch (_ignore2) {}
+            showError('ไม่พบข้อมูลรายงานสำหรับพิมพ์');
+            return;
+          }
+
+          state.lastSystemReport = report;
+
+          var esc = C.escapeHtml;
+
+          function truncateSubjectForPrint(value) {
+            var text = C.safeText(value || '').replace(/\s+/g, ' ').trim();
+            if (!text) return '-';
+            if (text.length <= 150) return text;
+            return text.substring(0, 150).replace(/\s+$/, '') + '.....';
+          }
+
+          var h = '';
+          h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานเอกสารทั้งหมด</title>';
+          h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+          h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}.wrap{padding:0}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}p.sub{margin:0 0 4px;text-align:center;font-size:12px;color:#334155}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#475569}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}tbody tr{break-inside:avoid;page-break-inside:avoid}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.sender-cell,.budget-cell,.status-cell,.loc-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word;line-height:1.22}.subject-text{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;max-height:4.88em}.index,.fiscal,.am-doc,.doc-sdh,.date-rec,.amount{white-space:nowrap}.btn-print{padding:10px 28px;background:#0A84FF;color:#fff;border:none;border-radius:999px;font-weight:900}.no-print{text-align:center;margin-top:14px}@media print{.no-print{display:none!important}}</style>';
+          h += '</head><body><div class="wrap">';
+          h += '<h2>รายงานรายการเอกสารทั้งหมดในระบบ</h2>';
+          h += '<p class="sub">จำนวนทั้งหมด ' + docs.length + ' รายการ</p>';
+          h += '<p class="meta">พิมพ์เมื่อ: ' + esc(new Date().toLocaleString('th-TH')) + '</p>';
+          h += '<table><colgroup><col style="width:4%"><col style="width:5%"><col style="width:10%"><col style="width:8%"><col style="width:19%"><col style="width:10%"><col style="width:8%"><col style="width:8%"><col style="width:8%"><col style="width:9%"><col style="width:11%"></colgroup><thead><tr><th>ลำดับ</th><th>ปีงบฯ</th><th>เลขที่หนังสือส่งกองคลัง</th><th>เลขที่ สธ. (กลุ่มงาน)</th><th>ชื่อเรื่อง</th><th>ประเภทเงินงบประมาณ</th><th>จำนวนเบิก/ยืม/คืน</th><th>สถานะ</th><th>สถานที่เก็บ</th><th>วันที่รับเอกสาร</th><th>ผู้ส่ง</th></tr></thead><tbody>';
+
+          for (var i = 0; i < docs.length; i++) {
+            var d = docs[i] || {};
+            var recNo = C.safeText(d.receiveNo || '');
+            var fiscal = recNo && recNo.indexOf('/') > -1 ? recNo.split('/')[0] : '';
+            var amDocStrict = C.safeTrim(d.amDocNoAk || '');
+            if (!amDocStrict) {
+              var amCandidate = C.safeTrim(d.amDocNo || '');
+              var recCandidate = C.safeTrim(d.receiveNo || '');
+              var sdhCandidate = C.safeTrim(d.docNoSdh || '');
+              if (amCandidate && amCandidate !== recCandidate && amCandidate !== sdhCandidate) {
+                amDocStrict = amCandidate;
+              }
+            }
+            var subject = truncateSubjectForPrint(d.subject || '-');
+            h += '<tr>';
+            h += '<td class="text-center index">' + (i + 1) + '</td>';
+            h += '<td class="text-center fiscal">' + esc(fiscal) + '</td>';
+            h += '<td class="text-center am-doc">' + esc(amDocStrict) + '</td>';
+            h += '<td class="text-center doc-sdh">' + esc(d.docNoSdh || '') + '</td>';
+            h += '<td class="subject-cell"><div class="subject-text">' + esc(subject) + '</div></td>';
+            h += '<td class="budget-cell">' + esc(d.budgetType || '-') + '</td>';
+            h += '<td class="text-right amount">' + esc(d.amount || '-') + '</td>';
+            h += '<td class="text-center status-cell">' + esc(d.docStatus || '-') + '</td>';
+            h += '<td class="text-center loc-cell">' + esc(d.storedLoc || '-') + '</td>';
+            h += '<td class="text-center date-rec">' + esc(d.dateRec || '') + '</td>';
+            h += '<td class="sender-cell">' + esc(d.sender || '') + '</td>';
+            h += '</tr>';
+          }
+
+          h += '</tbody></table>';
+          h += '<div class="no-print"><button class="btn-print" onclick="window.print()">พิมพ์รายงานทั้งหมด</button></div>';
+          h += '</div></body></html>';
+
+          w.document.open();
+          w.document.write(h);
+          w.document.close();
+        }).catch(function (err) {
+          try { w.close(); } catch (_ignore3) {}
+          showError((err && err.message) ? err.message : 'ไม่สามารถดึงข้อมูลรายงานได้');
+        });
+      }
+
+      function goAdd() {
+        if (state.isReadOnly) {
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถเพิ่มหรือแก้ไขเอกสารได้'
+          });
+          return;
+        }
+        C.redirect('document-form.html', { mode: 'add' });
+      }
+
+      function goBoxScan() {
+        if (state.isReadOnly) {
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถสแกนจัดเก็บเอกสารได้'
+          });
+          return;
+        }
+        C.redirect('storage-box-scan.html');
+      }
+
+      function goInspectionTool() {
+        C.redirect('inspection-report.html');
+      }
+
+      function initEvents() {
+        if (els.btnOpenSettings) {
+          els.btnOpenSettings.addEventListener('click', function () {
+            if (!els.settingsCard) return;
+            els.settingsCard.classList.toggle('hidden');
+          });
+        }
+
+        if (els.btnGenerateDevice) {
+          els.btnGenerateDevice.addEventListener('click', function () {
+            if (els.deviceKey) els.deviceKey.value = C.randomDeviceKey();
+          });
+        }
+
+        if (els.btnSaveSettings) {
+          els.btnSaveSettings.addEventListener('click', function () {
+            saveSettings();
+          });
+        }
+
+        if (els.btnLogin) {
+          els.btnLogin.addEventListener('click', function () {
+            login();
+          });
+        }
+
+        if (els.btnTogglePassword) {
+          els.btnTogglePassword.addEventListener('click', function () {
+            if (!els.password) return;
+            var isHidden = els.password.type === 'password';
+            els.password.type = isHidden ? 'text' : 'password';
+            if (els.passwordEyeIcon) {
+              els.passwordEyeIcon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
+            }
+          });
+        }
+
+        if (els.password) {
+          els.password.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') login();
+          });
+        }
+
+        if (els.btnLogout) {
+          els.btnLogout.addEventListener('click', function () {
+            logout();
+          });
+        }
+
+        if (els.searchInput) {
+          els.searchInput.addEventListener('keyup', function () {
+            handleSearch(this.value);
+          });
+          els.searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              if (state.searchTimer) clearTimeout(state.searchTimer);
+              state.page = 1;
+              loadDocs(true).catch(function (err) {
+                showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+              });
+            }
+          });
+        }
+
+        if (els.itemsPerPage) {
+          els.itemsPerPage.addEventListener('change', function () {
+            state.page = 1;
+            loadDocs(true).catch(function (err) {
+              showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+            });
+          });
+        }
+
+        if (els.btnPrev) {
+          els.btnPrev.addEventListener('click', function () {
+            if (state.page <= 1) return;
+            state.page -= 1;
+            loadDocs(true).catch(function (err) {
+              state.page += 1;
+              syncPagination();
+              showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+            });
+          });
+        }
+
+        if (els.btnNext) {
+          els.btnNext.addEventListener('click', function () {
+            if (state.page >= state.totalPages) return;
+            state.page += 1;
+            loadDocs(true).catch(function (err) {
+              state.page -= 1;
+              syncPagination();
+              showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+            });
+          });
+        }
+
+        if (els.jumpPageInline) {
+          els.jumpPageInline.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              this.blur();
+            }
+          });
+          els.jumpPageInline.addEventListener('blur', function () {
+            if (this.value !== '') goToPage();
+          });
+        }
+
+        if (els.tabDocs) {
+          els.tabDocs.addEventListener('click', function () {
+            switchTab('docs');
+          });
+        }
+
+        if (els.tabBoxes) {
+          els.tabBoxes.addEventListener('click', function () {
+            switchTab('boxes');
+          });
+        }
+
+        if (els.tabBoxScan) {
+          els.tabBoxScan.addEventListener('click', function () {
+            goBoxScan();
+          });
+        }
+
+        if (els.tabInspector) {
+          els.tabInspector.addEventListener('click', function () {
+            goInspectionTool();
+          });
+        }
+
+        if (els.btnAddFab) {
+          els.btnAddFab.addEventListener('click', function () {
+            goAdd();
+          });
+        }
+
+        if (els.btnOpenFilter) {
+          els.btnOpenFilter.addEventListener('click', function () {
+            openFilterModal();
+          });
+        }
+
+        if (els.btnCloseFilter) {
+          els.btnCloseFilter.addEventListener('click', function () {
+            closeFilterModal();
+          });
+        }
+
+        if (els.filterBackdrop) {
+          els.filterBackdrop.addEventListener('click', function () {
+            closeFilterModal();
+          });
+        }
+
+        if (els.btnResetFilter) {
+          els.btnResetFilter.addEventListener('click', function () {
+            resetFilterModal();
+          });
+        }
+
+        if (els.btnApplyFilter) {
+          els.btnApplyFilter.addEventListener('click', function () {
+            applyFilterFromModal();
+            closeFilterModal();
+            state.page = 1;
+            loadDocs(true).catch(function (err) {
+              showError(err && err.message ? err.message : 'ไม่สามารถโหลดข้อมูลเอกสารได้');
+            });
+          });
+        }
+
+        if (els.filterModal) {
+          els.filterModal.addEventListener('change', function (e) {
+            var t = e.target;
+            if (!t) return;
+            if (t.id === 'filterFiscalAll') {
+              var fiscal = document.querySelectorAll('.filter-fiscal-option');
+              for (var i = 0; i < fiscal.length; i++) fiscal[i].checked = !!t.checked;
+            }
+            if (t.classList && t.classList.contains('filter-fiscal-option')) {
+              var anyFiscalChecked = document.querySelectorAll('.filter-fiscal-option:checked').length > 0;
+              var fiscalAll = document.getElementById('filterFiscalAll');
+              if (fiscalAll) fiscalAll.checked = !anyFiscalChecked;
+            }
+            if (t.id === 'filterBudgetAll') {
+              var budget = document.querySelectorAll('.filter-budget-option');
+              for (var j = 0; j < budget.length; j++) budget[j].checked = !!t.checked;
+            }
+            if (t.classList && t.classList.contains('filter-budget-option')) {
+              var anyBudgetChecked = document.querySelectorAll('.filter-budget-option:checked').length > 0;
+              var budgetAll = document.getElementById('filterBudgetAll');
+              if (budgetAll) budgetAll.checked = !anyBudgetChecked;
+            }
+          });
+        }
+
+        if (els.boxesWrap) {
+          els.boxesWrap.addEventListener('click', function (e) {
+            var target = e && e.target && e.target.closest ? e.target.closest('a.box-card[data-box-name]') : null;
+            if (!target) return;
+            var rememberedBox = C.safeTrim(target.getAttribute('data-box-name') || '');
+            if (!rememberedBox) return;
+            try { sessionStorage.setItem('docControlLastBoxNameV1', rememberedBox); } catch (_e1) {}
+            try { localStorage.setItem('docControlLastBoxNameV1', rememberedBox); } catch (_e2) {}
+            try { window.__docControlLastBoxName = rememberedBox; } catch (_e3) {}
+          });
+        }
+
+        if (els.btnReloadBoxes) {
+          els.btnReloadBoxes.addEventListener('click', function () {
+            loadBoxes();
+          });
+        }
+
+        if (els.btnPrintAll) {
+          els.btnPrintAll.addEventListener('click', function () {
+            printAllReport();
+          });
+        }
+      }
+
+      function handleLegacyRoute() {
+        function pickRouteQueryValueCaseInsensitive(key) {
+          if (!routeQuery || typeof routeQuery !== 'object') return '';
+          if (Object.prototype.hasOwnProperty.call(routeQuery, key)) return routeQuery[key];
+          var want = String(key || '').toLowerCase();
+          for (var k in routeQuery) {
+            if (!Object.prototype.hasOwnProperty.call(routeQuery, k)) continue;
+            if (String(k).toLowerCase() === want) return routeQuery[k];
+          }
+          return '';
+        }
+
+        function cleanBoxRouteValue(value) {
+          var text = C.safeTrim(value || '');
+          var low = text.toLowerCase();
+          if (!text || text === '-' || low === 'undefined' || low === 'null') return '';
+          return text;
+        }
+
+        function resolveLegacyBoxFromRouteQuery() {
+          var keys = ['box', 'boxName', 'boxname', 'box_id', 'boxId', 'name', 'location', 'loc', 'detail'];
+          for (var i = 0; i < keys.length; i++) {
+            var val = cleanBoxRouteValue(pickRouteQueryValueCaseInsensitive(keys[i]));
+            if (val) return val;
+          }
+
+          // Fallback: เผื่อ routeQuery ถูก parse ไม่ครบ
+          try {
+            if (typeof window !== 'undefined' && window.location && window.location.search) {
+              var sp = new URLSearchParams(String(window.location.search || ''));
+              for (var j = 0; j < keys.length; j++) {
+                var raw = sp.get(keys[j]);
+                var cleaned = cleanBoxRouteValue(raw);
+                if (cleaned) return cleaned;
+              }
+            }
+          } catch (_ignore) {}
+          return '';
+        }
+
+        var mode = C.safeTrim(pickRouteQueryValueCaseInsensitive('mode') || '').toLowerCase();
+        var id = C.safeTrim(pickRouteQueryValueCaseInsensitive('id') || pickRouteQueryValueCaseInsensitive('docId') || '');
+        var box = resolveLegacyBoxFromRouteQuery();
+
+        if (mode === 'logout') {
+          if (state.api) {
+            state.api.logout({ noPageLoader: true }).catch(function () {}).finally(function () {
+              C.redirect('index.html', {}, true);
+            });
+          } else {
+            C.redirect('index.html', {}, true);
+          }
+          return true;
+        }
+
+        if (mode === 'welcome') {
+          C.redirect('welcome.html', {}, true);
+          return true;
+        }
+
+        if (mode === 'add') {
+          C.redirect('document-form.html', { mode: 'add' }, true);
+          return true;
+        }
+
+        if (mode === 'edit' && id) {
+          C.redirect('document-form.html', { mode: 'edit', id: id }, true);
+          return true;
+        }
+
+        if (mode === 'status' && id) {
+          C.redirect('document-status.html', { id: id }, true);
+          return true;
+        }
+
+        if (mode === 'inspector') {
+          C.redirect('inspection-report.html', {}, true);
+          return true;
+        }
+
+        if (mode === 'boxscan') {
+          C.redirect('storage-box-scan.html', {}, true);
+          return true;
+        }
+
+        if (mode === 'box') {
+          var modeBox = box || id;
+          if (modeBox) {
+            C.redirect('storage-box-view.html', { box: modeBox, boxName: modeBox }, true);
+            return true;
+          }
+        }
+
+        if (id) {
+          C.redirect('document-view.html', { id: id }, true);
+          return true;
+        }
+
+        if (box) {
+          C.redirect('storage-box-view.html', { box: box, boxName: box }, true);
+          return true;
+        }
+
+        return false;
+      }
+
+      function init() {
+        document.body.classList.add('login-mode');
+
+        function setupHeaderFollow() {
+          var topbar = document.getElementById('homeTopbar');
+          var spacer = document.getElementById('topbarSpacer');
+          if (!topbar) return;
+
+          function readTopbarOffset() {
+            if (!window.getComputedStyle) return 0;
+            var raw = window.getComputedStyle(document.documentElement).getPropertyValue('--home-topbar-top-offset');
+            var n = parseFloat(raw);
+            return isFinite(n) ? Math.max(0, n) : 0;
+          }
+
+          function applyPinnedState() {
+            var isVisible = !topbar.classList.contains('hidden');
+            topbar.classList.toggle('is-fixed', isVisible);
+            topbar.classList.toggle('is-sticky', isVisible);
+            topbar.style.setProperty('--follow-progress', isVisible ? '0.12' : '0');
+
+            if (!spacer) return;
+            if (!isVisible) {
+              spacer.style.height = '0px';
+              topbar.style.left = '';
+              topbar.style.right = '';
+              topbar.style.width = '';
+              return;
+            }
+
+            var rect = spacer.getBoundingClientRect();
+            var offset = readTopbarOffset();
+            var h = topbar.getBoundingClientRect().height;
+            spacer.style.height = Math.max(0, Math.round(h + offset)) + 'px';
+
+            if (rect && rect.width > 0) {
+              topbar.style.left = rect.left + 'px';
+              topbar.style.right = 'auto';
+              topbar.style.width = rect.width + 'px';
+            } else {
+              topbar.style.left = '';
+              topbar.style.right = '';
+              topbar.style.width = '';
+            }
+          }
+
+          if (typeof MutationObserver === 'function') {
+            var observer = new MutationObserver(function () {
+              applyPinnedState();
+            });
+            observer.observe(topbar, { attributes: true, attributeFilter: ['class'] });
+          }
+
+          window.addEventListener('resize', applyPinnedState, { passive: true });
+          setTimeout(applyPinnedState, 0);
+        }
+
+        state.config = C.readConfig();
+        applyConfigToUI(state.config);
+        applyLockMode(state.config);
+
+        var current = C.getStoredSettings();
+        var initialUrl = C.safeText(current.scriptUrl || '');
+        var initialDeviceKey = C.safeText(current.deviceKey || C.randomDeviceKey());
+
+        if (els.scriptUrl) els.scriptUrl.value = initialUrl;
+        if (els.deviceKey) els.deviceKey.value = initialDeviceKey;
+        if (els.homeTopbar) els.homeTopbar.classList.add('hidden');
+
+        renderStats({});
+        renderBoxes();
+        refreshFilterOptions();
+        syncPagination();
+        switchTab('docs');
+        mountFilterModalToBody();
+        initEvents();
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setupHeaderFollow);
+        } else {
+          setupHeaderFollow();
+        }
+
+        if (initialUrl) {
+          try {
+            createClientFromInputs();
+            if (handleLegacyRoute()) return;
+            trySession().then(function (ok) {
+              if (!ok) {
+                if (els.loginCard) els.loginCard.classList.remove('hidden');
+                setStatus('พร้อมเข้าสู่ระบบ', 'warn');
+              }
+            });
+          } catch (err) {
+            showError(err && err.message ? err.message : String(err));
+            if (els.settingsCard) els.settingsCard.classList.remove('hidden');
+            if (els.loginCard) els.loginCard.classList.remove('hidden');
+            setStatus('ตั้งค่า API ไม่ถูกต้อง', 'error');
+          }
+          return;
+        }
+
+        if (!state.config.lockSettings && els.settingsCard) {
+          els.settingsCard.classList.remove('hidden');
+        }
+
+        if (els.loginCard) els.loginCard.classList.remove('hidden');
+
+        if (state.config.lockSettings) {
+          setStatus('config.js ยังไม่ตั้งค่า URL', 'error');
+          showError('กรุณาตั้งค่า scriptUrl ในไฟล์ config.js ก่อนใช้งาน');
+        } else {
+          setStatus('ยังไม่ได้ตั้งค่า API', 'warn');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

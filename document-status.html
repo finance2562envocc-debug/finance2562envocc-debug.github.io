@@ -1,0 +1,1249 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>จัดการสถานะเอกสาร</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-17">
+  <style>
+    .status-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+      --status-control-height: 50px;
+    }
+
+    .status-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .main-card {
+      overflow: hidden;
+    }
+
+    .header-bg {
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      color: #fff;
+      text-align: center;
+      padding: 22px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bg::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 999px;
+      right: -66px;
+      top: -90px;
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .header-bg i {
+      font-size: 2rem;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+
+    .header-bg h3 {
+      margin: 0;
+      font-size: 1.18rem;
+      font-weight: 860;
+    }
+
+    .header-bg small {
+      display: block;
+      margin-top: 4px;
+      opacity: 0.94;
+      font-weight: 640;
+      font-size: 0.84rem;
+    }
+
+    .status-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .desc-note {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+      font-weight: 630;
+      border: 1px solid var(--input-border);
+      background: rgba(255, 255, 255, 0.62);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+
+    body.dark-mode .desc-note {
+      background: rgba(9, 20, 40, 0.55);
+      border-color: rgba(78, 112, 156, 0.5);
+    }
+
+    .steps-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    #stepsWrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toolbar-btn {
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      min-height: 36px;
+      border-radius: 999px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 760;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .toolbar-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.5);
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+    }
+
+    .toolbar-btn.primary {
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      color: #fff;
+      border-color: rgba(10, 132, 255, 0.4);
+    }
+
+    body.dark-mode .toolbar-btn.primary {
+      border-color: rgba(80, 162, 255, 0.55);
+      box-shadow: 0 12px 24px rgba(8, 102, 202, 0.28);
+    }
+
+    .status-body #stepsWrap > .form-section {
+      position: relative;
+      display: block;
+      margin: 0 !important;
+      border: 1px solid var(--input-border) !important;
+      background: var(--card-bg) !important;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+      overflow: hidden;
+      isolation: isolate;
+      z-index: 0;
+      border-radius: 18px;
+      padding: 14px;
+      transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+    }
+
+    .status-body #stepsWrap > .form-section + .form-section {
+      margin-top: 0 !important;
+    }
+
+    body.dark-mode .status-body #stepsWrap > .form-section {
+      border-color: #365172 !important;
+      background: #121d2f !important;
+      box-shadow: 0 14px 30px rgba(2, 8, 20, 0.56) !important;
+    }
+
+    .status-step-card.active {
+      border-color: rgba(10, 132, 255, 0.38) !important;
+      box-shadow: 0 18px 32px rgba(10, 132, 255, 0.16) !important;
+    }
+
+    body.dark-mode .status-step-card.active {
+      border-color: rgba(76, 150, 255, 0.5) !important;
+      box-shadow: 0 18px 34px rgba(8, 92, 190, 0.35) !important;
+    }
+
+    .form-section-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 820;
+      color: var(--text-color);
+      line-height: 1.15;
+    }
+
+    .step-index-badge {
+      min-width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.28);
+      color: #0a5fc6;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.74rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-right: 2px;
+      flex: 0 0 auto;
+    }
+
+    body.dark-mode .step-index-badge {
+      color: #9dc6ff;
+      border-color: rgba(141, 185, 255, 0.38);
+      background: rgba(35, 92, 162, 0.34);
+    }
+
+    .step-sub {
+      margin: 4px 0 0 0;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      font-weight: 600;
+      line-height: 1.35;
+      padding-left: 29px;
+    }
+
+    .step-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .step-head-main {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .step-title-wrap {
+      min-width: 0;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-flex;
+      width: 52px;
+      height: 30px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: rgba(148, 163, 184, 0.6);
+      transition: 0.2s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      width: 24px;
+      height: 24px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      transition: 0.2s;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .switch input:checked + .slider {
+      background: #16a34a;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .step-state {
+      min-height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.42);
+      background: rgba(148, 163, 184, 0.16);
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      font-weight: 760;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+
+    .step-state.on {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: rgba(34, 197, 94, 0.15);
+      color: #15803d;
+    }
+
+    body.dark-mode .step-state {
+      border-color: rgba(122, 153, 192, 0.42);
+      background: rgba(57, 84, 120, 0.24);
+      color: #b8c5d8;
+    }
+
+    body.dark-mode .step-state.on {
+      border-color: rgba(87, 229, 145, 0.38);
+      background: rgba(20, 126, 82, 0.28);
+      color: #86efac;
+    }
+
+    .status-detail {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      transition: opacity 0.2s ease;
+    }
+
+    .status-detail.disabled {
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.81rem;
+      font-weight: 760;
+      color: var(--text-muted);
+    }
+
+    .status-field {
+      border: 1px solid var(--input-border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.48);
+      padding: 9px;
+    }
+
+    body.dark-mode .status-field {
+      background: rgba(11, 24, 44, 0.48);
+      border-color: rgba(73, 102, 139, 0.45);
+    }
+
+    .form-control,
+    .form-select {
+      width: 100%;
+      min-height: var(--status-control-height);
+      height: var(--status-control-height);
+      border-radius: 14px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      font: inherit;
+      padding: 0 12px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 550;
+      line-height: 1.24;
+    }
+
+    .form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 40px;
+      background-image: var(--dd-arrow-light);
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 14px 14px;
+    }
+
+    body.dark-mode .form-select {
+      background-image: var(--dd-arrow-dark);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-soft);
+    }
+
+    .thai-date-input .form-control {
+      display: flex;
+      align-items: center;
+      min-height: var(--status-control-height);
+      height: var(--status-control-height);
+      padding-right: 36px;
+      padding-left: 14px;
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .member-select-wrap {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .member-avatar-sm {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.36);
+      box-shadow: 0 6px 14px rgba(10, 132, 255, 0.14);
+      color: #007aff;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .member-avatar-sm img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .member-select-wrap .form-select {
+      min-height: var(--status-control-height);
+      height: var(--status-control-height);
+      padding-left: 14px;
+      padding-right: 40px;
+      font-weight: 650;
+    }
+
+    .submit-btn {
+      border: none;
+      width: 100%;
+      min-height: 48px;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 860;
+      color: #fff;
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      cursor: pointer;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease;
+      box-shadow: 0 16px 34px rgba(10, 132, 255, 0.26);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 42px rgba(10, 132, 255, 0.32);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .error-box {
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.36);
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 650;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .error-box.show {
+      display: block;
+    }
+
+    .loading-row {
+      display: none;
+      text-align: center;
+      padding: 10px 0 2px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-weight: 630;
+    }
+
+    .loading-row .spinner {
+      display: inline-block;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.22);
+      border-top-color: var(--primary-color);
+      animation: spin 0.72s linear infinite;
+      margin-bottom: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .status-detail {
+        grid-template-columns: 1fr;
+      }
+
+      .step-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .status-page {
+        padding: 12px;
+        --status-control-height: 48px;
+      }
+
+      .status-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .header-bg i {
+        font-size: 1.62rem;
+      }
+
+      .header-bg h3 {
+        font-size: 1.02rem;
+      }
+
+      .status-body {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      #stepsWrap {
+        gap: 10px;
+      }
+
+      .status-body #stepsWrap > .form-section {
+        padding: 12px;
+        border-radius: 16px;
+      }
+
+      .form-section-title {
+        font-size: 0.95rem;
+      }
+
+      .step-sub {
+        font-size: 0.74rem;
+      }
+
+      .form-control,
+      .form-select {
+        font-size: 16px;
+      }
+
+      .steps-toolbar {
+        width: 100%;
+      }
+
+      .toolbar-btn {
+        flex: 1 1 0;
+      }
+
+      .step-state {
+        min-height: 26px;
+        font-size: 0.74rem;
+      }
+
+      .member-avatar-sm {
+        width: 38px;
+        height: 38px;
+      }
+
+      .member-select-wrap .form-select {
+        padding-left: 12px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .status-page {
+        padding: 8px;
+        --status-control-height: 46px;
+      }
+
+      .status-body {
+        padding: 10px;
+        gap: 9px;
+      }
+
+      #stepsWrap {
+        gap: 9px;
+      }
+
+      .status-body #stepsWrap > .form-section {
+        padding: 10px;
+        border-radius: 14px;
+      }
+
+      .header-bg small {
+        font-size: 0.78rem;
+      }
+
+      .desc-note {
+        font-size: 0.79rem;
+      }
+
+      .toolbar-btn {
+        min-height: 34px;
+        font-size: 0.78rem;
+        padding: 0 10px;
+      }
+
+      .submit-btn {
+        min-height: 46px;
+      }
+
+      .member-avatar-sm {
+        width: 34px;
+        height: 34px;
+      }
+
+      .member-select-wrap {
+        grid-template-columns: 36px minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      .member-select-wrap .form-select {
+        padding-left: 11px;
+      }
+
+      .step-state {
+        min-height: 24px;
+      }
+
+      .step-sub {
+        padding-left: 0;
+        margin-top: 5px;
+      }
+    }
+  </style>
+</head>
+<body class="page-doc-status">
+  <div class="status-page">
+    <div class="status-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+    </div>
+
+    <div id="errBox" class="error-box"></div>
+
+    <div id="mainCard" class="main-card" style="display:none;">
+      <div class="header-bg">
+        <i class="bi bi-list-check"></i>
+        <h3>จัดการสถานะการดำเนินการ</h3>
+        <small id="docHead">กำลังโหลด...</small>
+      </div>
+
+      <div class="status-body">
+        <p class="desc-note"><i class="bi bi-info-circle me-1"></i>เปิด-ปิดสวิตช์เพื่อบันทึกสถานะแต่ละขั้นตอน วันที่จะเติมอัตโนมัติเมื่อเปิดสวิตช์</p>
+        <div class="steps-toolbar">
+          <button id="btnEnableAll" type="button" class="toolbar-btn primary"><i class="bi bi-check2-square"></i>เปิดทุกสถานะ</button>
+          <button id="btnDisableAll" type="button" class="toolbar-btn"><i class="bi bi-x-square"></i>ปิดทั้งหมด</button>
+        </div>
+        <div id="stepsWrap"></div>
+
+        <div id="loadingMsg" class="loading-row">
+          <div class="spinner"></div>
+          <div>กำลังบันทึก...</div>
+        </div>
+
+        <button id="btnSubmit" type="button" class="submit-btn"><i class="bi bi-save-fill"></i>บันทึกสถานะ</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js?v=20260221-6"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var q = C.parseQuery();
+      var docId = C.safeTrim(q.id || '');
+      var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
+
+      var state = {
+        settings: null,
+        api: null,
+        user: null,
+        doc: null,
+        statusData: {},
+        members: [],
+        memberImgMap: {}
+      };
+
+      var steps = [
+        { key: 'return', label: 'ส่งกลับแก้ไข', icon: 'bi-arrow-return-right' },
+        { key: 'receiveBack', label: 'รับคืนเอกสารที่ส่งกลับ', icon: 'bi-box-arrow-in-down' },
+        { key: 'verify', label: 'ตรวจสอบ', icon: 'bi-search' },
+        { key: 'boss', label: 'หัวหน้าผ่านงาน', icon: 'bi-person-check' },
+        { key: 'sign', label: 'เสนอลงนาม', icon: 'bi-pen' }
+      ];
+
+      var els = {
+        btnBack: document.getElementById('btnBack'),
+        errBox: document.getElementById('errBox'),
+        mainCard: document.getElementById('mainCard'),
+        docHead: document.getElementById('docHead'),
+        btnEnableAll: document.getElementById('btnEnableAll'),
+        btnDisableAll: document.getElementById('btnDisableAll'),
+        stepsWrap: document.getElementById('stepsWrap'),
+        btnSubmit: document.getElementById('btnSubmit'),
+        loadingMsg: document.getElementById('loadingMsg')
+      };
+
+      function showError(message) {
+        var msg = C.safeTrim(message || '');
+        if (!msg) {
+          els.errBox.classList.remove('show');
+          els.errBox.textContent = '';
+          return;
+        }
+        els.errBox.textContent = msg;
+        els.errBox.classList.add('show');
+      }
+
+      function updateBrowserTitle(idValue) {
+        var id = C.safeTrim(idValue || '');
+        var page = id ? ('เปลี่ยนสถานะเอกสาร • ' + id) : 'เปลี่ยนสถานะเอกสาร';
+        document.title = page + ' | ' + APP_BROWSER_NAME;
+      }
+
+      function setSaving(isSaving) {
+        var active = !!isSaving;
+        els.btnSubmit.disabled = active;
+        els.loadingMsg.style.display = active ? 'block' : 'none';
+        els.loadingMsg.setAttribute('aria-hidden', active ? 'false' : 'true');
+      }
+
+      function mapMemberImages(members) {
+        var map = {};
+        var list = Array.isArray(members) ? members : [];
+        for (var i = 0; i < list.length; i++) {
+          var m = list[i] || {};
+          var name = C.safeTrim(m.name || '');
+          var img = C.safeTrim(m.image || '');
+          if (!name || !img) continue;
+          map[name] = img;
+          map[name.toLowerCase()] = img;
+        }
+        return map;
+      }
+
+      function isIsoDateText(value) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(C.safeTrim(value || ''));
+      }
+
+      function isEmptyDateToken(value) {
+        var text = C.safeTrim(value || '');
+        if (!text) return true;
+        return (
+          text === '-' ||
+          text === '--' ||
+          text === '---' ||
+          text === 'เลือกวันที่...' ||
+          text.toLowerCase() === 'null' ||
+          text.toLowerCase() === 'undefined'
+        );
+      }
+
+      function parseThaiDisplayToIso(display) {
+        var text = C.safeTrim(display || '').replace(/\s+/g, ' ');
+        if (!text) return '';
+        if (isIsoDateText(text)) return text;
+
+        var slash = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (slash) {
+          var d1 = Number(slash[1]);
+          var m1 = Number(slash[2]);
+          var y1 = Number(slash[3]);
+          if (y1 > 2400) y1 -= 543;
+          if (y1 >= 1900 && m1 >= 1 && m1 <= 12 && d1 >= 1 && d1 <= 31) {
+            return String(y1) + '-' + String(m1).padStart(2, '0') + '-' + String(d1).padStart(2, '0');
+          }
+        }
+
+        var m = text.match(/^(\d{1,2})\s+([^\s]+)\s+(\d{4})$/);
+        if (!m) return '';
+
+        var day = Number(m[1]);
+        var monthName = m[2];
+        var year = Number(m[3]);
+        var monthMap = {
+          'มกราคม': 1, 'ม.ค.': 1,
+          'กุมภาพันธ์': 2, 'ก.พ.': 2,
+          'มีนาคม': 3, 'มี.ค.': 3,
+          'เมษายน': 4, 'เม.ย.': 4,
+          'พฤษภาคม': 5, 'พ.ค.': 5,
+          'มิถุนายน': 6, 'มิ.ย.': 6,
+          'กรกฎาคม': 7, 'ก.ค.': 7,
+          'สิงหาคม': 8, 'ส.ค.': 8,
+          'กันยายน': 9, 'ก.ย.': 9,
+          'ตุลาคม': 10, 'ต.ค.': 10,
+          'พฤศจิกายน': 11, 'พ.ย.': 11,
+          'ธันวาคม': 12, 'ธ.ค.': 12
+        };
+        var month = monthMap[monthName] || 0;
+        if (!month || !day || day > 31 || !year) return '';
+        if (year > 2400) year -= 543;
+        if (year < 1900) return '';
+
+        return String(year) + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+      }
+
+      function resolveStepDateValue(statusData, stepKey) {
+        var iso = C.safeTrim((statusData && statusData[stepKey + 'Date']) || '');
+        if (isIsoDateText(iso)) return iso;
+
+        iso = C.safeTrim((statusData && statusData[stepKey + 'DateInput']) || '');
+        if (isIsoDateText(iso)) return iso;
+
+        var display = C.safeTrim((statusData && statusData[stepKey + 'DateDisplay']) || '');
+        var parsed = parseThaiDisplayToIso(display);
+        if (isIsoDateText(parsed)) return parsed;
+
+        return '';
+      }
+
+      function memberSelectHtml(fieldId, currentVal, disabled) {
+        var html = '<option value="">เลือกชื่อ...</option>';
+        var selected = C.safeTrim(currentVal || '');
+
+        for (var i = 0; i < state.members.length; i++) {
+          var m = state.members[i] || {};
+          var name = C.safeTrim(m.name || '');
+          if (!name) continue;
+          var pos = C.safeTrim(m.position || '');
+          var label = pos ? (name + ' (' + pos + ')') : name;
+          html += '<option value="' + C.escapeHtml(name) + '"' + (selected === name ? ' selected' : '') + '>' + C.escapeHtml(label) + '</option>';
+        }
+
+        return '<select id="' + C.escapeHtml(fieldId) + '" class="form-select"' + (disabled ? ' disabled' : '') + '>' + html + '</select>';
+      }
+
+      function memberAvatarHtml(fieldId, memberName) {
+        var key = C.safeTrim(memberName || '');
+        var img = state.memberImgMap[key] || state.memberImgMap[key.toLowerCase()] || '';
+        if (img) {
+          return '<img src="' + C.escapeHtml(img) + '" alt="u">';
+        }
+        return '<i class="bi bi-person-fill"></i>';
+      }
+
+      function renderSteps() {
+        var s = state.statusData || {};
+        var html = '';
+
+        for (var i = 0; i < steps.length; i++) {
+          var step = steps[i];
+          var checked = !!s[step.key + 'Check'];
+          var dateVal = resolveStepDateValue(s, step.key);
+          var displayText = 'เลือกวันที่...';
+          var displayColor = 'var(--text-muted)';
+          var userVal = C.safeTrim(s[step.key + 'User'] || '');
+
+          html += '<section id="' + step.key + 'Card" class="form-section status-step-card' + (checked ? ' active' : '') + '">';
+          html += '<div class="step-head">';
+          html += '<div class="step-head-main">';
+          html += '<label class="switch"><input type="checkbox" id="' + step.key + 'Check"' + (checked ? ' checked' : '') + '><span class="slider"></span></label>';
+          html += '<div class="step-title-wrap">';
+          html += '<h4 class="form-section-title"><span class="step-index-badge">' + String(i + 1) + '</span><i class="bi ' + C.escapeHtml(step.icon) + '"></i>' + C.escapeHtml(step.label) + '</h4>';
+          html += '<p class="step-sub">เปิดสวิตช์เพื่อกรอกวันที่และชื่อผู้ดำเนินการ</p>';
+          html += '</div>';
+          html += '</div>';
+          html += '<span id="' + step.key + 'State" class="step-state' + (checked ? ' on' : '') + '">' + (checked ? 'เปิดแล้ว' : 'ปิดอยู่') + '</span>';
+          html += '</div>';
+
+          html += '<div id="' + step.key + 'Detail" class="status-detail' + (checked ? '' : ' disabled') + '">';
+
+          html += '<div class="status-field">';
+          html += '<label class="form-label">วันที่</label>';
+          html += '<div class="thai-date-input" onclick="if(document.getElementById(\'' + step.key + 'Check\').checked){openCalendar(\'' + step.key + 'Date\')}">';
+          html += '<input type="hidden" id="' + step.key + 'Date" value="' + C.escapeHtml(dateVal) + '">';
+          html += '<div id="' + step.key + 'DateDisplay" class="form-control" style="color:' + C.escapeHtml(displayColor) + ';">' + C.escapeHtml(displayText) + '</div>';
+          html += '<i class="bi bi-calendar3 cal-icon"></i>';
+          html += '</div>';
+          html += '</div>';
+
+          html += '<div class="status-field">';
+          html += '<label class="form-label">ชื่อผู้ดำเนินการ</label>';
+          html += '<div class="member-select-wrap">';
+          html += '<div id="' + step.key + 'UserImg" class="member-avatar-sm">' + memberAvatarHtml(step.key + 'User', userVal) + '</div>';
+          html += memberSelectHtml(step.key + 'User', userVal, !checked);
+          html += '</div>';
+          html += '</div>';
+
+          html += '</div>';
+          html += '</section>';
+        }
+
+        els.stepsWrap.innerHTML = html;
+
+        for (var j = 0; j < steps.length; j++) {
+          (function bindStep(step) {
+            var checkEl = document.getElementById(step.key + 'Check');
+            var userEl = document.getElementById(step.key + 'User');
+            if (checkEl) {
+              checkEl.addEventListener('change', function () {
+                toggleStep(step.key);
+              });
+            }
+            if (userEl) {
+              userEl.addEventListener('change', function () {
+                updateMemberImage(step.key + 'User');
+              });
+            }
+            var stepDateEl = document.getElementById(step.key + 'Date');
+            if (typeof window.updDD === 'function' && stepDateEl) {
+              window.updDD(step.key + 'Date');
+            }
+            updateStepStateUI(step.key);
+          })(steps[j]);
+        }
+      }
+
+      function updateMemberImage(fieldId) {
+        var sel = document.getElementById(fieldId);
+        var imgWrap = document.getElementById(fieldId + 'Img');
+        if (!sel || !imgWrap) return;
+        var name = C.safeTrim(sel.value || '');
+        var img = state.memberImgMap[name] || state.memberImgMap[name.toLowerCase()] || '';
+        if (img) {
+          imgWrap.innerHTML = '<img src="' + C.escapeHtml(img) + '" alt="u">';
+        } else {
+          imgWrap.innerHTML = '<i class="bi bi-person-fill"></i>';
+        }
+      }
+
+      function updateStepStateUI(key) {
+        var checkEl = document.getElementById(key + 'Check');
+        var stateEl = document.getElementById(key + 'State');
+        var cardEl = document.getElementById(key + 'Card');
+        var isOn = !!(checkEl && checkEl.checked);
+
+        if (stateEl) {
+          stateEl.textContent = isOn ? 'เปิดแล้ว' : 'ปิดอยู่';
+          stateEl.classList.toggle('on', isOn);
+        }
+        if (cardEl) {
+          cardEl.classList.toggle('active', isOn);
+        }
+      }
+
+      function toggleStep(key) {
+        var checkEl = document.getElementById(key + 'Check');
+        var detailEl = document.getElementById(key + 'Detail');
+        var dateEl = document.getElementById(key + 'Date');
+        var userEl = document.getElementById(key + 'User');
+
+        if (!checkEl || !detailEl || !dateEl || !userEl) return;
+
+        if (checkEl.checked) {
+          detailEl.classList.remove('disabled');
+          userEl.disabled = false;
+          if (!C.safeTrim(dateEl.value || '')) {
+            var now = new Date();
+            var mm = String(now.getMonth() + 1).padStart(2, '0');
+            var dd = String(now.getDate()).padStart(2, '0');
+            dateEl.value = now.getFullYear() + '-' + mm + '-' + dd;
+          }
+        } else {
+          detailEl.classList.add('disabled');
+          userEl.disabled = true;
+        }
+
+        if (typeof window.updDD === 'function') {
+          window.updDD(key + 'Date');
+        }
+
+        updateStepStateUI(key);
+      }
+
+      function setAllSteps(enabled) {
+        for (var i = 0; i < steps.length; i++) {
+          var step = steps[i];
+          var checkEl = document.getElementById(step.key + 'Check');
+          if (!checkEl) continue;
+          checkEl.checked = !!enabled;
+          toggleStep(step.key);
+        }
+      }
+
+      function getDateForSubmit(stepKey) {
+        var input = document.getElementById(stepKey + 'Date');
+        var value = C.safeTrim((input && input.value) || '');
+        if (isIsoDateText(value)) return value;
+        if (isEmptyDateToken(value)) return '';
+        var fromState = resolveStepDateValue(state.statusData || {}, stepKey);
+        if (fromState) return fromState;
+        var fallback = C.safeTrim(((state.statusData || {})[stepKey + 'Date']) || ((state.statusData || {})[stepKey + 'DateInput']) || '');
+        return isIsoDateText(fallback) ? fallback : '';
+      }
+
+      function validateStatusData(statusData) {
+        var data = statusData || {};
+        for (var i = 0; i < steps.length; i++) {
+          var step = steps[i];
+          var checkKey = step.key + 'Check';
+          var dateKey = step.key + 'Date';
+          var userKey = step.key + 'User';
+          if (!data[checkKey]) continue;
+
+          var dateVal = C.safeTrim(data[dateKey] || '');
+          var userVal = C.safeTrim(data[userKey] || '');
+
+          if (!isIsoDateText(dateVal)) {
+            return 'กรุณาเลือกวันที่ให้ครบในขั้นตอน "' + step.label + '"';
+          }
+          if (!userVal) {
+            return 'กรุณาเลือกชื่อผู้ดำเนินการในขั้นตอน "' + step.label + '"';
+          }
+        }
+        return '';
+      }
+
+      function collectStatusData() {
+        return {
+          returnCheck: !!(document.getElementById('returnCheck') || {}).checked,
+          returnDate: getDateForSubmit('return'),
+          returnUser: C.safeTrim((document.getElementById('returnUser') || {}).value || ''),
+          receiveBackCheck: !!(document.getElementById('receiveBackCheck') || {}).checked,
+          receiveBackDate: getDateForSubmit('receiveBack'),
+          receiveBackUser: C.safeTrim((document.getElementById('receiveBackUser') || {}).value || ''),
+          verifyCheck: !!(document.getElementById('verifyCheck') || {}).checked,
+          verifyDate: getDateForSubmit('verify'),
+          verifyUser: C.safeTrim((document.getElementById('verifyUser') || {}).value || ''),
+          bossCheck: !!(document.getElementById('bossCheck') || {}).checked,
+          bossDate: getDateForSubmit('boss'),
+          bossUser: C.safeTrim((document.getElementById('bossUser') || {}).value || ''),
+          signCheck: !!(document.getElementById('signCheck') || {}).checked,
+          signDate: getDateForSubmit('sign'),
+          signUser: C.safeTrim((document.getElementById('signUser') || {}).value || '')
+        };
+      }
+
+      async function submitStatus() {
+        if (!state.user || state.user.isReadOnly || state.user.canEdit === false) {
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถจัดการสถานะเอกสารได้'
+          }, true);
+          return;
+        }
+
+        var statusData = collectStatusData();
+        var invalidMessage = validateStatusData(statusData);
+        if (invalidMessage) {
+          await Swal.fire({
+            icon: 'warning',
+            title: 'ข้อมูลไม่ครบ',
+            text: invalidMessage,
+            confirmButtonColor: '#007AFF'
+          });
+          return;
+        }
+
+        setSaving(true);
+        var nextDocId = state.doc.docId || docId;
+        try {
+          var res = await state.api.docUpdateStatus(nextDocId, statusData);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'ไม่สามารถบันทึกสถานะได้');
+          }
+        } catch (err) {
+          await Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+          return;
+        } finally {
+          setSaving(false);
+        }
+
+        await Swal.fire({
+          icon: 'success',
+          title: 'บันทึกสถานะสำเร็จ',
+          confirmButtonText: 'ดูรายละเอียดเอกสาร',
+          confirmButtonColor: '#007AFF',
+          allowOutsideClick: false
+        });
+
+        C.redirect('document-view.html', { id: nextDocId }, true);
+      }
+
+      async function loadData() {
+        showError('');
+
+        var res = await Promise.all([
+          state.api.me(),
+          state.api.docDetail(docId),
+          state.api.optionsMembers()
+        ]);
+
+        var meRes = res[0] || {};
+        var docRes = res[1] || {};
+        var memberRes = res[2] || {};
+
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
+        }
+        if (!docRes || docRes.success === false || !docRes.doc) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: docId,
+            back: 'index.html'
+          }, true);
+          return false;
+        }
+
+        state.user = meRes.user;
+        state.doc = docRes.doc;
+        state.statusData = docRes.statusData || {};
+        state.members = (memberRes && Array.isArray(memberRes.data)) ? memberRes.data : [];
+        state.memberImgMap = mapMemberImages(state.members);
+        updateBrowserTitle(state.doc.docId || docId);
+
+        if (state.user.isReadOnly || state.user.canEdit === false) {
+          C.redirect('access-denied.html', {
+            message: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถจัดการสถานะเอกสารได้'
+          }, true);
+          return false;
+        }
+
+        var headText = (state.doc.docId || '-') + ' | เลขรับ ' + (state.doc.receiveNo || '-');
+        els.docHead.textContent = headText;
+
+        renderSteps();
+
+        els.mainCard.style.display = 'block';
+        return true;
+      }
+
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('document-view.html', { id: docId });
+        });
+
+        window.addEventListener('pageshow', function () {
+          setSaving(false);
+        });
+
+        if (els.btnEnableAll) {
+          els.btnEnableAll.addEventListener('click', function () {
+            setAllSteps(true);
+          });
+        }
+
+        if (els.btnDisableAll) {
+          els.btnDisableAll.addEventListener('click', function () {
+            setAllSteps(false);
+          });
+        }
+
+        els.btnSubmit.addEventListener('click', submitStatus);
+      }
+
+      async function init() {
+        if (!docId) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: '',
+            back: 'index.html'
+          }, true);
+          return;
+        }
+
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          showError('กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน');
+          return;
+        }
+
+        bindEvents();
+        updateBrowserTitle(docId);
+        setSaving(false);
+
+        try {
+          await loadData();
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'โหลดหน้าจัดการสถานะไม่สำเร็จ');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

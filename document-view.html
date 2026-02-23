@@ -1,0 +1,2086 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>รายละเอียดเอกสาร</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-17">
+  <style>
+    .doc-page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .doc-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .page-doc-view .main-card {
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.34) !important;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(247, 251, 255, 0.64)) !important;
+      box-shadow: 0 30px 58px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.84) !important;
+    }
+
+    .header-bg {
+      background: linear-gradient(145deg, #66baff 0%, #3196fb 42%, #1f79f0 100%);
+      color: #fff;
+      text-align: center;
+      padding: 24px 16px 22px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .header-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0));
+      pointer-events: none;
+    }
+
+    .header-bg::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      right: -84px;
+      top: -102px;
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .doc-id-kicker {
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.94;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .doc-id-title {
+      margin: 0;
+      font-size: clamp(1.25rem, 2.5vw, 1.72rem);
+      font-weight: 830;
+      line-height: 1.12;
+      word-break: break-word;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .doc-id-sub {
+      margin-top: 4px;
+      font-size: 0.9rem;
+      opacity: 0.96;
+      font-weight: 620;
+      word-break: break-word;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .header-badges {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .h-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: 999px;
+      font-size: 0.77rem;
+      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      line-height: 1.15;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.24));
+      color: #f8fbff;
+      text-shadow: 0 1px 0 rgba(15, 23, 42, 0.2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), 0 10px 20px rgba(15, 23, 42, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .h-badge.success {
+      background: linear-gradient(180deg, rgba(22, 163, 74, 0.62), rgba(22, 163, 74, 0.46));
+      border-color: rgba(187, 247, 208, 0.74);
+      color: #f0fdf4;
+    }
+
+    .h-badge.warn {
+      background: linear-gradient(180deg, rgba(249, 115, 22, 0.66), rgba(217, 119, 6, 0.5));
+      border-color: rgba(254, 215, 170, 0.74);
+      color: #fff7ed;
+    }
+
+    .h-badge.info {
+      background: linear-gradient(180deg, rgba(14, 165, 233, 0.64), rgba(2, 132, 199, 0.5));
+      border-color: rgba(186, 230, 253, 0.72);
+      color: #effcff;
+    }
+
+    .h-badge.gray {
+      background: linear-gradient(180deg, rgba(100, 116, 139, 0.6), rgba(71, 85, 105, 0.5));
+      border-color: rgba(203, 213, 225, 0.72);
+      color: #f8fafc;
+    }
+
+    .h-badge.pink {
+      background: linear-gradient(180deg, rgba(236, 72, 153, 0.64), rgba(219, 39, 119, 0.5));
+      border-color: rgba(251, 207, 232, 0.74);
+      color: #fff1f7;
+    }
+
+    .h-badge.red {
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.66), rgba(220, 38, 38, 0.5));
+      border-color: rgba(254, 202, 202, 0.72);
+      color: #fff5f5;
+    }
+
+    .doc-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(235, 245, 255, 0.34), rgba(235, 245, 255, 0.14));
+    }
+
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 840;
+      color: var(--text-color);
+      margin: 0 0 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .info-group {
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(250, 253, 255, 0.72));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 10px 24px rgba(15, 23, 42, 0.06);
+      margin-bottom: 10px;
+      transition: border-color 0.22s ease, box-shadow 0.24s ease;
+    }
+
+    .info-group:hover {
+      border-color: rgba(10, 132, 255, 0.28);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 14px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .info-label {
+      margin: 0;
+      font-size: 0.76rem;
+      font-weight: 740;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .info-value {
+      margin: 2px 0 0;
+      font-size: 0.95rem;
+      font-weight: 640;
+      color: var(--text-color);
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .subject-value {
+      font-weight: 750;
+      color: #0f3f7f;
+    }
+
+    .muted-value {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      font-weight: 520;
+    }
+
+    .budget-highlight {
+      background: linear-gradient(180deg, rgba(10, 132, 255, 0.12), rgba(10, 132, 255, 0.04));
+      border-style: dashed;
+      border-color: rgba(10, 132, 255, 0.26);
+    }
+
+    .storage-status-empty,
+    .storage-status-ok {
+      text-align: center;
+    }
+
+    .storage-status-empty {
+      background: linear-gradient(180deg, rgba(148, 163, 184, 0.14), rgba(148, 163, 184, 0.06));
+      border-color: rgba(148, 163, 184, 0.28);
+    }
+
+    .storage-status-ok {
+      background: linear-gradient(180deg, rgba(34, 197, 94, 0.14), rgba(34, 197, 94, 0.08));
+      border-color: rgba(34, 197, 94, 0.28);
+    }
+
+    .storage-status-empty-title,
+    .storage-status-title {
+      margin: 2px 0 0;
+      font-size: 1.06rem;
+      font-weight: 820;
+    }
+
+    .storage-status-empty-title {
+      color: var(--text-muted);
+    }
+
+    .storage-status-title {
+      color: #16a34a;
+      font-weight: 860;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .row-full {
+      grid-column: 1 / -1;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .btn {
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 15px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.24s ease, box-shadow 0.28s ease, border-color 0.2s ease, background-color 0.2s ease;
+      backdrop-filter: blur(14px) saturate(170%);
+      -webkit-backdrop-filter: blur(14px) saturate(170%);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #fff;
+      border-color: rgba(10, 132, 255, 0.34);
+      background: linear-gradient(180deg, rgba(68, 165, 255, 0.96), rgba(10, 132, 255, 0.96), rgba(0, 113, 227, 0.96));
+      box-shadow: 0 12px 28px rgba(10, 132, 255, 0.26);
+    }
+
+    .btn.green {
+      color: #fff;
+      border-color: rgba(34, 197, 94, 0.34);
+      background: linear-gradient(180deg, rgba(80, 214, 138, 0.95), rgba(48, 209, 88, 0.95), rgba(30, 186, 75, 0.95));
+      box-shadow: 0 12px 28px rgba(34, 197, 94, 0.24);
+    }
+
+    .btn.gray {
+      color: #fff;
+      border-color: rgba(100, 116, 139, 0.32);
+      background: linear-gradient(180deg, rgba(100, 116, 139, 0.94), rgba(71, 85, 105, 0.94));
+      box-shadow: 0 12px 26px rgba(51, 65, 85, 0.22);
+    }
+
+    .btn.outline {
+      color: #0c4a6e;
+      border-color: rgba(10, 132, 255, 0.28);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(228, 242, 255, 0.72));
+      box-shadow: 0 10px 22px rgba(10, 132, 255, 0.14);
+    }
+
+    .btn.danger {
+      color: #fff;
+      border-color: rgba(239, 68, 68, 0.36);
+      background: linear-gradient(180deg, rgba(248, 113, 113, 0.95), rgba(239, 68, 68, 0.95), rgba(220, 38, 38, 0.95));
+      box-shadow: 0 12px 24px rgba(239, 68, 68, 0.24);
+    }
+
+    .btn.small-icon {
+      min-height: 32px;
+      height: 32px;
+      width: 34px;
+      padding: 0;
+      border-radius: 11px;
+      font-size: 0.78rem;
+    }
+
+    body.dark-mode .page-doc-view .main-card {
+      border-color: rgba(148, 163, 184, 0.4) !important;
+      background: linear-gradient(180deg, rgba(16, 26, 40, 0.8), rgba(12, 20, 32, 0.68)) !important;
+      box-shadow: 0 34px 66px rgba(2, 8, 20, 0.56), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    }
+
+    body.dark-mode .doc-body {
+      background: linear-gradient(180deg, rgba(16, 26, 40, 0.28), rgba(16, 26, 40, 0.12));
+    }
+
+    body.dark-mode .info-group {
+      border-color: rgba(148, 163, 184, 0.34);
+      background: linear-gradient(180deg, rgba(19, 30, 45, 0.82), rgba(14, 23, 35, 0.72));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.34);
+    }
+
+    body.dark-mode .subject-value {
+      color: #90cafc;
+    }
+
+    body.dark-mode .budget-highlight {
+      background: linear-gradient(180deg, rgba(10, 132, 255, 0.22), rgba(10, 132, 255, 0.08));
+      border-color: rgba(90, 200, 250, 0.42);
+    }
+
+    body.dark-mode .storage-status-empty {
+      background: linear-gradient(180deg, rgba(40, 56, 80, 0.52), rgba(28, 40, 60, 0.44)) !important;
+      border-color: rgba(118, 146, 186, 0.4) !important;
+    }
+
+    body.dark-mode .storage-status-ok {
+      background: linear-gradient(180deg, rgba(22, 58, 44, 0.62), rgba(16, 44, 34, 0.54)) !important;
+      border-color: rgba(74, 222, 128, 0.42) !important;
+    }
+
+    body.dark-mode .storage-status-title {
+      color: #86efac;
+    }
+
+    body.dark-mode .storage-detail {
+      border-color: rgba(74, 222, 128, 0.36) !important;
+      background:
+        linear-gradient(140deg, rgba(27, 70, 50, 0.54), rgba(17, 46, 35, 0.52)),
+        linear-gradient(180deg, rgba(17, 33, 50, 0.72), rgba(12, 24, 38, 0.66)) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 14px 30px rgba(2, 8, 20, 0.42);
+    }
+
+    body.dark-mode .storage-detail .chip {
+      background: linear-gradient(180deg, rgba(51, 65, 85, 0.9), rgba(30, 41, 59, 0.86)) !important;
+      border-color: rgba(148, 163, 184, 0.44) !important;
+      color: #f1f5f9 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 18px rgba(2, 8, 20, 0.28) !important;
+    }
+
+    body.dark-mode .storage-meta-label {
+      color: #9eb3cf !important;
+    }
+
+    body.dark-mode .storage-meta-value {
+      color: #e5eefc !important;
+    }
+
+    body.dark-mode .storage-owner-name {
+      color: #e5eefc !important;
+    }
+
+    body.dark-mode .storage-owner-pos {
+      color: #a9bdd7 !important;
+    }
+
+    body.dark-mode .storage-owner .fallback {
+      background: rgba(74, 222, 128, 0.22);
+      color: #dcfce7;
+      border-color: rgba(134, 239, 172, 0.45);
+    }
+
+    body.dark-mode .storage-owner img {
+      border-color: rgba(134, 239, 172, 0.4);
+      box-shadow: 0 8px 16px rgba(2, 8, 20, 0.36);
+    }
+
+    body.dark-mode .destroy-line {
+      border-color: rgba(248, 113, 113, 0.42);
+      background: rgba(220, 38, 38, 0.2);
+      color: #fecaca;
+    }
+
+    body.dark-mode .btn.outline {
+      color: #d6ebff;
+      border-color: rgba(90, 200, 250, 0.42);
+      background: linear-gradient(180deg, rgba(26, 37, 53, 0.92), rgba(20, 32, 46, 0.84));
+      box-shadow: 0 12px 26px rgba(2, 8, 20, 0.32);
+    }
+
+    .step-track {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step-item {
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(244, 248, 255, 0.62));
+      text-align: center;
+      padding: 10px 8px;
+      color: var(--text-muted);
+      font-size: 0.77rem;
+      font-weight: 700;
+      min-height: 110px;
+      display: grid;
+      align-content: start;
+      gap: 4px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 10px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .step-item i {
+      font-size: 1rem;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+
+    .step-item.done {
+      border-color: rgba(34, 197, 94, 0.4);
+      background: linear-gradient(180deg, rgba(34, 197, 94, 0.16), rgba(34, 197, 94, 0.08));
+      color: #166534;
+    }
+
+    .step-user-chip {
+      margin: 2px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid rgba(52, 199, 89, 0.3);
+      background: rgba(255, 255, 255, 0.6);
+      font-size: 0.68rem;
+      font-weight: 730;
+      max-width: 100%;
+    }
+
+    .step-user-chip img,
+    .step-user-chip .fallback {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .step-user-chip .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(34, 197, 94, 0.18);
+      color: #166534;
+      font-size: 0.62rem;
+      font-weight: 860;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .readonly-box,
+    .notice-box {
+      text-align: center;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font-size: 0.86rem;
+      line-height: 1.45;
+      font-weight: 640;
+    }
+
+    .readonly-box {
+      background: rgba(217, 119, 6, 0.12);
+      border-color: rgba(217, 119, 6, 0.3);
+      color: var(--text-color);
+    }
+
+    .notice-box.red {
+      background: rgba(239, 68, 68, 0.14);
+      border-color: rgba(239, 68, 68, 0.28);
+      color: #991b1b;
+    }
+
+    .notice-box.gray {
+      background: rgba(148, 163, 184, 0.22);
+      border-color: rgba(100, 116, 139, 0.32);
+      color: var(--text-color);
+    }
+
+    .notice-box.blue {
+      background: rgba(90, 200, 250, 0.14);
+      border-color: rgba(90, 200, 250, 0.34);
+      color: var(--text-color);
+    }
+
+    .notice-box.pink {
+      background: rgba(244, 114, 182, 0.16);
+      border-color: rgba(236, 72, 153, 0.3);
+      color: var(--text-color);
+    }
+
+    .notice-box.green {
+      background: rgba(34, 197, 94, 0.14);
+      border-color: rgba(34, 197, 94, 0.28);
+      color: var(--text-color);
+    }
+
+    .storage-form {
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid #d4dfed;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(11, 45, 92, 0.08);
+    }
+
+    .storage-form-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .storage-form-title {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 860;
+      color: var(--text-color);
+      line-height: 1.3;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .storage-form-sub {
+      margin: 2px 0 0;
+      font-size: 0.79rem;
+      font-weight: 620;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .storage-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .storage-field {
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .storage-select {
+      width: 100%;
+      min-height: 50px;
+      height: 50px;
+      border-radius: 14px !important;
+      font-weight: 650;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+      padding-right: 42px !important;
+      background-color: #ffffff !important;
+      background-image: var(--dd-arrow-light) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
+    }
+
+    .storage-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid #d4dfed;
+      background: #f8fbff;
+    }
+
+    .storage-user img,
+    .storage-user .fallback {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+
+    .storage-user .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.26);
+      color: #007aff;
+      font-weight: 860;
+    }
+
+    .storage-user-copy {
+      min-width: 0;
+      line-height: 1.35;
+    }
+
+    .storage-user-name {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text-color);
+      word-break: break-word;
+    }
+
+    .storage-user-role {
+      font-size: 0.78rem;
+      font-weight: 620;
+      color: var(--text-muted);
+      word-break: break-word;
+    }
+
+    .storage-note {
+      margin-top: 2px;
+      border-radius: 12px;
+      border: 1px solid #bfd3ee;
+      background: #eef5ff;
+      color: #17447a;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      font-weight: 680;
+      line-height: 1.45;
+    }
+
+    .storage-submit-wrap {
+      margin-top: 12px;
+      display: flex;
+    }
+
+    .storage-submit-wrap .btn {
+      width: 100%;
+      min-height: 50px;
+    }
+
+    .storage-detail {
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.13), rgba(34, 197, 94, 0.04)), linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 252, 255, 0.68));
+      text-align: left;
+    }
+
+    .storage-detail .chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 10px;
+      padding: 5px 11px;
+      background: linear-gradient(180deg, rgba(68, 165, 255, 0.96), rgba(10, 132, 255, 0.96), rgba(0, 113, 227, 0.96));
+      color: #fff;
+      font-size: 0.74rem;
+      font-weight: 780;
+      margin-bottom: 8px;
+    }
+
+    .storage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: start;
+    }
+
+    .storage-cell {
+      min-width: 0;
+    }
+
+    .storage-cell-owner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-self: end;
+      width: min(100%, 420px);
+    }
+
+    .storage-cell-owner .storage-meta-label {
+      margin-bottom: 4px;
+    }
+
+    .storage-meta-label {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 760;
+      letter-spacing: 0.04em;
+    }
+
+    .storage-meta-value {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      font-weight: 760;
+    }
+
+    .storage-owner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .storage-owner-text {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .storage-owner-name {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      font-weight: 760;
+      line-height: 1.22;
+      overflow-wrap: anywhere;
+    }
+
+    .storage-owner img,
+    .storage-owner .fallback {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+      border: 2px solid rgba(34, 197, 94, 0.3);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .storage-owner .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(34, 197, 94, 0.18);
+      color: #166534;
+      font-weight: 860;
+      border: 1px solid rgba(34, 197, 94, 0.26);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .storage-owner-pos {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.24;
+      display: block;
+    }
+
+    .destroy-line {
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(239, 68, 68, 0.32);
+      background: rgba(239, 68, 68, 0.1);
+      color: #b91c1c;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 760;
+      padding: 6px 8px;
+    }
+
+    .state-row {
+      display: none;
+      text-align: center;
+      padding: 10px 0 4px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      font-weight: 640;
+    }
+
+    .state-row.show {
+      display: block;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.22);
+      border-top-color: var(--primary-color);
+      margin: 0 auto 8px;
+      animation: spin 0.72s linear infinite;
+    }
+
+    .qr-wrap {
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(249, 253, 255, 0.7));
+      margin-top: 4px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 12px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .qr-img {
+      width: min(72vw, 250px);
+      max-width: 250px;
+      aspect-ratio: 1/1;
+      object-fit: contain;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: #fff;
+      padding: 2px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.14);
+    }
+
+    .error-box {
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.36);
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 650;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .error-box.show {
+      display: block;
+    }
+
+    .sw-status-wrap {
+      text-align: left;
+      display: grid;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .sw-status-label {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 760;
+      color: var(--text-muted);
+      line-height: 1.28;
+    }
+
+    .swal2-popup .sw-status-select {
+      width: 100% !important;
+      min-height: 50px !important;
+      height: 50px !important;
+      border-radius: 15px !important;
+      border: 1px solid rgba(100, 116, 139, 0.38) !important;
+      background-color: #ffffff !important;
+      background-image: var(--dd-arrow-light) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
+      color: var(--text-color) !important;
+      padding: 0 40px 0 14px !important;
+      font: inherit !important;
+      font-weight: 680 !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    .swal2-popup .sw-status-remark {
+      width: 100% !important;
+      min-height: 120px !important;
+      border-radius: 15px !important;
+      border: 1px solid rgba(100, 116, 139, 0.38) !important;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 251, 255, 0.78)) !important;
+      color: var(--text-color) !important;
+      padding: 11px 14px !important;
+      font: inherit !important;
+      font-weight: 560 !important;
+      line-height: 1.44 !important;
+      resize: vertical;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86), 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+    }
+
+    .swal2-popup .sw-status-select:focus,
+    .swal2-popup .sw-status-remark:focus {
+      outline: none !important;
+      border-color: rgba(10, 132, 255, 0.58) !important;
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2) !important;
+    }
+
+    body.dark-mode .swal2-popup .sw-status-select,
+    body.dark-mode .swal2-popup .sw-status-remark {
+      border-color: rgba(148, 163, 184, 0.44) !important;
+      background-color: rgba(20, 29, 43, 0.9) !important;
+      color: rgba(241, 245, 249, 0.96) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(2, 8, 20, 0.34) !important;
+    }
+
+    body.dark-mode .swal2-popup .sw-status-select {
+      background-image: var(--dd-arrow-dark) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
+    }
+
+    .thai-date-input {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .thai-date-input .form-control {
+      min-height: 52px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding-right: 44px;
+      padding-left: 16px;
+      font-weight: 650;
+      border: 1px solid var(--input-border);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.76));
+      color: var(--text-color);
+    }
+
+    .thai-date-input .cal-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    body.dark-mode .step-item {
+      border-color: rgba(74, 104, 139, 0.52);
+      background: linear-gradient(180deg, rgba(17, 33, 51, 0.96), rgba(12, 25, 40, 0.9));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.4);
+      color: rgba(216, 228, 245, 0.95);
+    }
+
+    body.dark-mode .step-item i {
+      color: rgba(160, 181, 208, 0.96);
+    }
+
+    body.dark-mode .step-item.done {
+      border-color: rgba(89, 161, 255, 0.56);
+      background: linear-gradient(180deg, rgba(34, 88, 156, 0.66), rgba(21, 60, 111, 0.58));
+      color: #d8e9ff;
+    }
+
+    body.dark-mode .step-item.done i {
+      color: #8fd0ff;
+    }
+
+    body.dark-mode .step-user-chip {
+      border-color: rgba(118, 168, 234, 0.52);
+      background: rgba(12, 29, 47, 0.88);
+      color: #d2e6ff;
+    }
+
+    body.dark-mode .step-user-chip .fallback {
+      background: rgba(64, 129, 213, 0.28);
+      border-color: rgba(139, 191, 250, 0.58);
+      color: #d9ecff;
+    }
+
+    body.dark-mode .storage-form,
+    body.dark-mode .storage-user,
+    body.dark-mode .qr-wrap,
+    body.dark-mode .thai-date-input .form-control {
+      border-color: rgba(148, 163, 184, 0.36);
+      background: linear-gradient(180deg, rgba(18, 28, 42, 0.84), rgba(14, 23, 35, 0.72));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 14px 30px rgba(2, 8, 20, 0.34);
+    }
+
+    body.dark-mode .storage-select {
+      background-color: rgba(20, 29, 43, 0.9) !important;
+      background-image: var(--dd-arrow-dark) !important;
+      background-repeat: no-repeat !important;
+      background-position: right 14px center !important;
+      background-size: 14px 14px !important;
+      border-color: rgba(148, 163, 184, 0.44) !important;
+      color: rgba(241, 245, 249, 0.96) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 10px 22px rgba(2, 8, 20, 0.34) !important;
+    }
+
+    body.dark-mode .storage-note {
+      color: #d1e9ff;
+      border-color: rgba(90, 200, 250, 0.44);
+      background: linear-gradient(180deg, rgba(10, 132, 255, 0.22), rgba(10, 132, 255, 0.1));
+    }
+
+    body.dark-mode .storage-form-title {
+      color: #eaf2ff;
+    }
+
+    body.dark-mode .storage-form-sub {
+      color: #b8c7dd;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .doc-page {
+        padding: 12px;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step-track {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .doc-page {
+        padding: 10px;
+      }
+
+      .doc-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .doc-id-kicker {
+        font-size: 0.72rem;
+      }
+
+      .doc-id-title {
+        font-size: 1.08rem;
+      }
+
+      .doc-id-sub {
+        font-size: 0.78rem;
+      }
+
+      .h-badge {
+        font-size: 0.7rem;
+        padding: 5px 9px;
+      }
+
+      .swal2-popup .sw-status-select {
+        min-height: 48px !important;
+        height: 48px !important;
+      }
+
+      .swal2-popup .sw-status-remark {
+        min-height: 108px !important;
+      }
+
+      .doc-body {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .section-title {
+        font-size: 0.86rem;
+      }
+
+      .info-group {
+        padding: 10px;
+        border-radius: 14px;
+      }
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .action-row .btn:not(.small-icon) {
+        width: 100%;
+      }
+
+      .step-track {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step-item {
+        min-height: 96px;
+      }
+
+      .storage-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .storage-cell-owner {
+        justify-self: start;
+        width: 100%;
+      }
+
+      .storage-fields {
+        grid-template-columns: 1fr;
+      }
+
+      .storage-submit-wrap .btn {
+        min-height: 48px;
+      }
+
+      .qr-wrap {
+        padding: 12px 10px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .doc-page {
+        padding: 8px;
+      }
+
+      .doc-body {
+        padding: 10px;
+      }
+
+      .step-track {
+        grid-template-columns: 1fr;
+      }
+
+      .step-item {
+        min-height: 88px;
+        padding: 8px 7px;
+      }
+
+      .qr-img {
+        width: min(86vw, 220px);
+      }
+    }
+  </style>
+</head>
+<body class="page-doc-view">
+  <div class="doc-page">
+    <div class="doc-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+    </div>
+
+    <div id="errBox" class="error-box"></div>
+
+    <div id="mainCard" class="main-card" style="display:none;">
+      <div class="header-bg">
+        <div class="doc-id-kicker">เลขที่หนังสือ</div>
+        <h2 id="docIdTitle" class="doc-id-title">-</h2>
+        <div id="docIdSub" class="doc-id-sub">-</div>
+        <div id="statusBadges" class="header-badges"></div>
+      </div>
+
+      <div class="doc-body">
+        <div id="actionButtons" class="action-row"></div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-info-circle"></i>ข้อมูลทั่วไป</h3>
+          <div id="generalInfo" class="grid-2"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-card-text"></i>รายละเอียด</h3>
+          <div id="detailInfo" class="grid-2"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-wallet2"></i>ประเภทเงินงบประมาณ</h3>
+          <div id="budgetSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-bookmark-star"></i>เลขที่หนังสือ</h3>
+          <div id="docNoSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-chat-left-text"></i>หมายเหตุ</h3>
+          <div id="remarkSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-list-check"></i>สถานะการดำเนินการ</h3>
+          <div class="info-group">
+            <div id="stepTrack" class="step-track"></div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-archive"></i>สถานะจัดเก็บ</h3>
+          <div id="storageStatusSection"></div>
+        </div>
+
+        <div>
+          <h3 class="section-title"><i class="bi bi-pencil-square"></i>การบันทึกจัดเก็บ</h3>
+          <div id="storageActionSection"></div>
+        </div>
+
+        <div id="successMsg" class="state-row">บันทึกสำเร็จ! ระบบกำลังรีโหลดข้อมูล...</div>
+        <div id="loadingMsg" class="state-row"><div class="spinner"></div><div>กำลังบันทึก...</div></div>
+
+        <div class="qr-wrap">
+          <p class="fw-bold small mb-2" style="color:var(--text-muted);"><i class="bi bi-qr-code me-1"></i>QR Code</p>
+          <img id="docQr" class="qr-img" alt="QR Document">
+          <div style="margin-top:10px;">
+            <button id="btnPrintSticker" type="button" class="btn outline"><i class="bi bi-printer"></i>พิมพ์ใบแปะหน้าเอกสาร</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js?v=20260221-6"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var q = C.parseQuery();
+      var docId = C.safeTrim(q.id || '');
+      var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
+
+      var state = {
+        settings: null,
+        api: null,
+        doc: null,
+        statusData: null,
+        members: [],
+        info: { locations: [], fiscalYears: [] },
+        memberImgMap: {},
+        memberPosMap: {},
+        currentUser: null
+      };
+
+      var els = {
+        btnBack: document.getElementById('btnBack'),
+        errBox: document.getElementById('errBox'),
+        mainCard: document.getElementById('mainCard'),
+        docIdTitle: document.getElementById('docIdTitle'),
+        docIdSub: document.getElementById('docIdSub'),
+        statusBadges: document.getElementById('statusBadges'),
+        actionButtons: document.getElementById('actionButtons'),
+        generalInfo: document.getElementById('generalInfo'),
+        detailInfo: document.getElementById('detailInfo'),
+        budgetSection: document.getElementById('budgetSection'),
+        docNoSection: document.getElementById('docNoSection'),
+        remarkSection: document.getElementById('remarkSection'),
+        stepTrack: document.getElementById('stepTrack'),
+        storageStatusSection: document.getElementById('storageStatusSection'),
+        storageActionSection: document.getElementById('storageActionSection'),
+        successMsg: document.getElementById('successMsg'),
+        loadingMsg: document.getElementById('loadingMsg'),
+        docQr: document.getElementById('docQr'),
+        btnPrintSticker: document.getElementById('btnPrintSticker')
+      };
+
+      function showError(message) {
+        var msg = C.safeTrim(message || '');
+        if (!msg) {
+          els.errBox.classList.remove('show');
+          els.errBox.textContent = '';
+          return;
+        }
+        els.errBox.textContent = msg;
+        els.errBox.classList.add('show');
+      }
+
+      function updateBrowserTitle(idValue) {
+        var id = C.safeTrim(idValue || '');
+        var page = id ? ('รายละเอียดเอกสาร • ' + id) : 'รายละเอียดเอกสาร';
+        document.title = page + ' | ' + APP_BROWSER_NAME;
+      }
+
+      function setBusy(isBusy) {
+        els.loadingMsg.classList.toggle('show', !!isBusy);
+      }
+
+      function showSuccessRow(text) {
+        els.successMsg.textContent = C.safeText(text || 'บันทึกสำเร็จ');
+        els.successMsg.classList.add('show');
+        setTimeout(function () {
+          els.successMsg.classList.remove('show');
+        }, 2200);
+      }
+
+      function mapMemberData(members) {
+        var imgMap = {};
+        var posMap = {};
+        var list = Array.isArray(members) ? members : [];
+
+        for (var i = 0; i < list.length; i++) {
+          var m = list[i] || {};
+          var name = C.safeTrim(m.name || '');
+          if (!name) continue;
+          var lower = name.toLowerCase();
+          var img = C.safeTrim(m.image || '');
+          var pos = C.safeTrim(m.position || '');
+          if (img) {
+            imgMap[name] = img;
+            imgMap[lower] = img;
+          }
+          if (pos) {
+            posMap[name] = pos;
+            posMap[lower] = pos;
+          }
+        }
+
+        state.memberImgMap = imgMap;
+        state.memberPosMap = posMap;
+      }
+
+      function statusBadge(docStatus) {
+        var st = C.safeTrim(docStatus || '');
+        if (st === 'ยกเลิก') return '<span class="h-badge red"><i class="bi bi-x-circle"></i>ยกเลิก</span>';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="h-badge gray"><i class="bi bi-arrow-return-left"></i>ส่งคืนฯ</span>';
+        if (st === 'กำลังดำเนินการ') return '<span class="h-badge info"><i class="bi bi-hourglass-split"></i>กำลังดำเนินการ</span>';
+        if (st === 'มอบผู้รับผิดชอบ') return '<span class="h-badge pink"><i class="bi bi-person-check"></i>มอบผู้รับผิดชอบ</span>';
+        return '<span class="h-badge success"><i class="bi bi-check-circle"></i>ดำเนินการเสร็จ</span>';
+      }
+
+      function storageBadge(isStored, docStatus) {
+        var st = C.safeTrim(docStatus || '');
+        if (isStored) return '<span class="h-badge info"><i class="bi bi-archive"></i>จัดเก็บแล้ว</span>';
+        if (st === 'ดำเนินการเสร็จ') {
+          return '<span class="h-badge warn"><i class="bi bi-clock"></i>รอจัดเก็บ</span>';
+        }
+        return '';
+      }
+
+      function userAvatar(name, fallbackColor, fallbackTextColor) {
+        var n = C.safeTrim(name || '');
+        var img = state.memberImgMap[n] || state.memberImgMap[n.toLowerCase()] || '';
+        if (img) {
+          return '<img src="' + C.escapeHtml(img) + '" alt="u">';
+        }
+        var first = (n.charAt(0) || '?').toUpperCase();
+        return '<span class="fallback" style="background:' + (fallbackColor || 'rgba(10,132,255,0.12)') + ';color:' + (fallbackTextColor || '#007AFF') + ';">' + C.escapeHtml(first) + '</span>';
+      }
+
+      function goEdit() {
+        if (!state.doc) return;
+        C.redirect('document-form.html', { mode: 'edit', id: state.doc.docId || docId });
+      }
+
+      function goDuplicate() {
+        if (!state.doc) return;
+        var sourceId = C.safeTrim(state.doc.docId || docId || '');
+        if (!sourceId) return;
+        C.redirect('document-form.html', { copyFrom: sourceId });
+      }
+
+      function goStatus() {
+        if (!state.doc) return;
+        C.redirect('document-status.html', { id: state.doc.docId || docId });
+      }
+
+      function goScanner() {
+        C.redirect('storage-box-scan.html');
+      }
+
+      function getDocQrUrl() {
+        var targetDocId = C.safeTrim((state.doc && state.doc.docId) || docId || '');
+        var target = C.buildPageUrl('document-view.html', { id: targetDocId });
+        try {
+          target = new URL(target, window.location.href).toString();
+        } catch (_ignore) {}
+        if (typeof window.appendSessionKeysToUrl === 'function') {
+          target = window.appendSessionKeysToUrl(target);
+        } else if (state.settings && C.safeTrim(state.settings.deviceKey || '')) {
+          target += (target.indexOf('?') >= 0 ? '&' : '?') + 'dk=' + encodeURIComponent(C.safeTrim(state.settings.deviceKey || ''));
+        }
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&margin=0&qzone=2&ecc=Q&data=' + encodeURIComponent(target);
+      }
+
+      function infoItem(label, value) {
+        return '<div class="info-group"><p class="info-label">' + C.escapeHtml(label) + '</p><p class="info-value">' + C.escapeHtml(C.safeText(value || '-') || '-') + '</p></div>';
+      }
+
+      function renderActionButtons(isReadOnly) {
+        if (isReadOnly) {
+          els.actionButtons.innerHTML = '<div class="readonly-box"><i class="bi bi-eye me-1"></i>บัญชีผู้มีสิทธิ์อ่าน: ดูข้อมูลได้เท่านั้น</div>';
+          return;
+        }
+
+        var html = '';
+        html += '<button type="button" class="btn outline" id="btnGoEdit"><i class="bi bi-pencil"></i>แก้ไข</button>';
+        html += '<button type="button" class="btn primary" id="btnGoDuplicate"><i class="bi bi-files"></i>คัดลอกสำเนา</button>';
+        html += '<button type="button" class="btn green" id="btnGoStatus"><i class="bi bi-list-check"></i>จัดการสถานะ</button>';
+        html += '<button type="button" class="btn gray" id="btnChangeMainStatus"><i class="bi bi-arrow-repeat"></i>เปลี่ยนสถานะ</button>';
+
+        els.actionButtons.innerHTML = html;
+
+        document.getElementById('btnGoEdit').addEventListener('click', goEdit);
+        document.getElementById('btnGoDuplicate').addEventListener('click', goDuplicate);
+        document.getElementById('btnGoStatus').addEventListener('click', goStatus);
+        document.getElementById('btnChangeMainStatus').addEventListener('click', changeMainStatus);
+      }
+
+      function renderGeneralInfo(doc) {
+        var html = '';
+        html += infoItem('เลขที่รับ', doc.receiveNo || '-');
+        html += infoItem('วันที่รับ', doc.dateRecDisplay || '-');
+        html += infoItem('เวลา', (doc.timeRec || '-') + ' น.');
+        html += infoItem('ลงวันที่', doc.datedDisplay || '-');
+        html += infoItem('เลขที่ สธ. (กลุ่มงาน)', doc.docNoSdh || '-');
+        html += infoItem('สถานะหลัก', doc.docStatus || '-');
+        els.generalInfo.innerHTML = html;
+      }
+
+      function renderDetailInfo(doc) {
+        var html = '';
+
+        html += '<div class="info-group row-full">';
+        html += '<p class="info-label">เรื่อง</p>';
+        html += '<p class="info-value subject-value">' + C.escapeHtml(doc.subject || '-') + '</p>';
+        html += '</div>';
+
+        html += infoItem('กลุ่ม/ศูนย์', doc.group || '-');
+        html += infoItem('ชื่อผู้ส่ง/ผู้ยืม/ผู้ใช้หนี้/ผู้ประสานงาน', doc.sender || '-');
+        html += infoItem('วัตถุประสงค์', doc.purpose || '-');
+        html += infoItem('จำนวนเบิก/ยืม/คืน', C.fmtMoney(doc.amount || '-'));
+        html += infoItem('ส่วนต่าง/เงินเหลือคืน', C.fmtMoney(doc.difference || '-'));
+
+        els.detailInfo.innerHTML = html;
+      }
+
+      function renderBudgetSection(doc) {
+        var budgetType = C.safeTrim(doc.budgetType || '') || '-';
+        var isPlan = budgetType === 'เงินงบประมาณ';
+
+        var html = '';
+        html += '<div class="info-group budget-highlight">';
+        html += '<p class="info-label">ประเภทเงินงบประมาณ</p>';
+        html += '<p class="info-value">' + C.escapeHtml(budgetType) + '</p>';
+
+        if (isPlan) {
+          html += '<div class="grid-2" style="margin-top:8px;">';
+          html += infoItem('ผลผลิต', doc.prod || '-');
+          html += infoItem('กิจกรรมหลัก', doc.mainAct || '-');
+          html += infoItem('โครงการย่อย', doc.subProject || '-');
+          html += infoItem('กิจกรรมย่อย', doc.activity || '-');
+          html += '</div>';
+        }
+
+        html += '</div>';
+        els.budgetSection.innerHTML = html;
+      }
+
+      function renderDocNoSection(doc, isReadOnly) {
+        var amText = C.safeTrim(doc.amDocNo || '');
+        var anText = C.safeTrim(doc.anDateDisplay || '-') || '-';
+
+        var html = '';
+        html += '<div class="grid-2">';
+
+        html += '<div class="info-group">';
+        html += '<p class="info-label">เลขที่หนังสือส่งกองคลัง</p>';
+        html += '<div class="action-row" style="margin-top:4px;">';
+        html += '<p class="info-value" style="margin:0;">' + (amText ? C.escapeHtml(amText) : '<span class="muted-value">ยังไม่ได้กรอก</span>') + '</p>';
+        if (!isReadOnly) {
+          html += '<button type="button" class="btn outline small-icon" id="btnEditAm"><i class="bi bi-pencil-fill"></i></button>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="info-group">';
+        html += '<p class="info-label">ลงวันที่ดำเนินการ</p>';
+        html += '<div class="action-row" style="margin-top:4px;">';
+        html += '<p class="info-value" style="margin:0;">' + C.escapeHtml(anText) + '</p>';
+        if (!isReadOnly) {
+          html += '<button type="button" class="btn outline small-icon" id="btnEditAn"><i class="bi bi-pencil-fill"></i></button>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+
+        els.docNoSection.innerHTML = html;
+
+        if (!isReadOnly) {
+          var btnAm = document.getElementById('btnEditAm');
+          var btnAn = document.getElementById('btnEditAn');
+          if (btnAm) {
+            btnAm.addEventListener('click', function () {
+              editAmDocNo();
+            });
+          }
+          if (btnAn) {
+            btnAn.addEventListener('click', function () {
+              editAnDate();
+            });
+          }
+        }
+      }
+
+      function renderRemarkSection(doc) {
+        var text = C.safeTrim(doc.statusRemark || '');
+        if (!text) {
+          els.remarkSection.innerHTML = '<div class="info-group"><p class="info-value muted-value">ไม่มีหมายเหตุ</p></div>';
+          return;
+        }
+        els.remarkSection.innerHTML = '<div class="info-group"><p class="info-value">' + C.escapeHtml(text) + '</p></div>';
+      }
+
+      function renderStepTrack(statusData) {
+        var steps = [
+          { key: 'return', label: 'ส่งกลับแก้ไข', done: !!statusData.returnCheck, date: statusData.returnDateDisplay, user: statusData.returnUser },
+          { key: 'receiveBack', label: 'รับคืนเอกสาร', done: !!statusData.receiveBackCheck, date: statusData.receiveBackDateDisplay, user: statusData.receiveBackUser },
+          { key: 'verify', label: 'ตรวจสอบ', done: !!statusData.verifyCheck, date: statusData.verifyDateDisplay, user: statusData.verifyUser },
+          { key: 'boss', label: 'หัวหน้าผ่านงาน', done: !!statusData.bossCheck, date: statusData.bossDateDisplay, user: statusData.bossUser },
+          { key: 'sign', label: 'เสนอลงนาม', done: !!statusData.signCheck, date: statusData.signDateDisplay, user: statusData.signUser }
+        ];
+
+        var html = '';
+
+        for (var i = 0; i < steps.length; i++) {
+          var s = steps[i];
+          html += '<div class="step-item ' + (s.done ? 'done' : '') + '">';
+          html += s.done ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-circle"></i>';
+          html += '<div>' + C.escapeHtml(s.label) + '</div>';
+
+          if (s.done) {
+            html += '<div style="font-size:0.68rem;">' + C.escapeHtml(C.safeText(s.date || '-') || '-') + '</div>';
+            var uname = C.safeTrim(s.user || '');
+            if (uname) {
+              html += '<span class="step-user-chip">';
+              html += userAvatar(uname, 'rgba(34,197,94,0.18)', '#166534');
+              html += '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + C.escapeHtml(uname) + '</span>';
+              html += '</span>';
+            }
+          }
+
+          html += '</div>';
+        }
+
+        els.stepTrack.innerHTML = html;
+      }
+
+      function renderStorageStatus(doc) {
+        var isStored = !!doc.isStored;
+        var storageHtml = '';
+
+        if (!isStored) {
+          storageHtml += '<div class="info-group storage-status-empty">';
+          storageHtml += '<p class="info-label">สถานที่เก็บ</p>';
+          storageHtml += '<h4 class="storage-status-empty-title">ยังไม่ได้จัดเก็บ</h4>';
+          storageHtml += '</div>';
+          els.storageStatusSection.innerHTML = storageHtml;
+          return;
+        }
+
+        var storedLoc = C.safeTrim(doc.storedLoc || '-') || '-';
+        var storedAt = C.safeTrim(doc.storedAtDisplay || '-') || '-';
+        var destroyDate = C.safeTrim(doc.destroyDateDisplay || '-') || '-';
+        var storedUser = C.safeTrim(doc.storedUser || '-') || '-';
+        var fiscal = C.safeTrim(doc.fiscalYear || '-') || '-';
+        var pos = state.memberPosMap[storedUser] || state.memberPosMap[storedUser.toLowerCase()] || '';
+
+        storageHtml += '<div class="info-group storage-status-ok">';
+        storageHtml += '<p class="info-label">สถานที่เก็บ</p>';
+        storageHtml += '<h4 class="storage-status-title">' + C.escapeHtml(storedLoc) + '</h4>';
+
+        storageHtml += '<div class="storage-detail">';
+        storageHtml += '<span class="chip">ปีงบฯ ' + C.escapeHtml(fiscal) + '</span>';
+        storageHtml += '<div class="storage-grid">';
+        storageHtml += '<div class="storage-cell"><small class="storage-meta-label">วันที่จัดเก็บ</small><strong class="storage-meta-value">' + C.escapeHtml(storedAt) + '</strong></div>';
+        storageHtml += '<div class="storage-cell storage-cell-owner"><small class="storage-meta-label">ผู้จัดเก็บ</small><div class="storage-owner">';
+        storageHtml += userAvatar(storedUser, 'rgba(34,197,94,0.18)', '#166534');
+        storageHtml += '<div class="storage-owner-text"><strong class="storage-owner-name">' + C.escapeHtml(storedUser) + '</strong>';
+        if (pos) {
+          storageHtml += '<small class="storage-owner-pos">' + C.escapeHtml(pos) + '</small>';
+        }
+        storageHtml += '</div></div></div>';
+        storageHtml += '</div>';
+        storageHtml += '<div class="destroy-line"><i class="bi bi-clock-history me-1"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(destroyDate) + '</div>';
+        storageHtml += '</div>';
+        storageHtml += '</div>';
+
+        els.storageStatusSection.innerHTML = storageHtml;
+      }
+
+      function buildStorageAction(doc, isReadOnly) {
+        var status = C.safeTrim(doc.docStatus || '');
+        var isStored = !!doc.isStored;
+        var isCancelled = status === 'ยกเลิก';
+        var isReturned = status === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง';
+        var isInProgress = status === 'กำลังดำเนินการ';
+        var isAssigned = status === 'มอบผู้รับผิดชอบ';
+
+        if (isReadOnly) {
+          return '<div class="readonly-box"><i class="bi bi-eye me-1"></i>สิทธิ์อ่านเท่านั้น ไม่สามารถบันทึกจัดเก็บหรือแก้ไขข้อมูลได้</div>';
+        }
+
+        if (isCancelled) {
+          return '<div class="notice-box red"><i class="bi bi-ban me-1"></i>เอกสารถูกยกเลิก ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
+
+        if (isReturned) {
+          return '<div class="notice-box gray"><i class="bi bi-arrow-return-left me-1"></i>อนุมัติแล้วส่งคืนเจ้าของเรื่อง ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
+
+        if (isInProgress) {
+          return '<div class="notice-box blue"><i class="bi bi-hourglass-split me-1"></i>เอกสารต้องเปลี่ยนเป็นสถานะ "ดำเนินการเสร็จ" ก่อนจึงจะจัดเก็บได้</div>';
+        }
+
+        if (isAssigned) {
+          return '<div class="notice-box pink"><i class="bi bi-person-check me-1"></i>สถานะมอบผู้รับผิดชอบ ไม่สามารถบันทึกจัดเก็บได้</div>';
+        }
+
+        if (isStored) {
+          return '<div class="notice-box green"><i class="bi bi-check-circle-fill me-1"></i>จัดเก็บเรียบร้อยแล้ว</div>';
+        }
+
+        var locations = Array.isArray(state.info.locations) ? state.info.locations : [];
+        var fiscalYears = Array.isArray(state.info.fiscalYears) ? state.info.fiscalYears : [];
+
+        var locHtml = '<option value="" selected disabled>เลือกสถานที่เก็บ...</option>';
+        for (var i = 0; i < locations.length; i++) {
+          locHtml += '<option value="' + C.escapeHtml(locations[i]) + '">' + C.escapeHtml(locations[i]) + '</option>';
+        }
+
+        var fiscalHtml = '<option value="" selected disabled>เลือกปีงบประมาณ...</option>';
+        for (var f = 0; f < fiscalYears.length; f++) {
+          fiscalHtml += '<option value="' + C.escapeHtml(fiscalYears[f]) + '">' + C.escapeHtml(fiscalYears[f]) + '</option>';
+        }
+
+        var userName = C.safeTrim((state.currentUser && (state.currentUser.displayName || state.currentUser.username)) || '');
+        var userPos = C.safeTrim((state.currentUser && state.currentUser.position) || '') || 'ผู้ใช้งานระบบ';
+
+        var html = '';
+        html += '<div class="storage-form" id="formContainer">';
+        html += '<div class="storage-form-head">';
+        html += '<div>';
+        html += '<h4 class="storage-form-title"><i class="bi bi-pencil-square"></i>บันทึกการจัดเก็บ</h4>';
+        html += '<p class="storage-form-sub">เลือกสถานที่และปีงบประมาณให้ครบก่อนบันทึก</p>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="storage-fields">';
+        html += '<div class="storage-field">';
+        html += '<label class="info-label">สถานที่จัดเก็บ</label>';
+        html += '<select id="locationSelect" class="form-select storage-select">' + locHtml + '</select>';
+        html += '</div>';
+        html += '<div class="storage-field">';
+        html += '<label class="info-label">ปีงบประมาณ (ของเอกสาร)</label>';
+        html += '<select id="fiscalSelect" class="form-select storage-select">' + fiscalHtml + '</select>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="storage-field">';
+        html += '<label class="info-label">ผู้บันทึกข้อมูล (ผู้ที่ล็อกอิน)</label>';
+        html += '<div class="storage-user">';
+        html += userAvatar(userName, 'rgba(10,132,255,0.12)', '#007AFF');
+        html += '<div class="storage-user-copy"><div class="storage-user-name">' + C.escapeHtml(userName || '-') + '</div>';
+        html += '<div class="storage-user-role">' + C.escapeHtml(userPos) + '</div></div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="storage-note"><i class="bi bi-info-circle me-1"></i>ระบบจะคำนวณวันครบกำหนดทำลายอัตโนมัติจากวันจัดเก็บ + 10 ปี</div>';
+        html += '<div class="storage-submit-wrap">';
+        html += '<button type="button" class="btn primary" id="btnSaveStorage"><i class="bi bi-save-fill"></i>บันทึกจัดเก็บ</button>';
+        html += '</div>';
+        html += '</div>';
+
+        return html;
+      }
+
+      function bindStorageActionEvents(doc) {
+        var btn = document.getElementById('btnSaveStorage');
+        if (!btn) return;
+
+        btn.addEventListener('click', function () {
+          submitStorage(doc).catch(function (err) {
+            Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+          });
+        });
+      }
+
+      function renderDocument() {
+        var doc = state.doc || {};
+        var statusData = state.statusData || {};
+        var isReadOnly = !!doc.isReadOnlyUser;
+        updateBrowserTitle(doc.docId || docId);
+
+        els.docIdTitle.textContent = doc.docId || '-';
+        els.docIdSub.textContent = C.safeTrim(doc.docNoSdh || '') ? ('สธ ' + C.safeText(doc.docNoSdh || '')) : '-';
+        els.statusBadges.innerHTML = statusBadge(doc.docStatus) + storageBadge(!!doc.isStored, doc.docStatus);
+
+        renderActionButtons(isReadOnly);
+        renderGeneralInfo(doc);
+        renderDetailInfo(doc);
+        renderBudgetSection(doc);
+        renderDocNoSection(doc, isReadOnly);
+        renderRemarkSection(doc);
+        renderStepTrack(statusData);
+        renderStorageStatus(doc);
+
+        els.storageActionSection.innerHTML = buildStorageAction(doc, isReadOnly);
+        bindStorageActionEvents(doc);
+
+        els.docQr.src = getDocQrUrl();
+      }
+
+      async function changeMainStatus() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขหรือจัดการเอกสารได้' });
+          return;
+        }
+
+        var result = await Swal.fire({
+          title: 'เปลี่ยนสถานะเอกสาร',
+          width: 'min(560px, calc(100vw - 24px))',
+          html: ''
+            + '<div class="sw-status-wrap">'
+            + '<label class="sw-status-label">สถานะเอกสาร</label>'
+            + '<select id="swMainStatus" class="form-control sw-status-select">'
+            + '<option value="">-- เลือกสถานะ --</option>'
+            + '<option value="ดำเนินการเสร็จ">ดำเนินการเสร็จ</option>'
+            + '<option value="กำลังดำเนินการ">กำลังดำเนินการ</option>'
+            + '<option value="มอบผู้รับผิดชอบ">มอบผู้รับผิดชอบ</option>'
+            + '<option value="ยกเลิก">ยกเลิก</option>'
+            + '<option value="อนุมัติแล้วส่งคืนเจ้าของเรื่อง">อนุมัติแล้วส่งคืนเจ้าของเรื่อง</option>'
+            + '</select>'
+            + '<label class="sw-status-label" style="margin-top:2px;">หมายเหตุ (ไม่บังคับ)</label>'
+            + '<textarea id="swStatusRemark" class="form-control sw-status-remark" rows="4" placeholder="กรอกหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>'
+            + '</div>',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonText: 'บันทึก',
+          confirmButtonColor: '#007AFF',
+          preConfirm: function () {
+            var st = C.safeTrim((document.getElementById('swMainStatus') || {}).value || '');
+            var note = C.safeTrim((document.getElementById('swStatusRemark') || {}).value || '');
+            if (!st) {
+              Swal.showValidationMessage('กรุณาเลือกสถานะเอกสาร');
+              return false;
+            }
+            return { status: st, remark: note };
+          }
+        });
+
+        if (!result || !result.isConfirmed || !result.value) return;
+
+        setBusy(true);
+        try {
+          var res = await state.api.docChangeMainStatus(state.doc.docId, result.value.status, result.value.remark || '');
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'เปลี่ยนสถานะสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      async function editAmDocNo() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขได้' });
+          return;
+        }
+
+        var result = await Swal.fire({
+          title: 'เพิ่มเลขที่หนังสือส่งกองคลัง',
+          input: 'text',
+          inputPlaceholder: 'กรอกเลขที่หนังสือ',
+          inputValue: C.safeText(state.doc.amDocNo || ''),
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonText: 'บันทึก',
+          confirmButtonColor: '#007AFF'
+        });
+
+        if (!result || !result.isConfirmed) return;
+
+        setBusy(true);
+        try {
+          var res = await state.api.docUpdateField(state.doc.docId, 'amDocNo', C.safeText(result.value || ''));
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      async function editAnDate() {
+        if (!state.doc || state.doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถแก้ไขได้' });
+          return;
+        }
+
+        var tempDateId = 'tempAnDate' + Date.now();
+        var result = await Swal.fire({
+          title: 'แก้ไขลงวันที่ดำเนินการ',
+          html: ''
+            + '<div class="thai-date-input" onclick="openCalendar(\'' + tempDateId + '\')" style="margin-top:12px;">'
+            + '<input type="hidden" id="' + tempDateId + '" value="' + C.escapeHtml(C.safeTrim(state.doc.anDateInput || '')) + '">'
+            + '<div class="form-control" id="' + tempDateId + 'Display" style="color:var(--text-muted);">เลือกวันที่...</div>'
+            + '<i class="bi bi-calendar3 cal-icon"></i>'
+            + '</div>',
+          showCancelButton: true,
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonText: 'บันทึก',
+          confirmButtonColor: '#007AFF',
+          didOpen: function () {
+            if (typeof window.updDD === 'function') {
+              window.updDD(tempDateId);
+            }
+          },
+          preConfirm: function () {
+            var v = C.safeTrim((document.getElementById(tempDateId) || {}).value || '');
+            if (!v) {
+              Swal.showValidationMessage('กรุณาเลือกวันที่');
+              return false;
+            }
+            return v;
+          }
+        });
+
+        if (!result || !result.isConfirmed || !result.value) return;
+
+        setBusy(true);
+        try {
+          var res = await state.api.docUpdateField(state.doc.docId, 'anDate', result.value);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      async function submitStorage(doc) {
+        if (!doc || doc.isReadOnlyUser) {
+          Swal.fire({ icon: 'warning', title: 'สิทธิ์ไม่เพียงพอ', text: 'บัญชีผู้มีสิทธิ์อ่าน ไม่สามารถบันทึกจัดเก็บได้' });
+          return;
+        }
+
+        var loc = C.safeTrim((document.getElementById('locationSelect') || {}).value || '');
+        var fiscal = C.safeTrim((document.getElementById('fiscalSelect') || {}).value || '');
+        if (!loc || !fiscal) {
+          Swal.fire('กรอกข้อมูลไม่ครบ', 'กรุณาเลือกสถานที่จัดเก็บและปีงบประมาณ', 'warning');
+          return;
+        }
+
+        var today = new Date();
+        var destroyDate = new Date(today);
+        destroyDate.setFullYear(destroyDate.getFullYear() + 10);
+        var destroyDateStr = destroyDate.getFullYear() + '-' + String(destroyDate.getMonth() + 1).padStart(2, '0') + '-' + String(destroyDate.getDate()).padStart(2, '0');
+
+        var form = document.getElementById('formContainer');
+        if (form) form.style.display = 'none';
+
+        setBusy(true);
+        try {
+          var res = await state.api.saveStorageData(doc.docId, loc, '', fiscal, destroyDateStr);
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'บันทึกไม่สำเร็จ');
+          }
+
+          showSuccessRow('บันทึกสำเร็จ! ระบบกำลังรีโหลดข้อมูล...');
+          await Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ', confirmButtonColor: '#007AFF' });
+          await loadDetail();
+        } catch (err) {
+          if (form) form.style.display = 'block';
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
+        }
+        setBusy(false);
+      }
+
+      function printDocSticker() {
+        if (!state.doc) return;
+
+        var d = state.doc;
+        var docQr = getDocQrUrl();
+
+        var w = window.open('', '', 'width=940,height=1200');
+        if (!w) {
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
+          return;
+        }
+
+        function row(label, val) {
+          return '<tr><td class="head">' + C.escapeHtml(label) + '</td><td>' + C.escapeHtml(C.safeText(val || '-') || '-') + '</td></tr>';
+        }
+
+        function moneyText(value) {
+          var txt = C.fmtMoney(value);
+          return txt === '-' ? '-' : (txt + ' บาท');
+        }
+
+        var projectPlan = '-';
+        if (C.safeTrim(d.budgetType || '') === 'เงินงบประมาณ') {
+          projectPlan = 'ผลผลิต ' + C.safeText(d.prod || '-') + ' กิจกรรมหลัก ' + C.safeText(d.mainAct || '-') + ' โครงการย่อย ' + C.safeText(d.subProject || '-') + ' กิจกรรมย่อย ' + C.safeText(d.activity || '-');
+        }
+
+        var h = '';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ใบแปะหน้าเอกสาร</title>';
+        h += '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 portrait;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:0;background:#fff;color:#0F172A}.sheet{max-width:194mm;margin:0 auto;min-height:calc(297mm - 16mm);display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:12px}.label{width:100%;border:2px solid #0F172A;border-radius:18px;padding:10px 12px;background:#fff}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.title{font-size:18pt;font-weight:900;line-height:1.15}.subtitle{font-size:10pt;color:#334155;margin-top:2px}.qr-box{width:48mm;height:48mm;padding:2px;border:1px solid #CBD5E1;border-radius:12px;background:#fff;overflow:hidden;flex-shrink:0}.qr-box img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}.meta{width:100%;border-collapse:collapse;margin-top:10px}.meta td{border:1px solid #CBD5E1;padding:6px 8px;font-size:10.5pt;vertical-align:top}.meta td.head{width:34%;background:#F8FAFC;font-weight:800;color:#334155}.subject{margin-top:10px;border:1px solid #CBD5E1;border-radius:12px;padding:8px 10px;background:#F8FAFC}.subject .head{font-size:8pt;color:#475569;font-weight:800;margin-bottom:4px}.subject .txt{font-size:10.5pt;line-height:1.4}.foot{margin-top:8px;font-size:8.5pt;color:#64748B;text-align:right}.no-print{text-align:center;margin-top:0}.no-print button{padding:10px 28px;border:none;border-radius:999px;background:#0A84FF;color:#fff;font-weight:900;font-size:12pt}.no-print button:hover{filter:brightness(1.04)}@media print{html,body{width:210mm;height:297mm;overflow:hidden}body{display:grid;place-items:center;padding:0!important}.sheet{max-width:194mm;width:194mm;min-height:0!important;display:block!important;margin:0 auto!important;gap:0!important}.label{page-break-inside:avoid;break-inside:avoid}.no-print{display:none!important}}</style>';
+        h += '</head><body>';
+        h += '<div class="sheet"><div class="label">';
+        h += '<div class="top"><div><div class="title">ใบแปะหน้าเอกสาร</div><div class="subtitle">ใช้สแกนเพื่อเข้าหน้าเอกสารและติดตามสถานะ</div></div><div class="qr-box"><img src="' + C.escapeHtml(docQr) + '" alt="QR"></div></div>';
+        h += '<table class="meta">';
+        h += row('เลขที่เอกสาร', d.docId || '-');
+        h += row('เลขที่รับ', d.receiveNo || '-');
+        h += row('เลขที่ สธ. (กลุ่มงาน)', d.docNoSdh || '-');
+        h += row('เลขที่หนังสือส่งกองคลัง', d.amDocNo || '-');
+        h += row('วันที่รับเอกสาร', d.dateRecDisplay || '-');
+        h += row('กลุ่ม/ศูนย์', d.group || '-');
+        h += row('ผู้ส่ง', d.sender || '-');
+        h += row('วัตถุประสงค์', d.purpose || '-');
+        h += row('จำนวนเบิก/ยืม/คืน', moneyText(d.amount));
+        h += row('ส่วนต่าง/เงินเหลือคืน', moneyText(d.difference));
+        h += row('ประเภทเงินงบประมาณ', d.budgetType || '-');
+        if (projectPlan !== '-') {
+          h += row('แผนโครงการ', projectPlan);
+        }
+        h += row('สถานะปัจจุบัน', d.docStatus || '-');
+        h += '</table>';
+        h += '<div class="subject"><div class="head">เรื่อง</div><div class="txt">' + C.escapeHtml(d.subject || '-') + '</div></div>';
+        h += '<div class="foot">พิมพ์เมื่อ: ' + C.escapeHtml(new Date().toLocaleString('th-TH')) + '</div>';
+        h += '</div><div class="no-print"><button onclick="window.print()">พิมพ์ใบแปะหน้าเอกสาร</button></div></div>';
+        h += '</body></html>';
+
+        w.document.write(h);
+        w.document.close();
+      }
+
+      async function loadDetail() {
+        showError('');
+
+        var res = await Promise.all([
+          state.api.docDetail(docId),
+          state.api.optionsMembers(),
+          state.api.optionsInfo(),
+          state.api.me()
+        ]);
+
+        var detailRes = res[0] || {};
+        var membersRes = res[1] || {};
+        var infoRes = res[2] || {};
+        var meRes = res[3] || {};
+
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
+        }
+
+        if (!detailRes || detailRes.success === false || !detailRes.doc) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: docId,
+            back: 'index.html'
+          }, true);
+          return false;
+        }
+
+        state.currentUser = meRes.user;
+        state.doc = detailRes.doc;
+        state.statusData = detailRes.statusData || {};
+        state.members = Array.isArray(membersRes.data) ? membersRes.data : [];
+        state.info = (infoRes && infoRes.data && typeof infoRes.data === 'object') ? infoRes.data : { locations: [], fiscalYears: [] };
+
+        mapMemberData(state.members);
+        renderDocument();
+        els.mainCard.style.display = 'block';
+        return true;
+      }
+
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('index.html');
+        });
+
+        els.btnPrintSticker.addEventListener('click', printDocSticker);
+      }
+
+      async function init() {
+        if (!docId) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบเอกสาร',
+            detail: '',
+            back: 'index.html'
+          }, true);
+          return;
+        }
+
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          showError('กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน');
+          return;
+        }
+
+        bindEvents();
+        updateBrowserTitle(docId);
+
+        try {
+          var ok = await loadDetail();
+          if (!ok) return;
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'โหลดข้อมูลเอกสารไม่สำเร็จ');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

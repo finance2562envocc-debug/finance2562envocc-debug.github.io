@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ตรวจสอบผลงาน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-17">
+  <style>
+    .insp-page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px;
+      --ins-control-height: 52px;
+      --ins-adv-control-height: 60px;
+    }
+
+    .insp-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .hero-icon {
+      width: 66px;
+      height: 66px;
+      border-radius: 20px;
+      margin: 0 auto 12px;
+      background: linear-gradient(145deg, #66baff 0%, #3196fb 42%, #1f79f0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.7rem;
+      box-shadow: 0 18px 36px rgba(10, 132, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 1.42rem;
+      font-weight: 840;
+      color: var(--text-color);
+    }
+
+    .hero-sub {
+      margin: 4px 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 620;
+    }
+
+    .inspector-card {
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: 22px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 252, 255, 0.68));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 14px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .filter-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 840;
+      color: var(--text-color);
+      margin-bottom: 10px;
+    }
+
+    .row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .row.three {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 184px;
+      align-items: end;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.8rem;
+      font-weight: 760;
+      color: var(--text-muted);
+    }
+
+    .page-inspector .form-control,
+    .page-inspector .form-select {
+      width: 100%;
+      min-height: var(--ins-control-height);
+      height: var(--ins-control-height);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background-color: #ffffff;
+      color: var(--text-color);
+      font: inherit;
+      font-size: 1rem;
+      line-height: 1.2;
+      padding: 0 16px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 600;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px var(--primary-color-soft);
+    }
+
+    .page-inspector .form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 42px;
+      background-image: var(--dd-arrow-light);
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 14px 14px;
+    }
+
+    .page-inspector input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .page-inspector input[type="number"]::-webkit-outer-spin-button,
+    .page-inspector input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .page-inspector .search-btn,
+    .page-inspector .print-btn,
+    .page-inspector .adv-btn,
+    .page-inspector .light-btn {
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      border-radius: 999px;
+      min-height: var(--ins-control-height);
+      height: var(--ins-control-height);
+      padding: 0 18px;
+      font: inherit;
+      font-weight: 820;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.24s ease, box-shadow 0.28s ease, border-color 0.22s ease;
+      backdrop-filter: blur(14px) saturate(170%);
+      -webkit-backdrop-filter: blur(14px) saturate(170%);
+    }
+
+    .page-inspector .search-btn {
+      color: #fff;
+      border-color: rgba(10, 132, 255, 0.34);
+      background: linear-gradient(180deg, rgba(68, 165, 255, 0.96), rgba(10, 132, 255, 0.96), rgba(0, 113, 227, 0.96));
+      box-shadow: 0 12px 28px rgba(10, 132, 255, 0.26);
+      min-width: 0;
+      width: 100%;
+      border-radius: 16px !important;
+    }
+
+    .page-inspector .row.three > .search-btn {
+      align-self: end;
+    }
+
+    .search-btn:hover,
+    .print-btn:hover,
+    .adv-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .adv-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .adv-btn {
+      border: 1px solid rgba(37, 99, 235, 0.42);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(228, 242, 255, 0.72));
+      color: #0c4a6e;
+      box-shadow: 0 10px 22px rgba(10, 132, 255, 0.14);
+    }
+
+    .adv-badge {
+      display: none;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.77rem;
+      font-weight: 780;
+      background: rgba(10, 132, 255, 0.14);
+      border: 1px solid rgba(10, 132, 255, 0.32);
+      color: #075985;
+    }
+
+    .stat-box {
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(10, 132, 255, 0.16), rgba(10, 132, 255, 0.07));
+      border: 1px solid rgba(10, 132, 255, 0.22);
+      text-align: center;
+    }
+
+    .stat-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stat-number {
+      font-size: 2.4rem;
+      font-weight: 900;
+      line-height: 1;
+      color: #007aff;
+    }
+
+    .stat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(10, 132, 255, 0.26);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+      display: none;
+    }
+
+    .docs-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 840;
+      color: var(--text-color);
+    }
+
+    .print-btn {
+      color: #fff;
+      border-color: rgba(34, 197, 94, 0.34);
+      background: linear-gradient(180deg, rgba(80, 214, 138, 0.95), rgba(48, 209, 88, 0.95), rgba(30, 186, 75, 0.95));
+      box-shadow: 0 12px 28px rgba(48, 209, 88, 0.26);
+    }
+
+    .light-btn {
+      color: #334155;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(243, 248, 255, 0.74));
+      border: 1px solid rgba(100, 116, 139, 0.28);
+    }
+
+    .swal2-popup.ins-adv-popup {
+      width: min(860px, calc(100vw - 30px)) !important;
+      max-width: min(860px, calc(100vw - 30px)) !important;
+      padding: 0 !important;
+      border-radius: 30px !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+
+    .swal2-popup.ins-adv-popup .swal2-title,
+    .ins-adv-popup-title {
+      margin: 0 !important;
+      padding: 22px 24px 10px !important;
+      font-size: clamp(1.46rem, 3vw, 2rem) !important;
+      font-weight: 860 !important;
+      line-height: 1.18 !important;
+      letter-spacing: -0.01em !important;
+      color: var(--text-color) !important;
+    }
+
+    .swal2-popup.ins-adv-popup .swal2-close {
+      width: 42px !important;
+      height: 42px !important;
+      margin: 12px 14px 0 0 !important;
+      border-radius: 14px !important;
+      color: var(--text-muted) !important;
+      background: rgba(255, 255, 255, 0.74) !important;
+      border: 1px solid rgba(148, 163, 184, 0.34) !important;
+      transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+    }
+
+    .swal2-popup.ins-adv-popup .swal2-close:hover {
+      transform: translateY(-1px);
+      color: #0f172a !important;
+      border-color: rgba(10, 132, 255, 0.45) !important;
+    }
+
+    .swal2-popup.ins-adv-popup .ins-adv-popup-html,
+    .ins-adv-popup-html {
+      margin: 0 !important;
+      padding: 0 24px 24px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .ins-adv-wrap {
+      display: grid;
+      gap: 14px;
+      text-align: left;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .ins-adv-intro {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .ins-adv-intro i {
+      font-size: 1.02rem;
+      color: #1d4ed8;
+      margin-top: 1px;
+      flex: 0 0 auto;
+    }
+
+    .ins-adv-note {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 760;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .ins-adv-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      width: 100%;
+      align-items: start;
+    }
+
+    .ins-adv-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      box-sizing: border-box;
+    }
+
+    .ins-adv-label {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 790;
+      color: var(--text-muted);
+      line-height: 1.2;
+    }
+
+    .ins-adv-field .thai-date-input {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      cursor: pointer;
+      box-sizing: border-box;
+      display: block;
+    }
+
+    .ins-adv-date-display {
+      width: 100%;
+      min-height: var(--ins-adv-control-height) !important;
+      border-radius: 16px !important;
+      border: 1px solid rgba(148, 163, 184, 0.34) !important;
+      background: #ffffff !important;
+      color: var(--text-muted);
+      padding: 14px 42px 14px 16px !important;
+      display: flex;
+      align-items: center;
+      font-size: 1.08rem;
+      font-weight: 740;
+      line-height: 1.4;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      box-sizing: border-box !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.94);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ins-adv-field .thai-date-input:hover .ins-adv-date-display {
+      border-color: rgba(10, 132, 255, 0.46) !important;
+      box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.14) !important;
+    }
+
+    .ins-adv-field .thai-date-input .cal-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.18rem;
+      pointer-events: none;
+    }
+
+    .ins-adv-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+
+    .ins-adv-btn {
+      width: 100%;
+      max-width: 100%;
+      min-height: var(--ins-adv-control-height) !important;
+      height: var(--ins-adv-control-height) !important;
+      border-radius: 999px !important;
+      justify-content: center;
+      margin: 0 !important;
+      font-size: clamp(1.08rem, 1.8vw, 1.2rem) !important;
+      line-height: 1.2 !important;
+      font-weight: 820 !important;
+    }
+
+    body.dark-mode .swal2-popup.ins-adv-popup .swal2-close {
+      background: rgba(19, 29, 43, 0.9) !important;
+      border-color: rgba(148, 163, 184, 0.32) !important;
+      color: #cbd5e1 !important;
+    }
+
+    body.dark-mode .ins-adv-intro,
+    body.dark-mode .ins-adv-field {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    body.dark-mode .ins-adv-intro i {
+      color: #60a5fa;
+    }
+
+    body.dark-mode .ins-adv-date-display {
+      border-color: rgba(148, 163, 184, 0.4) !important;
+      background: rgba(15, 24, 36, 0.9) !important;
+      color: #9fb0c6;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark-mode .ins-adv-field .thai-date-input:hover .ins-adv-date-display {
+      border-color: rgba(56, 189, 248, 0.56) !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
+    }
+
+    .doc-item {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.26);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(250, 253, 255, 0.72));
+      padding: 12px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+    }
+
+    .doc-item:hover {
+      transform: translateY(-2px);
+      border-color: rgba(10, 132, 255, 0.35);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .doc-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .doc-badges {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 780;
+      border: 1px solid transparent;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chip.blue {
+      background: rgba(37, 99, 235, 0.14);
+      border-color: rgba(37, 99, 235, 0.36);
+      color: #1d4ed8;
+    }
+
+    .chip.gray {
+      background: rgba(148, 163, 184, 0.2);
+      border-color: rgba(100, 116, 139, 0.3);
+      color: #334155;
+    }
+
+    .doc-title {
+      font-size: 1.02rem;
+      font-weight: 860;
+      color: #1d4ed8;
+      line-height: 1.24;
+      word-break: break-word;
+    }
+
+    .doc-sub {
+      font-size: 0.78rem;
+      font-weight: 640;
+      color: var(--text-muted);
+      margin-top: 2px;
+      word-break: break-word;
+    }
+
+    .doc-subject {
+      margin: 0 0 8px;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      line-height: 1.44;
+      word-break: break-word;
+    }
+
+    .doc-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .doc-checker {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .doc-checker img,
+    .doc-checker .fallback {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(10, 132, 255, 0.22);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.11);
+      flex: 0 0 auto;
+    }
+
+    .doc-checker .fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.12);
+      color: #007aff;
+      font-size: 0.74rem;
+      font-weight: 860;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 42px 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.34);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(245, 250, 255, 0.42));
+      font-weight: 620;
+      line-height: 1.45;
+    }
+
+    .empty-state i {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(10, 132, 255, 0.32);
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 24px 10px;
+      color: var(--text-muted);
+      font-weight: 630;
+    }
+
+    .loading-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3px solid rgba(10, 132, 255, 0.2);
+      border-top-color: var(--primary-color);
+      margin: 0 auto 10px;
+      animation: spin 0.72s linear infinite;
+    }
+
+    body.dark-mode .inspector-card {
+      border-color: rgba(148, 163, 184, 0.36);
+      background: linear-gradient(180deg, rgba(19, 30, 45, 0.82), rgba(14, 23, 35, 0.7));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 16px 34px rgba(2, 8, 20, 0.36);
+    }
+
+    body.dark-mode .page-inspector .form-control,
+    body.dark-mode .page-inspector .form-select {
+      border-color: rgba(148, 163, 184, 0.38);
+      background-color: rgba(15, 24, 36, 0.86);
+      color: #e2e8f0;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark-mode .page-inspector .form-select {
+      background-image: var(--dd-arrow-dark);
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 14px 14px;
+    }
+
+    body.dark-mode .adv-btn,
+    body.dark-mode .light-btn {
+      color: #dbe7f5;
+      border-color: rgba(148, 163, 184, 0.36);
+      background: linear-gradient(180deg, rgba(23, 34, 49, 0.9), rgba(19, 29, 43, 0.82));
+    }
+
+    body.dark-mode .doc-item {
+      border-color: rgba(148, 163, 184, 0.34);
+      background: linear-gradient(180deg, rgba(19, 30, 45, 0.84), rgba(14, 23, 35, 0.72));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    @media (max-width: 980px) {
+      .row.three {
+        grid-template-columns: 1fr;
+      }
+
+      .search-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .insp-page {
+        padding: 12px;
+        --ins-control-height: 50px;
+        --ins-adv-control-height: 56px;
+      }
+
+      .swal2-popup.ins-adv-popup {
+        width: calc(100vw - 18px) !important;
+        max-width: calc(100vw - 18px) !important;
+        border-radius: 22px !important;
+      }
+
+      .swal2-popup.ins-adv-popup .swal2-title {
+        padding: 18px 14px 10px !important;
+        font-size: 1.42rem !important;
+      }
+
+      .swal2-popup.ins-adv-popup .ins-adv-popup-html {
+        padding: 0 14px 16px !important;
+      }
+
+      .ins-adv-grid,
+      .ins-adv-actions {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .insp-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .hero-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+
+      .hero h1 {
+        font-size: 1.18rem;
+      }
+
+      .hero-sub {
+        font-size: 0.84rem;
+      }
+
+      .inspector-card {
+        padding: 12px;
+      }
+
+      .search-btn,
+      .print-btn,
+      .adv-btn,
+      .light-btn {
+        width: 100%;
+      }
+
+      .adv-row {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .doc-meta {
+        gap: 7px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doc-checker {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .insp-page {
+        padding: 8px;
+        --ins-control-height: 48px;
+        --ins-adv-control-height: 54px;
+      }
+
+      .swal2-popup.ins-adv-popup {
+        width: calc(100vw - 12px) !important;
+        max-width: calc(100vw - 12px) !important;
+        border-radius: 20px !important;
+      }
+
+      .swal2-popup.ins-adv-popup .swal2-title {
+        padding: 16px 10px 8px !important;
+        font-size: 1.3rem !important;
+      }
+
+      .swal2-popup.ins-adv-popup .ins-adv-popup-html {
+        padding: 0 10px 12px !important;
+      }
+
+      .ins-adv-field {
+        padding: 0;
+        border-radius: 0;
+      }
+
+      .inspector-card {
+        padding: 10px;
+      }
+
+      .doc-item {
+        padding: 10px;
+      }
+
+      .doc-title {
+        font-size: 0.92rem;
+      }
+
+      .doc-subject {
+        font-size: 0.84rem;
+      }
+
+      .form-control,
+      .form-select {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body class="page-inspector">
+  <div class="insp-page">
+    <div class="insp-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+    </div>
+
+    <div class="hero">
+      <div class="hero-icon"><i class="bi bi-clipboard-check-fill"></i></div>
+      <h1>ตรวจสอบผลงาน</h1>
+      <p class="hero-sub">เลือกตัวกรอง แล้วกดค้นหาเพื่อแสดงผล</p>
+    </div>
+
+    <div class="inspector-card" id="filterCard">
+      <div class="filter-title"><i class="bi bi-funnel-fill"></i>ตัวกรอง</div>
+
+      <div class="row three">
+        <div>
+          <label class="form-label">เจ้าหน้าที่</label>
+          <select id="mainOfficer" class="form-select"></select>
+        </div>
+        <div>
+          <label class="form-label">ปีงบประมาณ</label>
+          <select id="mainFiscal" class="form-select"></select>
+        </div>
+        <button id="btnSearchInspector" type="button" class="search-btn"><i class="bi bi-search"></i>ค้นหา</button>
+      </div>
+
+      <div class="adv-row">
+        <button id="btnAdvFilter" type="button" class="adv-btn"><i class="bi bi-plus-circle"></i>เพิ่มตัวกรอง</button>
+        <span id="activeFilterBadge" class="adv-badge">1 ตัวกรอง</span>
+      </div>
+    </div>
+
+    <div id="statArea" class="inspector-card" style="display:none;">
+      <div class="stat-box">
+        <div class="stat-head">
+          <img id="officerImg" class="stat-avatar" alt="u">
+          <div>
+            <div id="totalCount" class="stat-number">0</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);font-weight:740;">เอกสารที่ตรวจสอบ</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;font-size:0.8rem;color:var(--text-muted);font-weight:680;">
+          <div><i class="bi bi-person-fill me-1"></i><span id="officerName">-</span></div>
+          <div><i class="bi bi-calendar3 me-1"></i><span id="fiscalYear">ทั้งหมด</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="inspector-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div class="docs-title"><i class="bi bi-list-check text-primary"></i>รายการเอกสารที่ตรวจสอบ</div>
+        <button id="btnPrint" type="button" class="print-btn" style="display:none;"><i class="bi bi-printer-fill"></i>พิมพ์รายงาน</button>
+      </div>
+      <div id="docsList" class="empty-state">
+        <i class="bi bi-clipboard-data"></i>
+        <p style="margin:0;">เลือกเจ้าหน้าที่และคลิก "ค้นหา" เพื่อดูรายงานผลงาน</p>
+      </div>
+    </div>
+
+    <div id="printSection" style="display:none;">
+      <h2 style="text-align:center;margin-bottom:4px;">รายงานผลงานการตรวจสอบเอกสาร</h2>
+      <p id="printSubtitle" style="text-align:center;margin-top:0;font-size:14px;"></p>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js?v=20260221-6"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+
+      var state = {
+        settings: null,
+        api: null,
+        members: [],
+        memberImgMap: {},
+        currentData: [],
+        hasSearched: false,
+        reportReqId: 0,
+        reportTimeout: null,
+        advFilters: {
+          officer: '',
+          selectedFiscalYears: [],
+          startDate: '',
+          endDate: '',
+          startDateText: '',
+          endDateText: '',
+          startTime: '',
+          endTime: '',
+          group: ''
+        }
+      };
+
+      var els = {
+        btnBack: document.getElementById('btnBack'),
+        mainOfficer: document.getElementById('mainOfficer'),
+        mainFiscal: document.getElementById('mainFiscal'),
+        btnSearchInspector: document.getElementById('btnSearchInspector'),
+        btnAdvFilter: document.getElementById('btnAdvFilter'),
+        activeFilterBadge: document.getElementById('activeFilterBadge'),
+        statArea: document.getElementById('statArea'),
+        officerImg: document.getElementById('officerImg'),
+        totalCount: document.getElementById('totalCount'),
+        officerName: document.getElementById('officerName'),
+        fiscalYear: document.getElementById('fiscalYear'),
+        docsList: document.getElementById('docsList'),
+        btnPrint: document.getElementById('btnPrint'),
+        printSubtitle: document.getElementById('printSubtitle')
+      };
+
+      function esc(v) {
+        return C.escapeHtml(v == null ? '' : String(v));
+      }
+
+      function updateActiveFilterBadge() {
+        var count = 0;
+        if (state.advFilters.startDate || state.advFilters.endDate || state.advFilters.startTime || state.advFilters.endTime) count++;
+        if (state.advFilters.selectedFiscalYears && state.advFilters.selectedFiscalYears.length > 0) count++;
+        if (state.advFilters.group) count++;
+
+        if (count > 0) {
+          els.activeFilterBadge.style.display = 'inline-flex';
+          els.activeFilterBadge.textContent = count + ' ตัวกรอง';
+        } else {
+          els.activeFilterBadge.style.display = 'none';
+        }
+      }
+
+      function getDateRangeText() {
+        var s = state.advFilters.startDate || '';
+        var e = state.advFilters.endDate || '';
+        var st = state.advFilters.startTime || '';
+        var et = state.advFilters.endTime || '';
+
+        var sTxt = state.advFilters.startDateText || s;
+        var eTxt = state.advFilters.endDateText || e;
+
+        var dateText = '';
+        if (s || e) {
+          if (s && e) dateText = 'ช่วงวันที่: ' + sTxt + ' - ' + eTxt;
+          else if (s) dateText = 'ตั้งแต่วันที่: ' + sTxt;
+          else dateText = 'ถึงวันที่: ' + eTxt;
+        }
+
+        var timeText = '';
+        if (st || et) {
+          if (st && et) timeText = 'ช่วงเวลา: ' + st + ' - ' + et;
+          else if (st) timeText = 'ตั้งแต่เวลา: ' + st;
+          else timeText = 'ถึงเวลา: ' + et;
+        }
+
+        if (dateText && timeText) return dateText + ' | ' + timeText;
+        return dateText || timeText || '';
+      }
+
+      function showLoadingState() {
+        els.docsList.className = 'loading-state';
+        els.docsList.innerHTML = '<div class="loading-spinner"></div><div>กำลังโหลด...</div>';
+      }
+
+      function showEmptyState(message) {
+        els.docsList.className = 'empty-state';
+        els.docsList.innerHTML = '<i class="bi bi-inbox"></i><p style="margin:0;">' + esc(message || 'ไม่พบข้อมูล') + '</p>';
+      }
+
+      function goDoc(docId) {
+        var id = C.safeTrim(docId || '');
+        if (!id) return;
+        C.redirect('document-view.html', { id: id });
+      }
+
+      function applyMainFilters() {
+        var officer = C.safeTrim(els.mainOfficer.value || '');
+        if (!officer) {
+          Swal.fire('กรุณาเลือกเจ้าหน้าที่', '', 'warning');
+          return;
+        }
+
+        var fy = C.safeTrim(els.mainFiscal.value || '');
+        state.advFilters.officer = officer;
+        state.advFilters.selectedFiscalYears = fy ? [fy] : [];
+        state.hasSearched = true;
+
+        updateActiveFilterBadge();
+        loadReport();
+      }
+
+      function openAdvancedFilter() {
+        var htmlContent = ''
+          + '<div class="ins-adv-wrap">'
+          + '<div class="ins-adv-intro"><i class="bi bi-sliders2"></i><p class="ins-adv-note">กำหนดช่วงวันที่ที่ต้องการ แล้วกดเพิ่มตัวกรองเพื่อใช้งานทันที</p></div>'
+          + '<div class="ins-adv-grid">'
+          + '<div class="ins-adv-field">'
+          + '<label class="ins-adv-label">จากวันที่</label>'
+          + '<div class="thai-date-input" onclick="openCalendar(\'inspStart\')">'
+          + '<input type="hidden" id="inspStart" value="">'
+          + '<div id="inspStartDisplay" class="ins-adv-date-display">เลือกวันที่...</div>'
+          + '<i class="bi bi-calendar3 cal-icon"></i>'
+          + '</div>'
+          + '</div>'
+          + '<div class="ins-adv-field">'
+          + '<label class="ins-adv-label">ถึงวันที่</label>'
+          + '<div class="thai-date-input" onclick="openCalendar(\'inspEnd\')">'
+          + '<input type="hidden" id="inspEnd" value="">'
+          + '<div id="inspEndDisplay" class="ins-adv-date-display">เลือกวันที่...</div>'
+          + '<i class="bi bi-calendar3 cal-icon"></i>'
+          + '</div>'
+          + '</div>'
+          + '</div>'
+          + '<div class="ins-adv-actions">'
+          + '<button type="button" id="btnClearDateFilter" class="light-btn ins-adv-btn"><i class="bi bi-x-circle"></i>ล้าง</button>'
+          + '<button type="button" id="btnApplyDateFilter" class="search-btn ins-adv-btn"><i class="bi bi-plus-circle"></i>เพิ่มตัวกรอง</button>'
+          + '</div>'
+          + '</div>';
+
+        Swal.fire({
+          title: 'ตัวกรองขั้นสูง',
+          customClass: {
+            popup: 'ins-adv-popup',
+            title: 'ins-adv-popup-title',
+            htmlContainer: 'ins-adv-popup-html'
+          },
+          html: htmlContent,
+          showConfirmButton: false,
+          showCloseButton: true,
+          didOpen: function () {
+            var startEl = document.getElementById('inspStart');
+            var endEl = document.getElementById('inspEnd');
+            if (startEl) startEl.value = state.advFilters.startDate || '';
+            if (endEl) endEl.value = state.advFilters.endDate || '';
+
+            if (typeof window.updDD === 'function') {
+              window.updDD('inspStart');
+              window.updDD('inspEnd');
+            }
+
+            var clearBtn = document.getElementById('btnClearDateFilter');
+            var applyBtn = document.getElementById('btnApplyDateFilter');
+
+            if (clearBtn) {
+              clearBtn.addEventListener('click', function () {
+                if (startEl) startEl.value = '';
+                if (endEl) endEl.value = '';
+                state.advFilters.startDate = '';
+                state.advFilters.endDate = '';
+                state.advFilters.startDateText = '';
+                state.advFilters.endDateText = '';
+                if (typeof window.updDD === 'function') {
+                  window.updDD('inspStart');
+                  window.updDD('inspEnd');
+                }
+                updateActiveFilterBadge();
+                if (state.hasSearched && state.advFilters.officer) loadReport();
+              });
+            }
+
+            if (applyBtn) {
+              applyBtn.addEventListener('click', function () {
+                var sd = C.safeTrim((startEl && startEl.value) || '');
+                var ed = C.safeTrim((endEl && endEl.value) || '');
+
+                if (sd && ed && sd > ed) {
+                  var tmp = sd;
+                  sd = ed;
+                  ed = tmp;
+                  if (startEl) startEl.value = sd;
+                  if (endEl) endEl.value = ed;
+                  if (typeof window.updDD === 'function') {
+                    window.updDD('inspStart');
+                    window.updDD('inspEnd');
+                  }
+                }
+
+                state.advFilters.startDate = sd;
+                state.advFilters.endDate = ed;
+
+                var sdTxt = (document.getElementById('inspStartDisplay') || {}).textContent || '';
+                var edTxt = (document.getElementById('inspEndDisplay') || {}).textContent || '';
+                state.advFilters.startDateText = (sd && sdTxt && sdTxt !== 'เลือกวันที่...') ? sdTxt : '';
+                state.advFilters.endDateText = (ed && edTxt && edTxt !== 'เลือกวันที่...') ? edTxt : '';
+
+                Swal.close();
+                updateActiveFilterBadge();
+                if (state.hasSearched && state.advFilters.officer) loadReport();
+              });
+            }
+          }
+        });
+      }
+
+      async function loadReport() {
+        var officer = state.advFilters.officer || '';
+        if (!officer) {
+          Swal.fire('กรุณาเลือกเจ้าหน้าที่', '', 'warning');
+          return;
+        }
+
+        var reqId = ++state.reportReqId;
+        if (state.reportTimeout) {
+          clearTimeout(state.reportTimeout);
+          state.reportTimeout = null;
+        }
+
+        showLoadingState();
+        els.btnSearchInspector.disabled = true;
+
+        state.reportTimeout = setTimeout(function () {
+          if (reqId !== state.reportReqId) return;
+          els.docsList.className = 'empty-state';
+          els.docsList.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i><p style="margin:0;">โหลดรายงานนานกว่าปกติ</p><button type="button" class="light-btn" onclick="window.__reloadInspectorReport()" style="margin-top:8px;">ลองใหม่</button>';
+        }, 15000);
+
+        try {
+          var res = await state.api.inspectionReport({
+            officerName: officer,
+            selectedFiscalYears: state.advFilters.selectedFiscalYears || [],
+            startDate: state.advFilters.startDate || '',
+            endDate: state.advFilters.endDate || '',
+            startTime: state.advFilters.startTime || '',
+            endTime: state.advFilters.endTime || '',
+            group: state.advFilters.group || ''
+          });
+
+          if (reqId !== state.reportReqId) return;
+
+          if (!res || res.success === false) {
+            throw new Error((res && res.error) ? res.error : 'ไม่สามารถดึงรายงานได้');
+          }
+
+          renderReport(res);
+        } catch (err) {
+          if (reqId !== state.reportReqId) return;
+          showEmptyState('ไม่สามารถดึงรายงานได้');
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'ไม่สามารถดึงรายงานได้', 'error');
+        } finally {
+          if (reqId !== state.reportReqId) return;
+          els.btnSearchInspector.disabled = false;
+          if (state.reportTimeout) {
+            clearTimeout(state.reportTimeout);
+            state.reportTimeout = null;
+          }
+        }
+      }
+
+      function renderReport(data) {
+        state.currentData = Array.isArray(data.documents) ? data.documents : [];
+
+        els.statArea.style.display = 'block';
+        els.btnPrint.style.display = state.currentData.length ? 'inline-flex' : 'none';
+
+        els.totalCount.textContent = String(Number(data.totalCount || state.currentData.length || 0));
+        els.officerName.textContent = C.safeTrim(data.officerName || '-') || '-';
+        els.fiscalYear.textContent = C.safeTrim(data.fiscalYear || 'ทั้งหมด') || 'ทั้งหมด';
+
+        var dr = getDateRangeText();
+        els.printSubtitle.textContent = 'เจ้าหน้าที่: ' + (data.officerName || '-') + ' | ปีงบประมาณ: ' + (data.fiscalYear || 'ทั้งหมด') + (dr ? (' | ' + dr) : '') + ' | จำนวน ' + (data.totalCount || 0) + ' ฉบับ';
+
+        var img = state.memberImgMap[data.officerName || ''] || '';
+        if (img) {
+          els.officerImg.src = img;
+          els.officerImg.style.display = 'inline-block';
+        } else {
+          els.officerImg.style.display = 'none';
+        }
+
+        if (!state.currentData.length) {
+          showEmptyState('ไม่พบเอกสารที่ตรวจสอบ');
+          return;
+        }
+
+        var html = '';
+
+        for (var i = 0; i < state.currentData.length; i++) {
+          var d = state.currentData[i] || {};
+          var am = C.safeTrim(d.amDocNo || '');
+          var sdh = C.safeTrim(d.docNoSdh || '');
+          var title = am || C.safeTrim(d.docId || '-') || '-';
+          var sub = (sdh && sdh !== title) ? ('สธ ' + sdh) : '';
+          var docHref = C.buildPageUrl('document-view.html', { id: d.docId || '' });
+
+          var checkerHtml = '';
+          if (img) {
+            checkerHtml = '<span class="doc-checker"><img src="' + esc(img) + '" alt="u"><span>' + esc(data.officerName || '-') + '</span></span>';
+          } else {
+            var first = (C.safeTrim(data.officerName || '').charAt(0) || '?').toUpperCase();
+            checkerHtml = '<span class="doc-checker"><span class="fallback">' + esc(first) + '</span><span>' + esc(data.officerName || '-') + '</span></span>';
+          }
+
+          html += '<a class="doc-item" href="' + esc(docHref) + '" data-doc-id="' + esc(d.docId || '') + '">';
+          html += '<div class="doc-head">';
+          html += '<div style="min-width:0;">';
+          html += '<div class="doc-badges">';
+          html += '<span class="chip blue">' + esc(d.fiscalYear || '-') + '</span>';
+          html += '</div>';
+          html += '<div class="doc-title">' + esc(title) + '</div>';
+          if (sub) html += '<div class="doc-sub">' + esc(sub) + '</div>';
+          html += '</div>';
+          html += '<span class="chip gray"><i class="bi bi-calendar-check"></i>' + esc(d.verifyDate || '-') + '</span>';
+          html += '</div>';
+
+          html += '<p class="doc-subject">' + esc(d.subject || '-') + '</p>';
+
+          html += '<div class="doc-meta">';
+          html += '<span><i class="bi bi-building me-1"></i>' + esc(d.group || '-') + '</span>';
+          html += '<span><i class="bi bi-person me-1"></i>' + esc(d.sender || '-') + '</span>';
+          if (C.safeTrim(d.purpose || '')) {
+            html += '<span><i class="bi bi-tag me-1"></i>' + esc(d.purpose) + '</span>';
+          }
+          html += checkerHtml;
+          html += '</div>';
+
+          html += '</a>';
+        }
+
+        els.docsList.className = '';
+        els.docsList.innerHTML = html;
+
+        var links = els.docsList.querySelectorAll('.doc-item');
+        for (var j = 0; j < links.length; j++) {
+          links[j].addEventListener('click', function (e) {
+            e.preventDefault();
+            var id = this.getAttribute('data-doc-id') || '';
+            goDoc(id);
+          });
+        }
+      }
+
+      function printReport() {
+        if (!state.currentData.length) {
+          Swal.fire('ไม่มีข้อมูล', 'ไม่พบเอกสารสำหรับพิมพ์', 'warning');
+          return;
+        }
+
+        var w = window.open('', '', 'width=1220,height=820');
+        if (!w) {
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
+          return;
+        }
+
+        var officer = els.officerName.textContent || '-';
+        var fiscal = els.fiscalYear.textContent || 'ทั้งหมด';
+        var dr = getDateRangeText();
+        var total = els.totalCount.textContent || String(state.currentData.length);
+
+        var h = '';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายงานผลงาน</title>';
+        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#334155}.sub{margin:0 0 8px;text-align:center;font-size:12px;color:#1F2937}table{width:100%;border-collapse:collapse;table-layout:fixed}thead{display:table-header-group}tbody tr{break-inside:avoid;page-break-inside:avoid}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject-cell,.group-cell,.sender-cell{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject-cell{line-height:1.3}.index,.fiscal,.am-doc,.doc-sdh,.verify-date,.amount,.diff{white-space:nowrap}.btn-print{padding:10px 28px;background:#0A84FF;color:#fff;border:none;border-radius:999px;font-weight:900}.no-print{text-align:center;margin-top:14px}@media print{.no-print{display:none!important}}</style>';
+        h += '</head><body>';
+        h += '<h2>รายงานผลงานการตรวจสอบเอกสาร</h2>';
+        h += '<p class="sub">เจ้าหน้าที่: <strong>' + esc(officer) + '</strong> | ปีงบประมาณ: <strong>' + esc(fiscal) + '</strong>' + (dr ? (' | ' + esc(dr)) : '') + ' | จำนวนรวม: <strong>' + esc(total) + ' ฉบับ</strong></p>';
+        h += '<p class="meta">พิมพ์เมื่อ: ' + esc(new Date().toLocaleString('th-TH')) + '</p>';
+        h += '<table><colgroup><col style="width:4%"><col style="width:5%"><col style="width:10%"><col style="width:8%"><col style="width:24%"><col style="width:9%"><col style="width:10%"><col style="width:14%"><col style="width:8%"><col style="width:8%"></colgroup><thead><tr><th>ลำดับ</th><th>ปีงบฯ</th><th>เลขที่หนังสือส่งกองคลัง</th><th>เลขที่ สธ. (กลุ่มงาน)</th><th>ชื่อเรื่อง</th><th>วันที่ตรวจสอบ</th><th>กลุ่ม/ศูนย์</th><th>ชื่อผู้ส่ง/ชื่อผู้ยืม/ชื่อผู้ใช้หนี้/ชื่อผู้ประสานงาน</th><th>จำนวนเบิก/ยืม/คืน</th><th>ส่วนต่าง/เงินเหลือคืน</th></tr></thead><tbody>';
+
+        for (var i = 0; i < state.currentData.length; i++) {
+          var d = state.currentData[i] || {};
+          var subjectText = String(d.subject || '');
+          if (subjectText.length > 240) {
+            subjectText = subjectText.substring(0, 240).replace(/\s+$/, '') + '...';
+          }
+          h += '<tr>';
+          h += '<td class="text-center index">' + (i + 1) + '</td>';
+          h += '<td class="text-center fiscal">' + esc(d.fiscalYear || '') + '</td>';
+          h += '<td class="text-center am-doc">' + esc(d.amDocNo || '') + '</td>';
+          h += '<td class="text-center doc-sdh">' + esc(d.docNoSdh || '') + '</td>';
+          h += '<td class="subject-cell">' + esc(subjectText || '-') + '</td>';
+          h += '<td class="text-center verify-date">' + esc(d.verifyDate || '-') + '</td>';
+          h += '<td class="group-cell">' + esc(d.group || '-') + '</td>';
+          h += '<td class="sender-cell">' + esc(d.sender || '-') + '</td>';
+          h += '<td class="text-right amount">' + esc(d.amount || '-') + '</td>';
+          h += '<td class="text-right diff">' + esc(d.difference || '-') + '</td>';
+          h += '</tr>';
+        }
+
+        h += '</tbody></table>';
+        h += '<div class="no-print"><button class="btn-print" onclick="window.print()">พิมพ์รายงาน</button></div>';
+        h += '</body></html>';
+
+        w.document.write(h);
+        w.document.close();
+      }
+
+      function fillFilters(infoData, membersData, meUser) {
+        var info = infoData || { fiscalYears: [], groups: [] };
+        var members = Array.isArray(membersData) ? membersData : [];
+
+        var officerHtml = '<option value="" selected disabled>เลือกเจ้าหน้าที่...</option>';
+        for (var i = 0; i < members.length; i++) {
+          var m = members[i] || {};
+          var name = C.safeTrim(m.name || '');
+          if (!name) continue;
+          var pos = C.safeTrim(m.position || '');
+          officerHtml += '<option value="' + esc(name) + '">' + esc(name + (pos ? (' (' + pos + ')') : '')) + '</option>';
+        }
+        els.mainOfficer.innerHTML = officerHtml;
+
+        var fiscalHtml = '<option value="" selected>ทั้งหมด</option>';
+        var fiscalYears = Array.isArray(info.fiscalYears) ? info.fiscalYears : [];
+        for (var f = 0; f < fiscalYears.length; f++) {
+          fiscalHtml += '<option value="' + esc(fiscalYears[f]) + '">' + esc(fiscalYears[f]) + '</option>';
+        }
+        els.mainFiscal.innerHTML = fiscalHtml;
+
+        var myName = C.safeTrim((meUser && (meUser.displayName || meUser.username)) || '');
+        if (myName) {
+          for (var k = 0; k < els.mainOfficer.options.length; k++) {
+            if (els.mainOfficer.options[k].value === myName) {
+              els.mainOfficer.selectedIndex = k;
+              state.advFilters.officer = myName;
+              break;
+            }
+          }
+        }
+      }
+
+      async function initData() {
+        var res = await Promise.all([
+          state.api.me(),
+          state.api.optionsInfo(),
+          state.api.optionsMembers()
+        ]);
+
+        var meRes = res[0] || {};
+        var infoRes = res[1] || {};
+        var memberRes = res[2] || {};
+
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
+        }
+
+        state.members = Array.isArray(memberRes.data) ? memberRes.data : [];
+        state.memberImgMap = {};
+        for (var i = 0; i < state.members.length; i++) {
+          var mem = state.members[i] || {};
+          var name = C.safeTrim(mem.name || '');
+          var img = C.safeTrim(mem.image || '');
+          if (!name || !img) continue;
+          state.memberImgMap[name] = img;
+          state.memberImgMap[name.toLowerCase()] = img;
+        }
+
+        fillFilters((infoRes && infoRes.data) ? infoRes.data : {}, state.members, meRes.user);
+        updateActiveFilterBadge();
+        return true;
+      }
+
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('index.html');
+        });
+
+        els.btnSearchInspector.addEventListener('click', applyMainFilters);
+        els.btnAdvFilter.addEventListener('click', openAdvancedFilter);
+        els.btnPrint.addEventListener('click', printReport);
+      }
+
+      async function init() {
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          Swal.fire('ตั้งค่าไม่ครบ', 'กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน', 'warning');
+          return;
+        }
+
+        bindEvents();
+
+        try {
+          var ok = await initData();
+          if (!ok) return;
+        } catch (err) {
+          Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'โหลดข้อมูลหน้าตรวจสอบผลงานไม่สำเร็จ', 'error');
+        }
+      }
+
+      window.__reloadInspectorReport = function () {
+        if (!state.hasSearched) return;
+        loadReport();
+      };
+
+      init();
+    })();
+  </script>
+</body>
+</html>

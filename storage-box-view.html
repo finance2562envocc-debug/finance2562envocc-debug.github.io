@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ตรวจสอบกล่องเอกสาร</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="./theme-legacy.css?v=20260221-17">
+  <style>
+    .box-page {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .box-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .back-btn {
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      min-height: 40px;
+      border-radius: 999px;
+      font-weight: 760;
+      padding: 0 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(10, 132, 255, 0.45);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .main-card {
+      overflow: hidden;
+    }
+
+    .header-bg {
+      background: linear-gradient(180deg, #2f97ff 0%, #0a84ff 62%, #0071e3 100%);
+      color: #fff;
+      text-align: center;
+      padding: 22px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bg::after {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 999px;
+      right: -70px;
+      top: -90px;
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .header-bg h2 {
+      margin: 0;
+      font-size: 1.34rem;
+      font-weight: 880;
+    }
+
+    .header-bg .subtitle {
+      margin-top: 6px;
+      font-size: 0.86rem;
+      font-weight: 640;
+      opacity: 0.94;
+    }
+
+    .header-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 8px;
+      border-radius: 999px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .box-body {
+      padding: 16px;
+    }
+
+    .box-qr-wrap {
+      padding: 18px;
+      margin-bottom: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      text-align: center;
+    }
+
+    .box-qr-image {
+      width: min(72vw, 220px);
+      max-width: 220px;
+      aspect-ratio: 1/1;
+      object-fit: contain;
+      background: #fff;
+      border: 1px solid var(--input-border);
+      border-radius: 14px;
+      padding: 4px;
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.14);
+    }
+
+    .box-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      min-height: 40px;
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: transform 0.2s ease, box-shadow 0.24s ease;
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(180deg, #2f97ff, #0a84ff, #0071e3);
+      box-shadow: 0 12px 28px rgba(10, 132, 255, 0.24);
+    }
+
+    .btn.light {
+      color: #075985;
+      background: rgba(10, 132, 255, 0.12);
+      border: 1px solid rgba(10, 132, 255, 0.24);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .year-chip-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .year-chip {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: 760;
+      border: 1px solid transparent;
+      line-height: 1.2;
+    }
+
+    .year-chip.storage {
+      border-color: rgba(2, 132, 199, 0.38);
+      background: rgba(125, 211, 252, 0.22);
+      color: #0c4a6e;
+    }
+
+    .year-chip.destroy {
+      border-color: rgba(185, 28, 28, 0.34);
+      background: rgba(254, 226, 226, 0.86);
+      color: #991b1b;
+    }
+
+    .docs-empty {
+      text-align: center;
+      padding: 40px 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(148, 163, 184, 0.34);
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.3);
+      font-weight: 620;
+    }
+
+    .docs-empty i {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 10px;
+      color: rgba(10, 132, 255, 0.3);
+    }
+
+    .box-doc-card {
+      padding: 16px 18px;
+      margin-bottom: 10px;
+      border-radius: 18px;
+      border: 1px solid var(--input-border);
+      background: var(--card-bg);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.24s ease, border-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .box-doc-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(10, 132, 255, 0.34);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.14);
+    }
+
+    .box-doc-card.status-cancelled {
+      border-left: 5px solid #dc2626;
+      background: linear-gradient(90deg, rgba(239, 68, 68, 0.14), transparent), var(--card-bg);
+    }
+
+    .box-doc-card.status-returned {
+      border-left: 5px solid #6b7280;
+      background: linear-gradient(90deg, rgba(107, 114, 128, 0.16), transparent), var(--card-bg);
+    }
+
+    .box-doc-card.status-stored,
+    .box-doc-card.status-completed {
+      border-left: 5px solid #16a34a;
+      background: linear-gradient(90deg, rgba(34, 197, 94, 0.14), transparent), var(--card-bg);
+    }
+
+    .box-doc-card.status-pending {
+      border-left: 5px solid #d97706;
+      background: linear-gradient(90deg, rgba(217, 119, 6, 0.14), transparent), var(--card-bg);
+    }
+
+    .box-doc-card.status-inprogress {
+      border-left: 5px solid #0ea5e9;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.16), transparent), var(--card-bg);
+    }
+
+    .box-doc-card.status-assigned {
+      border-left: 5px solid #ec4899;
+      background: linear-gradient(90deg, rgba(244, 114, 182, 0.16), transparent), var(--card-bg);
+    }
+
+    .doc-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .doc-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .box-fiscal-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 122, 255, 0.12);
+      color: #007aff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 840;
+      font-size: 0.72rem;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .doc-title {
+      font-weight: 860;
+      font-size: 0.98rem;
+      line-height: 1.25;
+      color: #1d4ed8;
+      word-break: break-word;
+    }
+
+    .doc-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      word-break: break-word;
+    }
+
+    .doc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      align-items: center;
+      max-width: 58%;
+    }
+
+    .badge-status {
+      font-size: 0.68rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 780;
+      border: 1px solid rgba(71, 85, 105, 0.3);
+      background: rgba(255, 255, 255, 0.86);
+      color: #0f172a;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .badge-active {
+      border-color: rgba(34, 197, 94, 0.52);
+      background: rgba(34, 197, 94, 0.24);
+      color: #166534;
+    }
+
+    .badge-cancel {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.22);
+      color: #b91c1c;
+    }
+
+    .badge-return {
+      border-color: rgba(107, 114, 128, 0.46);
+      background: rgba(148, 163, 184, 0.24);
+      color: #4b5563;
+    }
+
+    .badge-stored {
+      border-color: rgba(34, 197, 94, 0.52);
+      background: rgba(34, 197, 94, 0.24);
+      color: #166534;
+    }
+
+    .badge-pending {
+      border-color: rgba(217, 119, 6, 0.54);
+      background: rgba(251, 146, 60, 0.24);
+      color: #92400e;
+    }
+
+    .badge-inprogress {
+      border-color: rgba(14, 165, 233, 0.54);
+      background: rgba(56, 189, 248, 0.24);
+      color: #075985;
+    }
+
+    .badge-assigned {
+      border-color: rgba(236, 72, 153, 0.52);
+      background: rgba(251, 207, 232, 0.82);
+      color: #9d174d;
+    }
+
+    .badge-purpose {
+      border-color: rgba(124, 58, 237, 0.46);
+      background: rgba(167, 139, 250, 0.22);
+      color: #5b21b6;
+    }
+
+    .badge-budget {
+      border-color: rgba(2, 132, 199, 0.46);
+      background: rgba(125, 211, 252, 0.28);
+      color: #0c4a6e;
+    }
+
+    .doc-subject {
+      margin: 0 0 8px;
+      color: var(--text-main);
+      line-height: 1.44;
+      font-size: 0.9rem;
+      word-break: break-word;
+    }
+
+    .doc-destroy {
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      font-weight: 790;
+      color: #b91c1c;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .doc-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .doc-foot small {
+      color: var(--text-muted);
+      font-weight: 640;
+    }
+
+    .doc-foot-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+
+    .stored-user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(10, 132, 255, 0.26);
+      background: rgba(10, 132, 255, 0.1);
+      color: #075985;
+      font-weight: 700;
+      font-size: 0.72rem;
+      max-width: min(100%, 260px);
+    }
+
+    .stored-user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 132, 255, 0.16);
+      border: 1px solid rgba(10, 132, 255, 0.25);
+      color: #0c4a6e;
+      font-size: 0.62rem;
+      font-weight: 900;
+      line-height: 1;
+      flex: 0 0 22px;
+    }
+
+    .stored-user-chip img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+      flex: 0 0 22px;
+    }
+
+    .stored-user-name {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 150px;
+    }
+
+    .error-box {
+      display: none;
+      border: 1px solid rgba(239, 68, 68, 0.36);
+      background: rgba(239, 68, 68, 0.12);
+      color: #991b1b;
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-weight: 650;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .error-box.show {
+      display: block;
+    }
+
+    @media (max-width: 880px) {
+      .box-page {
+        padding: 12px;
+      }
+
+      .doc-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .doc-tags {
+        justify-content: flex-start;
+        max-width: none;
+      }
+
+      .doc-foot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .doc-foot-right {
+        margin-left: 0;
+        justify-content: flex-start;
+        width: 100%;
+      }
+
+      .box-doc-card {
+        padding: 14px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .box-page {
+        padding: 10px;
+      }
+
+      .box-top {
+        margin-bottom: 10px;
+      }
+
+      .back-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-bg {
+        padding: 16px 12px;
+      }
+
+      .header-bg h2 {
+        font-size: 1.08rem;
+      }
+
+      .header-bg .subtitle {
+        font-size: 0.8rem;
+      }
+
+      .box-body {
+        padding: 12px;
+      }
+
+      .box-qr-wrap {
+        padding: 12px;
+      }
+
+      .box-actions .btn {
+        width: 100%;
+      }
+
+      .year-chip-wrap {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .year-chip {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .box-page {
+        padding: 8px;
+      }
+
+      .box-body {
+        padding: 10px;
+      }
+
+      .box-qr-image {
+        width: min(86vw, 200px);
+      }
+
+      .box-doc-card {
+        padding: 11px;
+        border-radius: 14px;
+      }
+
+      .doc-title {
+        font-size: 0.92rem;
+      }
+
+      .doc-subject {
+        font-size: 0.84rem;
+      }
+    }
+  </style>
+</head>
+<body class="page-box-view">
+  <div class="box-page">
+    <div class="box-top">
+      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+    </div>
+
+    <div id="errBox" class="error-box"></div>
+
+      <div id="mainCard" class="main-card" style="display:none;">
+      <div class="header-bg">
+        <div id="boxSubtitle" class="subtitle">ตรวจสอบเอกสารในกล่อง: -</div>
+        <h2 id="boxTitle"><i class="bi bi-archive-fill me-2"></i>-</h2>
+        <span id="totalChip" class="header-chip">รวม 0 รายการ</span>
+      </div>
+
+      <div class="box-body">
+        <div class="box-qr-wrap">
+          <p class="fw-bold text-muted small mb-2"><i class="bi bi-qr-code me-1"></i>QR Code กล่องนี้</p>
+          <img id="boxQr" class="box-qr-image" alt="QR Box">
+          <div class="box-actions">
+            <button id="btnPrintQr" type="button" class="btn light"><i class="bi bi-printer"></i>พิมพ์ QR ติดกล่อง</button>
+          </div>
+          <div class="year-chip-wrap">
+            <span id="storageYearChip" class="year-chip storage">ปีจัดเก็บเอกสาร: -</span>
+            <span id="destroyYearChip" class="year-chip destroy">ปีที่ทำลายเอกสาร: -</span>
+          </div>
+        </div>
+
+        <div id="docsWrap"></div>
+
+        <div class="box-actions" style="margin-top:12px;">
+          <button id="btnPrintList" type="button" class="btn primary"><i class="bi bi-printer-fill"></i>พิมพ์รายการเอกสาร</button>
+          <button id="btnReload" type="button" class="btn light"><i class="bi bi-arrow-clockwise"></i>อัปเดต</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./config.js"></script>
+  <script src="./api-client.js?v=20260221-6"></script>
+  <script src="./theme-legacy.js?v=20260221-3"></script>
+  <script src="./app-common.js?v=20260221-2"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var C = window.DocFrontendCommon;
+      var q = C.parseQuery();
+      var boxName = resolveBoxNameFromQuery(q);
+      var APP_BROWSER_NAME = 'ระบบทะเบียนคุมเอกสาร';
+      var LAST_BOX_NAME_KEY = 'docControlLastBoxNameV1';
+
+      var state = {
+        settings: null,
+        api: null,
+        detail: null
+      };
+
+      var els = {
+        btnBack: document.getElementById('btnBack'),
+        btnReload: document.getElementById('btnReload'),
+        errBox: document.getElementById('errBox'),
+        mainCard: document.getElementById('mainCard'),
+        boxSubtitle: document.getElementById('boxSubtitle'),
+        boxTitle: document.getElementById('boxTitle'),
+        totalChip: document.getElementById('totalChip'),
+        boxQr: document.getElementById('boxQr'),
+        storageYearChip: document.getElementById('storageYearChip'),
+        destroyYearChip: document.getElementById('destroyYearChip'),
+        docsWrap: document.getElementById('docsWrap'),
+        btnPrintQr: document.getElementById('btnPrintQr'),
+        btnPrintList: document.getElementById('btnPrintList')
+      };
+
+      function pickQueryValueCaseInsensitive(obj, key) {
+        if (!obj || typeof obj !== 'object') return '';
+        if (Object.prototype.hasOwnProperty.call(obj, key)) return obj[key];
+        var want = String(key || '').toLowerCase();
+        for (var k in obj) {
+          if (!Object.prototype.hasOwnProperty.call(obj, k)) continue;
+          if (String(k).toLowerCase() === want) return obj[k];
+        }
+        return '';
+      }
+
+      function cleanBoxNameValue(value) {
+        var text = C.safeTrim(value || '');
+        var low = text.toLowerCase();
+        if (!text || text === '-' || low === 'undefined' || low === 'null') return '';
+        return text;
+      }
+
+      function rememberLastBoxName(name) {
+        var value = cleanBoxNameValue(name);
+        if (!value) return;
+        try { sessionStorage.setItem(LAST_BOX_NAME_KEY, value); } catch (_e1) {}
+        try { localStorage.setItem(LAST_BOX_NAME_KEY, value); } catch (_e2) {}
+        try { window.__docControlLastBoxName = value; } catch (_e3) {}
+      }
+
+      function readLastBoxName() {
+        var fromWindow = cleanBoxNameValue(window.__docControlLastBoxName || '');
+        if (fromWindow) return fromWindow;
+        try {
+          var fromSession = cleanBoxNameValue(sessionStorage.getItem(LAST_BOX_NAME_KEY) || '');
+          if (fromSession) return fromSession;
+        } catch (_e1) {}
+        try {
+          var fromLocal = cleanBoxNameValue(localStorage.getItem(LAST_BOX_NAME_KEY) || '');
+          if (fromLocal) return fromLocal;
+        } catch (_e2) {}
+        return '';
+      }
+
+      function pickBoxValueFromSearchParams(searchParams, keys) {
+        if (!searchParams || !keys || !keys.length) return '';
+        for (var i = 0; i < keys.length; i++) {
+          var raw = searchParams.get(keys[i]);
+          var value = cleanBoxNameValue(raw);
+          if (value) return value;
+        }
+        return '';
+      }
+
+      function resolveBoxNameFromQuery(queryObj) {
+        var keys = ['box', 'boxName', 'boxname', 'box_id', 'boxId', 'name', 'location', 'loc', 'detail', 'box_name', 'id'];
+        for (var i = 0; i < keys.length; i++) {
+          var val = cleanBoxNameValue(pickQueryValueCaseInsensitive(queryObj, keys[i]));
+          if (val) return val;
+        }
+        // fallback: URLSearchParams เผื่อบางกรณี parseQuery ไม่ได้ค่าครบ
+        try {
+          if (typeof window !== 'undefined' && window.location && window.location.search) {
+            var sp = new URLSearchParams(String(window.location.search || ''));
+            var fromSearch = pickBoxValueFromSearchParams(sp, keys);
+            if (fromSearch) return fromSearch;
+          }
+        } catch (_ignore) {}
+
+        // fallback: query ที่ฝังอยู่ใน hash เช่น "#/path?box=..."
+        try {
+          if (typeof window !== 'undefined' && window.location && window.location.hash) {
+            var hash = String(window.location.hash || '');
+            var qIdx = hash.indexOf('?');
+            if (qIdx >= 0) {
+              var hashSearch = new URLSearchParams(hash.substring(qIdx + 1));
+              var fromHash = pickBoxValueFromSearchParams(hashSearch, keys);
+              if (fromHash) return fromHash;
+            }
+          }
+        } catch (_ignore2) {}
+
+        // fallback: อ่านจาก referrer เผื่อบางเบราว์เซอร์ส่ง query มาไม่ครบ
+        try {
+          if (typeof document !== 'undefined' && document.referrer) {
+            var refUrl = new URL(document.referrer, window.location.href);
+            var fromRef = pickBoxValueFromSearchParams(refUrl.searchParams, keys);
+            if (fromRef) return fromRef;
+            var refHash = String(refUrl.hash || '');
+            var refQIdx = refHash.indexOf('?');
+            if (refQIdx >= 0) {
+              var refHashSearch = new URLSearchParams(refHash.substring(refQIdx + 1));
+              var fromRefHash = pickBoxValueFromSearchParams(refHashSearch, keys);
+              if (fromRefHash) return fromRefHash;
+            }
+          }
+        } catch (_ignore3) {}
+
+        var remembered = readLastBoxName();
+        if (remembered) return remembered;
+        return '';
+      }
+
+      function showError(message) {
+        var msg = C.safeTrim(message || '');
+        if (!msg) {
+          els.errBox.classList.remove('show');
+          els.errBox.textContent = '';
+          return;
+        }
+        els.errBox.textContent = msg;
+        els.errBox.classList.add('show');
+      }
+
+      function updateBrowserTitle(boxValue) {
+        var box = C.safeTrim(boxValue || '');
+        var page = box ? ('ตรวจสอบเอกสารในกล่อง • ' + box) : 'ตรวจสอบเอกสารในกล่อง';
+        document.title = page + ' | ' + APP_BROWSER_NAME;
+      }
+
+      function statusBadge(status) {
+        var st = C.safeTrim(status || '');
+        if (st === 'ยกเลิก') return '<span class="badge-status badge-cancel">ยกเลิก</span>';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return '<span class="badge-status badge-return">ส่งคืนฯ</span>';
+        if (st === 'กำลังดำเนินการ') return '<span class="badge-status badge-inprogress">กำลังดำเนินการ</span>';
+        if (st === 'มอบผู้รับผิดชอบ') return '<span class="badge-status badge-assigned">มอบผู้รับผิดชอบ</span>';
+        return '<span class="badge-status badge-active">ดำเนินการเสร็จ</span>';
+      }
+
+      function locBadge(storedLoc) {
+        var loc = C.safeTrim(storedLoc || '');
+        if (loc) return '<span class="badge-status badge-stored"><i class="bi bi-archive-fill me-1"></i>กล่อง ' + C.escapeHtml(loc) + '</span>';
+        return '<span class="badge-status badge-pending">รอจัดเก็บ</span>';
+      }
+
+      function buildDocStatusClass(doc) {
+        var d = doc || {};
+        var st = C.safeTrim(d.status || '');
+        var loc = C.safeTrim(d.storedLoc || '');
+        if (st === 'ยกเลิก') return 'status-cancelled';
+        if (st === 'อนุมัติแล้วส่งคืนเจ้าของเรื่อง') return 'status-returned';
+        if (loc) return 'status-stored';
+        if (st === 'กำลังดำเนินการ') return 'status-inprogress';
+        if (st === 'มอบผู้รับผิดชอบ') return 'status-assigned';
+        return 'status-completed';
+      }
+
+      function getBoxQrData() {
+        var targetBox = C.safeTrim((state.detail && state.detail.boxName) || boxName || '');
+        var target = C.buildPageUrl('storage-box-view.html', {
+          box: targetBox,
+          boxName: targetBox
+        });
+
+        // ทำให้ QR เปิดหน้าเว็บ frontend โดยตรง ไม่ชี้เข้า Apps Script API
+        try {
+          target = new URL(target, window.location.href).toString();
+        } catch (_ignore) {}
+
+        if (typeof window.appendSessionKeysToUrl === 'function') {
+          target = window.appendSessionKeysToUrl(target);
+        } else if (state.settings && C.safeTrim(state.settings.deviceKey || '')) {
+          target += '&dk=' + encodeURIComponent(C.safeTrim(state.settings.deviceKey || ''));
+        }
+        return target;
+      }
+
+      function getBoxQrUrl() {
+        return 'https://api.qrserver.com/v1/create-qr-code/?size=900x900&margin=10&ecc=Q&data=' + encodeURIComponent(getBoxQrData());
+      }
+
+      function goDoc(docId) {
+        var id = C.safeTrim(docId || '');
+        if (!id) return;
+        C.redirect('document-view.html', { id: id });
+      }
+
+      function render() {
+        var detail = state.detail || {};
+        var docs = Array.isArray(detail.docs) ? detail.docs : [];
+        var resolvedBoxName = C.safeTrim(detail.boxName || boxName || '-');
+        if (resolvedBoxName && resolvedBoxName !== '-') {
+          boxName = resolvedBoxName;
+          rememberLastBoxName(resolvedBoxName);
+        }
+        updateBrowserTitle(resolvedBoxName);
+
+        els.boxTitle.innerHTML = '<i class="bi bi-archive-fill me-2"></i>' + C.escapeHtml(resolvedBoxName);
+        if (els.boxSubtitle) {
+          els.boxSubtitle.textContent = 'ตรวจสอบเอกสารในกล่อง: ' + resolvedBoxName;
+        }
+        els.totalChip.textContent = 'รวม ' + docs.length + ' รายการ';
+        els.storageYearChip.textContent = 'ปีจัดเก็บเอกสาร: ' + C.safeText(detail.storageYearSummary || '-');
+        els.destroyYearChip.textContent = 'ปีที่ทำลายเอกสาร: ' + C.safeText(detail.destroyYearSummary || '-');
+        els.boxQr.src = getBoxQrUrl();
+
+        if (!docs.length) {
+          els.docsWrap.innerHTML = '<div class="docs-empty"><i class="bi bi-box-seam"></i><div>ไม่พบเอกสารใน "' + C.escapeHtml(detail.boxName || boxName || '-') + '"</div><div style="font-size:0.82rem;margin-top:4px;">อาจยังไม่มีการบันทึก หรือชื่อกล่องไม่ตรง</div></div>';
+          return;
+        }
+
+        var html = '';
+
+        for (var i = 0; i < docs.length; i++) {
+          var d = docs[i] || {};
+          var title = C.safeTrim(d.amDocNo || '') || C.safeTrim(d.docId || '-') || '-';
+          var sub = C.safeTrim(d.docNoSdh || '');
+          var purposeBadge = C.safeTrim(d.purpose || '') ? ('<span class="badge-status badge-purpose"><i class="bi bi-tag-fill me-1"></i>' + C.escapeHtml(d.purpose) + '</span>') : '';
+          var budgetLabel = C.safeTrim(d.budgetType || '') || 'ไม่ระบุงบฯ';
+          var destroyInfo = C.safeTrim(d.destroyDate || '') && d.destroyDate !== '-'
+            ? '<div class="doc-destroy"><i class="bi bi-clock-history"></i>ครบกำหนดทำลาย: ' + C.escapeHtml(d.destroyDate) + '</div>'
+            : '';
+
+          var footLeft = ((C.safeText(d.group || '') + ' ' + C.safeText(d.sender || '')).replace(/\s+/g, ' ').trim()) || '-';
+          var receiveLabel = C.safeTrim(d.receiveNo || '-') || '-';
+          var storedUserName = C.safeTrim(d.user || '-') || '-';
+
+          var storedAvatar = '';
+          if (C.safeTrim(d.userImg || '')) {
+            storedAvatar = '<img src="' + C.escapeHtml(d.userImg) + '" alt="u">';
+          } else {
+            storedAvatar = '<span class="stored-user-avatar">' + C.escapeHtml((storedUserName !== '-' ? storedUserName.charAt(0) : '?').toUpperCase()) + '</span>';
+          }
+
+          var storedUserChip = (C.safeTrim(d.storedLoc || '') && storedUserName !== '-')
+            ? '<span class="stored-user-chip" title="ผู้จัดเก็บ: ' + C.escapeHtml(storedUserName) + '">' + storedAvatar + '<span class="stored-user-name">' + C.escapeHtml(storedUserName) + '</span></span>'
+            : '';
+
+          html += '<div class="box-doc-card ' + buildDocStatusClass(d) + '" data-doc-id="' + C.escapeHtml(d.docId || '') + '">';
+          html += '<div class="doc-top">';
+          html += '<div class="doc-left">';
+          html += '<span class="box-fiscal-chip">' + C.escapeHtml(C.safeTrim(d.fiscal || '-') || '-') + '</span>';
+          html += '<div style="min-width:0;">';
+          html += '<div class="doc-title">' + C.escapeHtml(title) + '</div>';
+          if (sub && sub !== title) {
+            html += '<div class="doc-subtitle">(สธ ' + C.escapeHtml(sub) + ')</div>';
+          }
+          html += '</div>';
+          html += '</div>';
+
+          html += '<div class="doc-tags">' + purposeBadge;
+          html += '<span class="badge-status badge-budget"><i class="bi bi-wallet2 me-1"></i>' + C.escapeHtml(budgetLabel) + '</span>';
+          html += statusBadge(d.status);
+          html += locBadge(d.storedLoc || '');
+          html += '</div>';
+          html += '</div>';
+
+          html += '<p class="doc-subject">' + C.escapeHtml(C.safeTrim(d.subject || '-') || '-') + '</p>';
+          html += destroyInfo;
+          html += '<div class="doc-foot">';
+          html += '<small>' + C.escapeHtml(footLeft) + '</small>';
+          html += '<div class="doc-foot-right"><small>รับ: ' + C.escapeHtml(receiveLabel) + '</small>' + storedUserChip + '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+
+        els.docsWrap.innerHTML = html;
+
+        var cards = els.docsWrap.querySelectorAll('.box-doc-card');
+        for (var c = 0; c < cards.length; c++) {
+          cards[c].addEventListener('click', function () {
+            var id = C.safeTrim(this.getAttribute('data-doc-id') || '');
+            if (id) goDoc(id);
+          });
+        }
+      }
+
+      function printBoxQrLabel() {
+        var d = state.detail || {};
+        var box = d.boxName || boxName || '-';
+        var boxQrUrl = getBoxQrUrl();
+
+        var w = window.open('', '', 'width=900,height=700');
+        if (!w) {
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
+          return;
+        }
+
+        var h = '';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>QR ติดกล่อง - ' + C.escapeHtml(box) + '</title>';
+        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 landscape;margin:10mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:0;background:#fff;color:#111}.sheet{width:calc(297mm - 20mm);height:calc(210mm - 20mm);margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8mm}.qr-wrap{width:84mm;height:84mm;border-radius:20px;background:#fff;border:3px solid #111;box-sizing:border-box;padding:3px;display:flex;align-items:center;justify-content:center;overflow:hidden}.qr-wrap img{width:100%;height:100%;object-fit:contain}.box-name{font-weight:900;font-size:42pt;line-height:1.08;text-align:center;max-width:260mm}.meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}.chip{padding:8px 14px;border-radius:999px;border:1.5px solid #111;font-size:14pt;font-weight:700;background:#F8FAFC}.chip.destroy{border-color:#B91C1C;color:#991B1B;background:#FEF2F2}.no-print{text-align:center;margin-top:10px}.no-print button{padding:10px 28px;border:none;border-radius:999px;background:#007AFF;color:#fff;font-weight:900;font-size:13pt}@media print{.no-print{display:none!important}}</style>';
+        h += '</head><body>';
+        h += '<div class="sheet">';
+        h += '<div class="qr-wrap"><img src="' + C.escapeHtml(boxQrUrl) + '" alt="QR"></div>';
+        h += '<div class="box-name">' + C.escapeHtml(box) + '</div>';
+        h += '<div class="meta"><span class="chip">ปีจัดเก็บเอกสาร: ' + C.escapeHtml(d.storageYearSummary || '-') + '</span><span class="chip destroy">ปีที่ทำลายเอกสาร: ' + C.escapeHtml(d.destroyYearSummary || '-') + '</span></div>';
+        h += '<div class="no-print"><button onclick="window.print()">พิมพ์</button></div>';
+        h += '</div></body></html>';
+
+        w.document.write(h);
+        w.document.close();
+      }
+
+      function printReport() {
+        var d = state.detail || {};
+        var docs = Array.isArray(d.docs) ? d.docs : [];
+
+        if (!docs.length) {
+          Swal.fire('ไม่มีข้อมูล', 'ไม่พบเอกสารสำหรับพิมพ์', 'warning');
+          return;
+        }
+
+        var w = window.open('', '', 'width=1220,height=820');
+        if (!w) {
+          Swal.fire('ไม่สามารถเปิดหน้าต่างพิมพ์', 'กรุณาอนุญาตป๊อปอัป (Pop-up) สำหรับหน้านี้', 'info');
+          return;
+        }
+
+        var h = '';
+        h += '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>รายการเอกสาร - ' + C.escapeHtml(d.boxName || boxName || '-') + '</title>';
+        h += '<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">';
+        h += '<style>@page{size:A4 landscape;margin:8mm}body{font-family:"IBM Plex Sans Thai",sans-serif;margin:0;padding:8px;color:#0F172A}h2{margin:0 0 2px;text-align:center;font-size:21px;line-height:1.2;font-weight:800}p.meta{margin:0 0 8px;text-align:center;font-size:11px;color:#334155}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{border:1px solid #334155;padding:4px 5px;font-size:10.2px;line-height:1.28;vertical-align:top}th{background:#E2E8F0;text-align:center;font-weight:800}.text-center{text-align:center}.text-right{text-align:right}.subject,.sender,.user{white-space:normal;overflow-wrap:anywhere;word-break:break-word}.subject{line-height:1.3}.user{font-size:9.8px}.amount,.diff,.index,.fiscal,.doc-no,.am-doc-no{white-space:nowrap}@media print{button{display:none!important}}</style>';
+        h += '</head><body>';
+        h += '<h2>รายการเอกสารในกล่อง: ' + C.escapeHtml(d.boxName || boxName || '-') + '</h2>';
+        h += '<p class="meta">ข้อมูล ณ วันที่ ' + C.escapeHtml(new Date().toLocaleString('th-TH')) + ' | จำนวนทั้งหมด ' + docs.length + ' รายการ</p>';
+        h += '<table><colgroup><col style="width:4%"><col style="width:5%"><col style="width:10%"><col style="width:7%"><col style="width:24%"><col style="width:11%"><col style="width:8%"><col style="width:8%"><col style="width:11%"><col style="width:12%"></colgroup><thead><tr><th>ลำดับ</th><th>ปีงบฯ</th><th>เลขที่หนังสือส่งกองคลัง</th><th>เลขที่ สธ.</th><th>ชื่อเรื่อง</th><th>ชื่อผู้ส่ง</th><th>จำนวน</th><th>ส่วนต่าง</th><th>วันที่จัดเก็บ</th><th>ผู้จัดเก็บ</th></tr></thead><tbody>';
+
+        for (var i = 0; i < docs.length; i++) {
+          var row = docs[i] || {};
+          var subject = String(row.subject || '-');
+          if (subject.length > 240) {
+            subject = subject.substring(0, 240).replace(/\s+$/, '') + '...';
+          }
+          var dateText = C.safeText(row.dateStr || '-') + (C.safeTrim(row.timeStr || '') ? (' ' + C.safeTrim(row.timeStr || '')) : '');
+
+          h += '<tr>';
+          h += '<td class="text-center index">' + (i + 1) + '</td>';
+          h += '<td class="text-center fiscal">' + C.escapeHtml(row.fiscal || '-') + '</td>';
+          h += '<td class="text-center am-doc-no">' + C.escapeHtml(row.amDocNo || '') + '</td>';
+          h += '<td class="text-center doc-no">' + C.escapeHtml(row.docNoSdh || '') + '</td>';
+          h += '<td class="subject">' + C.escapeHtml(subject) + '</td>';
+          h += '<td class="sender">' + C.escapeHtml(row.sender || '-') + '</td>';
+          h += '<td class="text-right amount">' + C.escapeHtml(row.amount || '-') + '</td>';
+          h += '<td class="text-right diff">' + C.escapeHtml(row.difference || '-') + '</td>';
+          h += '<td class="text-center">' + C.escapeHtml(dateText) + '</td>';
+          h += '<td class="user">' + C.escapeHtml(row.user || '-') + '</td>';
+          h += '</tr>';
+        }
+
+        h += '</tbody></table><script>window.onload=function(){window.print();window.close();}<' + '/script></body></html>';
+
+        w.document.write(h);
+        w.document.close();
+      }
+
+      async function loadDetail() {
+        showError('');
+
+        if (!boxName) {
+          boxName = readLastBoxName();
+        }
+        if (!boxName) {
+          return { success: false, error: 'ไม่พบชื่อกล่อง' };
+        }
+
+        var res = await Promise.all([
+          state.api.boxDetail(boxName),
+          state.api.me()
+        ]);
+
+        var boxRes = res[0] || {};
+        var meRes = res[1] || {};
+
+        if (!meRes || meRes.success === false || !meRes.user) {
+          C.redirect('index.html', {}, true);
+          return false;
+        }
+
+        if (!boxRes || boxRes.success === false) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบชื่อกล่อง',
+            detail: boxName,
+            back: 'index.html'
+          }, true);
+          return false;
+        }
+
+        state.detail = boxRes;
+        render();
+        els.mainCard.style.display = 'block';
+        return true;
+      }
+
+      function bindEvents() {
+        els.btnBack.addEventListener('click', function () {
+          C.redirect('index.html');
+        });
+
+        els.btnReload.addEventListener('click', function () {
+          loadDetail().catch(function (err) {
+            showError((err && err.message) ? err.message : 'โหลดข้อมูลกล่องไม่สำเร็จ');
+          });
+        });
+
+        els.btnPrintQr.addEventListener('click', printBoxQrLabel);
+        els.btnPrintList.addEventListener('click', printReport);
+      }
+
+      async function init() {
+        if (!boxName) {
+          boxName = readLastBoxName();
+        }
+        if (!boxName) {
+          C.redirect('not-found.html', {
+            message: 'ไม่พบชื่อกล่อง',
+            detail: '',
+            back: 'index.html'
+          }, true);
+          return;
+        }
+        rememberLastBoxName(boxName);
+
+        try {
+          state.settings = C.ensureSettingsOrThrow();
+          state.api = C.createApiClient(state.settings);
+        } catch (_e) {
+          showError('กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน');
+          return;
+        }
+
+        bindEvents();
+        updateBrowserTitle(boxName);
+
+        try {
+          var ok = await loadDetail();
+          if (!ok) return;
+        } catch (err) {
+          showError((err && err.message) ? err.message : 'โหลดข้อมูลกล่องไม่สำเร็จ');
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
