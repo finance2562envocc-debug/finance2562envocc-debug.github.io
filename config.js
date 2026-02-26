@@ -8,7 +8,7 @@
     themePreset: 'apple-glass',
 
     // จำเป็น: ใส่ URL Web App ที่ลงท้ายด้วย /exec
-    scriptUrl: 'https://script.google.com/macros/s/AKfycbx9BjtMbFJ2G9vPyJVmNCu3mAJb8mSzIpzjt1LnQfKiMjXnwSy7_N0ZV9GTXPQ5cx18/exec',
+    scriptUrl: 'https://script.google.com/macros/s/AKfycbz8qt2yIFnU2yeDfLUkOxPLMLZUnuIp2rPjEWc5HK70OJZGen8NPyFqnN5AXGPyLRm5/exec',
 
     // ไม่จำเป็น: ถ้าเว้นว่าง ระบบจะสร้างและจำค่าให้เองในเบราว์เซอร์
     deviceKey: '',
