@@ -106,16 +106,134 @@
       color: var(--text-muted);
       font-size: 0.84rem;
       line-height: 1.5;
-      font-weight: 630;
-      border: 1px solid var(--input-border);
-      background: rgba(255, 255, 255, 0.62);
-      border-radius: 14px;
-      padding: 10px 12px;
+      font-weight: 620;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      border-radius: 0;
+      padding: 0 !important;
+    }
+
+    .desc-note.emphasis {
+      color: #1e3a8a;
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0;
+      padding: 0 !important;
+      font-weight: 680;
+    }
+
+    .status-log-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-log-meta {
+      display: block;
+      margin: 0;
+      padding: 0 !important;
+      border-radius: 0;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: var(--text-color);
+      font-size: 0.86rem;
+      font-weight: 720;
+    }
+
+    .history-popup-btn {
+      border: 1px solid rgba(10, 132, 255, 0.3);
+      border-radius: 999px;
+      background: rgba(10, 132, 255, 0.1);
+      color: #0a63cf;
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 0.79rem;
+      font-weight: 760;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .history-popup-btn:hover {
+      border-color: rgba(10, 132, 255, 0.45);
+      background: rgba(10, 132, 255, 0.16);
+    }
+
+    .history-popup-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .history-popup-content {
+      text-align: left;
+      display: grid;
+      gap: 8px;
+      max-height: 60vh;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .history-popup-block {
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      padding: 8px 10px;
+    }
+
+    .history-popup-title {
+      margin: 0 0 3px;
+      color: var(--text-color);
+      font-size: 0.83rem;
+      font-weight: 760;
+      line-height: 1.3;
+    }
+
+    .history-popup-line {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.76rem;
+      line-height: 1.34;
+      word-break: break-word;
     }
 
     body.dark-mode .desc-note {
-      background: rgba(9, 20, 40, 0.55);
-      border-color: rgba(78, 112, 156, 0.5);
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: #b8c5d8;
+    }
+
+    body.dark-mode .desc-note.emphasis {
+      color: #dbeafe;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    body.dark-mode .status-log-meta {
+      color: #d0deef;
+    }
+
+    body.dark-mode .history-popup-btn {
+      color: #bfdbfe;
+      border-color: rgba(118, 178, 252, 0.44);
+      background: rgba(13, 90, 170, 0.28);
+    }
+
+    body.dark-mode .history-popup-btn:hover {
+      border-color: rgba(148, 196, 255, 0.62);
+      background: rgba(13, 90, 170, 0.38);
+    }
+
+    body.dark-mode .history-popup-block {
+      border-color: rgba(89, 120, 160, 0.45);
+      background: rgba(39, 57, 84, 0.28);
     }
 
     .steps-toolbar {
@@ -170,15 +288,15 @@
       position: relative;
       display: block;
       margin: 0 !important;
-      border: 1px solid var(--input-border) !important;
-      background: var(--card-bg) !important;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08) !important;
+      border: 1px solid rgba(148, 163, 184, 0.28) !important;
+      background: rgba(255, 255, 255, 0.4) !important;
+      box-shadow: none !important;
       overflow: hidden;
       isolation: isolate;
       z-index: 0;
-      border-radius: 18px;
-      padding: 14px;
-      transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
+      border-radius: 14px;
+      padding: 13px;
+      transition: border-color 0.24s ease, background-color 0.24s ease;
     }
 
     .status-body #stepsWrap > .form-section + .form-section {
@@ -186,19 +304,21 @@
     }
 
     body.dark-mode .status-body #stepsWrap > .form-section {
-      border-color: #365172 !important;
-      background: #121d2f !important;
-      box-shadow: 0 14px 30px rgba(2, 8, 20, 0.56) !important;
+      border-color: rgba(73, 102, 139, 0.35) !important;
+      background: rgba(11, 24, 44, 0.38) !important;
+      box-shadow: none !important;
     }
 
     .status-step-card.active {
       border-color: rgba(10, 132, 255, 0.38) !important;
-      box-shadow: 0 18px 32px rgba(10, 132, 255, 0.16) !important;
+      background: rgba(10, 132, 255, 0.08) !important;
+      box-shadow: none !important;
     }
 
     body.dark-mode .status-step-card.active {
       border-color: rgba(76, 150, 255, 0.5) !important;
-      box-shadow: 0 18px 34px rgba(8, 92, 190, 0.35) !important;
+      background: rgba(8, 92, 190, 0.22) !important;
+      box-shadow: none !important;
     }
 
     .form-section-title {
@@ -235,6 +355,11 @@
       background: rgba(35, 92, 162, 0.34);
     }
 
+    body.dark-mode .step-count-chip {
+      color: #bfdbfe;
+      background: rgba(13, 90, 170, 0.36);
+    }
+
     .step-sub {
       margin: 4px 0 0 0;
       color: var(--text-muted);
@@ -262,6 +387,24 @@
 
     .step-title-wrap {
       min-width: 0;
+    }
+
+    .step-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .step-count-chip {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 760;
+      color: #0a63cf;
+      background: rgba(10, 132, 255, 0.12);
+      white-space: nowrap;
+      line-height: 1.3;
     }
 
     .switch {
@@ -312,10 +455,10 @@
     .step-state {
       min-height: 28px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.42);
-      background: rgba(148, 163, 184, 0.16);
+      border: none;
+      background: rgba(148, 163, 184, 0.14);
       color: var(--text-muted);
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 760;
       display: inline-flex;
       align-items: center;
@@ -327,19 +470,17 @@
     }
 
     .step-state.on {
-      border-color: rgba(34, 197, 94, 0.4);
-      background: rgba(34, 197, 94, 0.15);
-      color: #15803d;
+      background: rgba(34, 197, 94, 0.16);
+      color: #166534;
     }
 
     body.dark-mode .step-state {
-      border-color: rgba(122, 153, 192, 0.42);
-      background: rgba(57, 84, 120, 0.24);
+      border: none;
+      background: rgba(57, 84, 120, 0.26);
       color: #b8c5d8;
     }
 
     body.dark-mode .step-state.on {
-      border-color: rgba(87, 229, 145, 0.38);
       background: rgba(20, 126, 82, 0.28);
       color: #86efac;
     }
@@ -365,15 +506,25 @@
     }
 
     .status-field {
-      border: 1px solid var(--input-border);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.48);
-      padding: 9px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
     }
 
     body.dark-mode .status-field {
-      background: rgba(11, 24, 44, 0.48);
-      border-color: rgba(73, 102, 139, 0.45);
+      background: transparent;
+      border-color: transparent;
+    }
+
+    .status-field.remark-field {
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(148, 163, 184, 0.1);
+    }
+
+    body.dark-mode .status-field.remark-field {
+      background: rgba(57, 84, 120, 0.2);
     }
 
     .form-control,
@@ -414,6 +565,14 @@
       box-shadow: 0 0 0 3px var(--primary-color-soft);
     }
 
+    textarea.form-control {
+      min-height: 112px;
+      height: auto;
+      padding: 11px 12px;
+      line-height: 1.42;
+      resize: vertical;
+    }
+
     .thai-date-input .form-control {
       display: flex;
       align-items: center;
@@ -444,8 +603,8 @@
       align-items: center;
       justify-content: center;
       background: rgba(10, 132, 255, 0.12);
-      border: 1px solid rgba(10, 132, 255, 0.36);
-      box-shadow: 0 6px 14px rgba(10, 132, 255, 0.14);
+      border: none;
+      box-shadow: none;
       color: #007aff;
       font-size: 0.9rem;
       font-weight: 800;
@@ -581,6 +740,14 @@
         gap: 10px;
       }
 
+      .status-log-head {
+        align-items: stretch;
+      }
+
+      .status-log-head .history-popup-btn {
+        width: 100%;
+      }
+
       #stepsWrap {
         gap: 10px;
       }
@@ -706,11 +873,21 @@
 
       <div class="status-body">
         <p class="desc-note"><i class="bi bi-info-circle me-1"></i>เปิด-ปิดสวิตช์เพื่อบันทึกสถานะแต่ละขั้นตอน วันที่จะเติมอัตโนมัติเมื่อเปิดสวิตช์</p>
+        <p class="desc-note emphasis"><i class="bi bi-shield-lock me-1"></i>ทุกครั้งที่บันทึก ระบบจะเก็บเป็นรายสถานะแยกครั้ง (ครั้งที่ 1, 2, 3...) และไม่แก้ไขประวัติเดิมย้อนหลัง</p>
+        <div class="status-log-head">
+          <div id="statusLogMeta" class="status-log-meta">กำลังเตรียมข้อมูลประวัติสถานะ...</div>
+          <button id="btnShowHistoryAll" type="button" class="history-popup-btn"><i class="bi bi-clock-history"></i>ดูประวัติทั้งหมด</button>
+        </div>
         <div class="steps-toolbar">
           <button id="btnEnableAll" type="button" class="toolbar-btn primary"><i class="bi bi-check2-square"></i>เปิดทุกสถานะ</button>
           <button id="btnDisableAll" type="button" class="toolbar-btn"><i class="bi bi-x-square"></i>ปิดทั้งหมด</button>
         </div>
         <div id="stepsWrap"></div>
+
+        <section class="status-field remark-field">
+          <label class="form-label" for="statusRemark"><i class="bi bi-chat-left-text me-1"></i>หมายเหตุสถานะ (คอลัมน์ AM)</label>
+          <textarea id="statusRemark" class="form-control" rows="4" placeholder="กรอกหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
+        </section>
 
         <div id="loadingMsg" class="loading-row">
           <div class="spinner"></div>
@@ -741,8 +918,11 @@
         user: null,
         doc: null,
         statusData: {},
+        statusStepLogs: [],
+        statusStepStats: {},
         members: [],
-        memberImgMap: {}
+        memberImgMap: {},
+        statusDraftData: null
       };
 
       var steps = [
@@ -761,6 +941,9 @@
         btnEnableAll: document.getElementById('btnEnableAll'),
         btnDisableAll: document.getElementById('btnDisableAll'),
         stepsWrap: document.getElementById('stepsWrap'),
+        statusLogMeta: document.getElementById('statusLogMeta'),
+        btnShowHistoryAll: document.getElementById('btnShowHistoryAll'),
+        statusRemark: document.getElementById('statusRemark'),
         btnSubmit: document.getElementById('btnSubmit'),
         loadingMsg: document.getElementById('loadingMsg')
       };
@@ -878,6 +1061,182 @@
         return '';
       }
 
+      function buildEmptyStatusDraft() {
+        return {
+          returnCheck: false,
+          returnDate: '',
+          returnUser: '',
+          receiveBackCheck: false,
+          receiveBackDate: '',
+          receiveBackUser: '',
+          verifyCheck: false,
+          verifyDate: '',
+          verifyUser: '',
+          bossCheck: false,
+          bossDate: '',
+          bossUser: '',
+          signCheck: false,
+          signDate: '',
+          signUser: '',
+          statusRemark: ''
+        };
+      }
+
+      function formatStatusLogTimestamp(isoText) {
+        var iso = C.safeTrim(isoText || '');
+        if (!iso) return 'ไม่ระบุเวลา';
+
+        var normalized = iso;
+        var isDateOnlyInput = false;
+        var ymd = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (ymd) {
+          isDateOnlyInput = true;
+          var yOnly = Number(ymd[1]);
+          if (yOnly > 2400) yOnly -= 543;
+          normalized = String(yOnly).padStart(4, '0') + '-' + ymd[2] + '-' + ymd[3] + 'T00:00:00+07:00';
+        } else {
+          var yearPrefix = normalized.match(/^(\d{4})([\s\S]*)$/);
+          if (yearPrefix) {
+            var y = Number(yearPrefix[1]);
+            if (y > 2400) {
+              normalized = String(y - 543) + yearPrefix[2];
+            }
+          }
+          if (/^\d{4}-\d{2}-\d{2}T/.test(normalized) && !/(Z|[+\-]\d{2}:?\d{2})$/.test(normalized)) {
+            normalized += '+07:00';
+          }
+        }
+
+        var d = new Date(normalized);
+        if (isNaN(d.getTime())) return iso;
+
+        var dateText = new Intl.DateTimeFormat('th-TH-u-ca-buddhist', {
+          timeZone: 'Asia/Bangkok',
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }).format(d);
+
+        if (isDateOnlyInput) {
+          return dateText + ' เวลาไม่ระบุ';
+        }
+
+        var timeText = new Intl.DateTimeFormat('th-TH', {
+          timeZone: 'Asia/Bangkok',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        }).format(d);
+
+        return dateText + ' เวลา ' + timeText + ' น.';
+      }
+
+      function escapePlainText(value) {
+        return C.escapeHtml(C.safeText(value || '').replace(/\s+/g, ' ').trim());
+      }
+
+      function getStepSavedCount(stepKey) {
+        var stats = (state.statusStepStats && typeof state.statusStepStats === 'object') ? state.statusStepStats : {};
+        var count = Number(stats[stepKey] || 0);
+        if (!isFinite(count) || count < 0) count = 0;
+        return Math.floor(count);
+      }
+
+      function sortStepLogsDesc(list) {
+        return (Array.isArray(list) ? list.slice() : []).sort(function (a, b) {
+          var sa = Number(a && a.seqNo || 0);
+          var sb = Number(b && b.seqNo || 0);
+          if (sa !== sb) return sb - sa;
+          var ta = String(a && a.createdAtIso || '');
+          var tb = String(b && b.createdAtIso || '');
+          return tb.localeCompare(ta);
+        });
+      }
+
+      function groupedStatusLogsByStep() {
+        var logs = Array.isArray(state.statusStepLogs) ? state.statusStepLogs : [];
+        var grouped = {};
+        for (var i = 0; i < steps.length; i++) grouped[steps[i].key] = [];
+        for (var j = 0; j < logs.length; j++) {
+          var item = logs[j] || {};
+          var key = C.safeTrim(item.stepKey || '');
+          if (!key) continue;
+          if (!grouped[key]) grouped[key] = [];
+          grouped[key].push(item);
+        }
+        for (var k = 0; k < steps.length; k++) {
+          var stepKey = steps[k].key;
+          grouped[stepKey] = sortStepLogsDesc(grouped[stepKey]);
+        }
+        return grouped;
+      }
+
+      async function showAllHistoryPopup() {
+        var grouped = groupedStatusLogsByStep();
+        var html = '<div class="history-popup-content">';
+        for (var i = 0; i < steps.length; i++) {
+          var step = steps[i];
+          var list = Array.isArray(grouped[step.key]) ? grouped[step.key] : [];
+          var savedCount = getStepSavedCount(step.key);
+          if (savedCount < list.length) savedCount = list.length;
+          html += '<div class="history-popup-block">';
+          html += '<p class="history-popup-title"><i class="bi ' + C.escapeHtml(step.icon) + '"></i> ' + C.escapeHtml(step.label) + ' • บันทึกแล้ว ' + String(savedCount) + ' ครั้ง</p>';
+          if (!list.length) {
+            html += '<p class="history-popup-line">ยังไม่เคยบันทึกสถานะนี้</p>';
+          } else {
+            for (var r = 0; r < list.length; r++) {
+              var item = list[r] || {};
+              var seq = Number(item.seqNo || (list.length - r));
+              if (!isFinite(seq) || seq < 1) seq = (list.length - r);
+              var eventDate = C.safeTrim(item.stepDateDisplay || '') || C.safeTrim(item.stepDateIso || '') || '-';
+              var eventUser = C.safeTrim(item.stepUser || '') || '-';
+              var recordedAtText = formatStatusLogTimestamp(item.createdAtIso || item.stepDateIso || '');
+              html += '<p class="history-popup-line">ครั้งที่ ' + String(seq) + ' • วันที่: ' + C.escapeHtml(eventDate) + ' • ผู้ดำเนินการ: ' + C.escapeHtml(eventUser) + '</p>';
+              html += '<p class="history-popup-line">บันทึกเมื่อ: ' + C.escapeHtml(recordedAtText) + '</p>';
+              var note = C.safeTrim(item.statusRemark || '');
+              if (note) {
+                html += '<p class="history-popup-line">หมายเหตุ: ' + escapePlainText(note) + '</p>';
+              }
+            }
+          }
+          html += '</div>';
+        }
+        html += '</div>';
+
+        await Swal.fire({
+          icon: 'info',
+          title: 'สรุปประวัติสถานะทั้งหมด',
+          html: html,
+          width: 820,
+          confirmButtonText: 'ปิด',
+          confirmButtonColor: '#0A84FF'
+        });
+      }
+
+      function renderStatusLogHistory() {
+        var grouped = groupedStatusLogsByStep();
+
+        var totalSaved = 0;
+        for (var s = 0; s < steps.length; s++) {
+          var stepKey = steps[s].key;
+          var stepCount = getStepSavedCount(stepKey);
+          var stepLogs = Array.isArray(grouped[stepKey]) ? grouped[stepKey] : [];
+          if (stepCount < stepLogs.length) stepCount = stepLogs.length;
+          totalSaved += stepCount;
+        }
+        if (els.statusLogMeta) {
+          els.statusLogMeta.innerHTML = '<i class="bi bi-journal-check me-1"></i>บันทึกสถานะสะสมทั้งหมด <strong>' + String(totalSaved) + '</strong> รายการ (นับแยกตามแต่ละสถานะ)';
+        }
+        if (els.btnShowHistoryAll) {
+          var btnText = totalSaved > 0
+            ? '<i class="bi bi-clock-history"></i>ดูประวัติทั้งหมด (' + String(totalSaved) + ')'
+            : '<i class="bi bi-clock-history"></i>ดูประวัติทั้งหมด';
+          els.btnShowHistoryAll.innerHTML = btnText;
+        }
+      }
+
       function memberSelectHtml(fieldId, currentVal, disabled) {
         var html = '<option value="">เลือกชื่อ...</option>';
         var selected = C.safeTrim(currentVal || '');
@@ -904,7 +1263,7 @@
       }
 
       function renderSteps() {
-        var s = state.statusData || {};
+        var s = state.statusDraftData || buildEmptyStatusDraft();
         var html = '';
 
         for (var i = 0; i < steps.length; i++) {
@@ -914,14 +1273,24 @@
           var displayText = 'เลือกวันที่...';
           var displayColor = 'var(--text-muted)';
           var userVal = C.safeTrim(s[step.key + 'User'] || '');
+          var stepSavedCount = getStepSavedCount(step.key);
+
+          if (dateVal) {
+            var dateObj = new Date(dateVal);
+            displayText = isNaN(dateObj.getTime()) ? dateVal : dateObj.toLocaleDateString('th-TH');
+            displayColor = 'var(--text-color)';
+          }
 
           html += '<section id="' + step.key + 'Card" class="form-section status-step-card' + (checked ? ' active' : '') + '">';
           html += '<div class="step-head">';
           html += '<div class="step-head-main">';
           html += '<label class="switch"><input type="checkbox" id="' + step.key + 'Check"' + (checked ? ' checked' : '') + '><span class="slider"></span></label>';
           html += '<div class="step-title-wrap">';
+          html += '<div class="step-title-row">';
           html += '<h4 class="form-section-title"><span class="step-index-badge">' + String(i + 1) + '</span><i class="bi ' + C.escapeHtml(step.icon) + '"></i>' + C.escapeHtml(step.label) + '</h4>';
-          html += '<p class="step-sub">เปิดสวิตช์เพื่อกรอกวันที่และชื่อผู้ดำเนินการ</p>';
+          html += '<span class="step-count-chip">บันทึกแล้ว ' + String(stepSavedCount) + ' ครั้ง</span>';
+          html += '</div>';
+          html += '<p class="step-sub">เปิดสวิตช์เพื่อเพิ่มการบันทึกสถานะครั้งใหม่</p>';
           html += '</div>';
           html += '</div>';
           html += '<span id="' + step.key + 'State" class="step-state' + (checked ? ' on' : '') + '">' + (checked ? 'เปิดแล้ว' : 'ปิดอยู่') + '</span>';
@@ -1047,9 +1416,9 @@
         var value = C.safeTrim((input && input.value) || '');
         if (isIsoDateText(value)) return value;
         if (isEmptyDateToken(value)) return '';
-        var fromState = resolveStepDateValue(state.statusData || {}, stepKey);
+        var fromState = resolveStepDateValue(state.statusDraftData || {}, stepKey);
         if (fromState) return fromState;
-        var fallback = C.safeTrim(((state.statusData || {})[stepKey + 'Date']) || ((state.statusData || {})[stepKey + 'DateInput']) || '');
+        var fallback = C.safeTrim(((state.statusDraftData || {})[stepKey + 'Date']) || ((state.statusDraftData || {})[stepKey + 'DateInput']) || '');
         return isIsoDateText(fallback) ? fallback : '';
       }
 
@@ -1091,7 +1460,9 @@
           bossUser: C.safeTrim((document.getElementById('bossUser') || {}).value || ''),
           signCheck: !!(document.getElementById('signCheck') || {}).checked,
           signDate: getDateForSubmit('sign'),
-          signUser: C.safeTrim((document.getElementById('signUser') || {}).value || '')
+          signUser: C.safeTrim((document.getElementById('signUser') || {}).value || ''),
+          statusRemark: C.safeText((els.statusRemark && els.statusRemark.value) || '').trim(),
+          mode: 'append_step_events'
         };
       }
 
@@ -1117,10 +1488,11 @@
 
         setSaving(true);
         var nextDocId = state.doc.docId || docId;
+        var saveResult = null;
         try {
-          var res = await state.api.docUpdateStatus(nextDocId, statusData);
-          if (!res || res.success === false) {
-            throw new Error((res && res.error) ? res.error : 'ไม่สามารถบันทึกสถานะได้');
+          saveResult = await state.api.docUpdateStatus(nextDocId, statusData);
+          if (!saveResult || saveResult.success === false) {
+            throw new Error((saveResult && saveResult.error) ? saveResult.error : 'ไม่สามารถบันทึกสถานะได้');
           }
         } catch (err) {
           await Swal.fire('เกิดข้อผิดพลาด', (err && err.message) ? err.message : 'บันทึกไม่สำเร็จ', 'error');
@@ -1129,15 +1501,48 @@
           setSaving(false);
         }
 
-        await Swal.fire({
+        if (saveResult && Array.isArray(saveResult.statusStepLogs)) {
+          state.statusStepLogs = saveResult.statusStepLogs;
+        } else if (saveResult && Array.isArray(saveResult.appended) && saveResult.appended.length) {
+          state.statusStepLogs = (Array.isArray(state.statusStepLogs) ? state.statusStepLogs : []).concat(saveResult.appended);
+        }
+        if (saveResult && saveResult.statusStepStats && typeof saveResult.statusStepStats === 'object') {
+          state.statusStepStats = saveResult.statusStepStats;
+        }
+        if (saveResult && saveResult.statusData) {
+          state.statusData = saveResult.statusData;
+        }
+
+        state.statusDraftData = buildEmptyStatusDraft();
+
+        renderStatusLogHistory();
+        renderSteps();
+        if (els.statusRemark) els.statusRemark.value = '';
+
+        var appended = Array.isArray(saveResult && saveResult.appended) ? saveResult.appended : [];
+        var savedSummary = appended.map(function (item) {
+          var label = C.safeTrim((item && item.stepLabel) || '');
+          var seq = Number((item && item.seqNo) || 0);
+          if (!isFinite(seq) || seq < 1) return label || '-';
+          return (label || '-') + ' ครั้งที่ ' + String(seq);
+        }).join(' | ');
+        if (!savedSummary) savedSummary = 'บันทึกสถานะที่เลือกแล้ว';
+
+        var action = await Swal.fire({
           icon: 'success',
           title: 'บันทึกสถานะสำเร็จ',
-          confirmButtonText: 'ดูรายละเอียดเอกสาร',
+          text: savedSummary,
+          confirmButtonText: 'บันทึกต่อ',
+          showDenyButton: true,
+          denyButtonText: 'ดูรายละเอียดเอกสาร',
           confirmButtonColor: '#007AFF',
+          denyButtonColor: '#64748B',
           allowOutsideClick: false
         });
 
-        C.redirect('document-view.html', { id: nextDocId }, true);
+        if (action && action.isDenied) {
+          C.redirect('document-view.html', { id: nextDocId }, true);
+        }
       }
 
       async function loadData() {
@@ -1169,8 +1574,11 @@
         state.user = meRes.user;
         state.doc = docRes.doc;
         state.statusData = docRes.statusData || {};
+        state.statusStepLogs = Array.isArray(docRes.statusStepLogs) ? docRes.statusStepLogs : [];
+        state.statusStepStats = (docRes.statusStepStats && typeof docRes.statusStepStats === 'object') ? docRes.statusStepStats : {};
         state.members = (memberRes && Array.isArray(memberRes.data)) ? memberRes.data : [];
         state.memberImgMap = mapMemberImages(state.members);
+        state.statusDraftData = buildEmptyStatusDraft();
         updateBrowserTitle(state.doc.docId || docId);
 
         if (state.user.isReadOnly || state.user.canEdit === false) {
@@ -1183,7 +1591,9 @@
         var headText = (state.doc.docId || '-') + ' | เลขรับ ' + (state.doc.receiveNo || '-');
         els.docHead.textContent = headText;
 
+        renderStatusLogHistory();
         renderSteps();
+        if (els.statusRemark) els.statusRemark.value = '';
 
         els.mainCard.style.display = 'block';
         return true;
@@ -1207,6 +1617,12 @@
         if (els.btnDisableAll) {
           els.btnDisableAll.addEventListener('click', function () {
             setAllSteps(false);
+          });
+        }
+
+        if (els.btnShowHistoryAll) {
+          els.btnShowHistoryAll.addEventListener('click', function () {
+            showAllHistoryPopup();
           });
         }
 
