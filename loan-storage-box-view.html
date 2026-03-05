@@ -1060,6 +1060,7 @@
           <img id="boxQr" class="box-qr-image" alt="QR Box" width="220" height="220">
           <div class="box-actions">
             <button id="btnPrintQr" type="button" class="btn light"><i class="bi bi-printer"></i>พิมพ์ QR ติดกล่อง</button>
+            <button id="btnManageBoxes" type="button" class="btn light"><i class="bi bi-sliders"></i>จัดการกล่อง</button>
           </div>
           <div class="year-chip-wrap">
             <span id="storageYearChip" class="year-chip storage">ปีงบประมาณในกล่อง: -</span>
@@ -1102,6 +1103,7 @@
 
       var els = {
         btnBack: document.getElementById('btnBack'),
+        btnManageBoxes: document.getElementById('btnManageBoxes'),
         btnReload: document.getElementById('btnReload'),
         errBox: document.getElementById('errBox'),
         mainCard: document.getElementById('mainCard'),
@@ -1780,6 +1782,12 @@
         els.btnBack.addEventListener('click', function () {
           C.redirect('loan-index.html');
         });
+
+        if (els.btnManageBoxes) {
+          els.btnManageBoxes.addEventListener('click', function () {
+            C.redirect('box-management.html', { scope: 'loan', back: 'loan-index.html', tab: 'boxes' });
+          });
+        }
 
         els.btnReload.addEventListener('click', function () {
           loadDetail().catch(function (err) {
