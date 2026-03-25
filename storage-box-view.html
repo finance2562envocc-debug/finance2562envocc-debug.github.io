@@ -498,11 +498,25 @@
       line-height: 1.45;
       display: none;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      width: min(100%, 760px);
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
     }
 
     .readonly-box.show {
-      display: inline-flex;
+      display: flex;
+    }
+
+    .readonly-box i {
+      flex: 0 0 auto;
+    }
+
+    .readonly-box span,
+    .readonly-box div {
+      text-align: center;
     }
 
     @media (max-width: 880px) {
@@ -616,11 +630,11 @@
 <body class="page-box-view">
   <div class="box-page">
     <div class="box-top">
-      <button id="btnBack" type="button" class="back-btn"><i class="bi bi-arrow-left"></i> กลับ</button>
+      <button id="btnBack" type="button" class="back-btn" style="display:none;"><i class="bi bi-arrow-left"></i> กลับ</button>
     </div>
 
     <div id="errBox" class="error-box"></div>
-    <div id="readonlyNote" class="readonly-box"><i class="bi bi-qr-code-scan"></i><span>โหมดดูรายละเอียดจาก QR Code: ดูข้อมูลได้อย่างเดียว</span></div>
+    <div id="readonlyNote" class="readonly-box" style="display:none;"><i class="bi bi-qr-code-scan"></i><span>โหมดดูรายละเอียดจาก QR Code: ดูข้อมูลได้อย่างเดียว</span></div>
 
       <div id="mainCard" class="main-card" style="display:none;">
       <div class="header-bg">
@@ -655,8 +669,8 @@
 
   <script src="./config.js"></script>
   <script src="./api-client.js?v=20260318-2"></script>
-  <script src="./theme-legacy.js?v=20260221-3"></script>
-  <script src="./app-common.js?v=20260324-1"></script>
+  <script src="./theme-legacy.js?v=20260325-1"></script>
+  <script src="./app-common.js?v=20260325-1"></script>
   <script>
     (function () {
       'use strict';
@@ -675,7 +689,8 @@
       var state = {
         settings: null,
         api: null,
-        detail: null
+        detail: null,
+        resolvedViewMode: isPublicQrRequest ? 'public' : 'pending'
       };
 
       var els = {
@@ -885,28 +900,38 @@
 
       function goDoc(docId, publicQrUrl) {
         var publicUrl = C.safeTrim(publicQrUrl || '');
-        if (isPublicQrRequest && publicUrl) {
+        var isPublicMode = state.resolvedViewMode === 'public';
+        if (isPublicMode && publicUrl) {
           window.location.href = publicUrl;
           return;
         }
         var id = C.safeTrim(docId || '');
         if (!id) return;
-        if (isPublicQrRequest) {
+        if (isPublicMode) {
           C.redirect('document-view.html', { id: id, qr: '1' });
           return;
         }
         C.redirect('document-view.html', { id: id });
       }
 
-      function renderViewMode() {
-        if (els.btnBack) els.btnBack.style.display = isPublicQrRequest ? 'none' : 'inline-flex';
-        if (els.readonlyNote) els.readonlyNote.classList.toggle('show', !!isPublicQrRequest);
-        if (els.btnManageBoxes) els.btnManageBoxes.style.display = isPublicQrRequest ? 'none' : 'inline-flex';
-        if (els.btnPrintQr) els.btnPrintQr.style.display = isPublicQrRequest ? 'none' : 'inline-flex';
-        if (els.btnPrintList) els.btnPrintList.style.display = isPublicQrRequest ? 'none' : 'inline-flex';
-        if (els.btnReload) els.btnReload.style.display = isPublicQrRequest ? 'none' : 'inline-flex';
-        if (els.boxQrWrap) els.boxQrWrap.style.display = isPublicQrRequest ? 'none' : 'block';
-        if (els.footerActions) els.footerActions.style.display = isPublicQrRequest ? 'none' : 'flex';
+      function renderViewMode(mode) {
+        var resolved = mode === 'public' || mode === 'private' ? mode : 'pending';
+        state.resolvedViewMode = resolved;
+        var isPublicMode = resolved === 'public';
+        var isPrivateMode = resolved === 'private';
+
+        if (els.btnBack) els.btnBack.style.display = isPrivateMode ? 'inline-flex' : 'none';
+        if (els.readonlyNote) {
+          var shouldShowReadonly = !!(isPublicMode && state.detail);
+          els.readonlyNote.classList.toggle('show', shouldShowReadonly);
+          els.readonlyNote.style.display = shouldShowReadonly ? 'inline-flex' : 'none';
+        }
+        if (els.btnManageBoxes) els.btnManageBoxes.style.display = isPrivateMode ? 'inline-flex' : 'none';
+        if (els.btnPrintQr) els.btnPrintQr.style.display = isPrivateMode ? 'inline-flex' : 'none';
+        if (els.btnPrintList) els.btnPrintList.style.display = isPrivateMode ? 'inline-flex' : 'none';
+        if (els.btnReload) els.btnReload.style.display = isPrivateMode ? 'inline-flex' : 'none';
+        if (els.boxQrWrap) els.boxQrWrap.style.display = isPrivateMode ? 'block' : 'none';
+        if (els.footerActions) els.footerActions.style.display = isPrivateMode ? 'flex' : 'none';
       }
 
       function getOpDateSortValue(doc) {
@@ -949,7 +974,7 @@
         els.storageYearChip.textContent = 'ปีจัดเก็บเอกสาร: ' + C.safeText(detail.storageYearSummary || '-');
         els.destroyYearChip.textContent = 'ปีที่ทำลายเอกสาร: ' + C.safeText(detail.destroyYearSummary || '-');
         els.boxQr.src = getBoxQrUrl();
-        renderViewMode();
+        renderViewMode(state.resolvedViewMode);
 
         if (!docs.length) {
           els.docsWrap.innerHTML = '<div class="docs-empty"><i class="bi bi-box-seam"></i><div>ไม่พบเอกสารใน "' + C.escapeHtml(detail.boxName || boxName || '-') + '"</div><div style="font-size:0.82rem;margin-top:4px;">อาจยังไม่มีการบันทึก หรือชื่อกล่องไม่ตรง</div></div>';
@@ -1115,26 +1140,46 @@
         var boxRes = null;
         var meRes = { user: null };
 
+        async function tryLegacyPublicBoxDetail() {
+          var legacyBoxRes = await state.api.boxPublicQrDetail(boxName, qrToken || '', {
+            noPageLoader: true,
+            allowLegacy: true
+          });
+          if (!legacyBoxRes || legacyBoxRes.success === false) return null;
+          return legacyBoxRes;
+        }
+
         if (isPublicQrRequest) {
           boxRes = await state.api.boxPublicQrDetail(boxName, qrToken, {
             noPageLoader: true,
             allowLegacy: isLegacyPublicQrRequest || (!qrToken && !!boxName)
           });
+          renderViewMode('public');
         } else {
-          var res = await Promise.all([
-            state.api.boxDetail(boxName),
-            state.api.me()
-          ]);
-          boxRes = res[0] || {};
-          meRes = res[1] || {};
+          try {
+            var res = await Promise.all([
+              state.api.boxDetail(boxName),
+              state.api.me()
+            ]);
+            boxRes = res[0] || {};
+            meRes = res[1] || {};
+          } catch (privateErr) {
+            var fallbackBoxRes = await tryLegacyPublicBoxDetail();
+            if (fallbackBoxRes) {
+              renderViewMode('public');
+              state.detail = fallbackBoxRes;
+              render();
+              els.mainCard.style.display = 'block';
+              return true;
+            }
+            throw privateErr;
+          }
         }
 
         if (!isPublicQrRequest && (!meRes || meRes.success === false || !meRes.user)) {
-          var legacyBoxRes = await state.api.boxPublicQrDetail(boxName, '', {
-            noPageLoader: true,
-            allowLegacy: true
-          });
-          if (legacyBoxRes && legacyBoxRes.success) {
+          var legacyBoxRes = await tryLegacyPublicBoxDetail();
+          if (legacyBoxRes) {
+            renderViewMode('public');
             state.detail = legacyBoxRes;
             render();
             els.mainCard.style.display = 'block';
@@ -1157,6 +1202,9 @@
           return false;
         }
 
+        if (state.resolvedViewMode !== 'public') {
+          renderViewMode('private');
+        }
         state.detail = boxRes;
         render();
         els.mainCard.style.display = 'block';
@@ -1201,7 +1249,8 @@
           rememberLastBoxName(boxName);
 
           try {
-            state.settings = isPublicQrRequest ? C.getStoredSettings() : C.ensureSettingsOrThrow();
+            state.settings = C.getStoredSettings();
+            if (!state.settings || !state.settings.scriptUrl) throw new Error('missing_script_url');
             state.api = C.createApiClient(state.settings);
           } catch (_e) {
             showError(isPublicQrRequest ? 'ไม่พบการตั้งค่า scriptUrl สำหรับเปิด QR Code กล่อง' : 'กรุณาตั้งค่า scriptUrl และ deviceKey ที่หน้า index ก่อน');
@@ -1210,7 +1259,7 @@
 
           bindEvents();
           updateBrowserTitle(boxName);
-          renderViewMode();
+          renderViewMode(state.resolvedViewMode);
 
           try {
             var ok = await loadDetail();
