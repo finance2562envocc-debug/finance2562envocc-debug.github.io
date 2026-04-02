@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>ตรวจสอบสัญญาเงินยืมของตนเอง</title>
+  <title>ตรวจสอบรายชื่อผู้ยืมเงิน</title>
   <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg/500px-Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg.png">
   <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg/500px-Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -472,14 +472,15 @@
       table-layout: fixed;
     }
 
-    .table col.col-index { width: 6%; }
-    .table col.col-contract { width: 14%; }
-    .table col.col-group { width: 21%; }
-    .table col.col-expense { width: 13%; }
-    .table col.col-funding { width: 13%; }
-    .table col.col-amount { width: 12%; }
-    .table col.col-status { width: 11%; }
-    .table col.col-due { width: 10%; }
+    .table col.col-index { width: 4%; }
+    .table col.col-contract { width: 10%; }
+    .table col.col-borrower { width: 17%; }
+    .table col.col-group { width: 15%; }
+    .table col.col-expense { width: 11%; }
+    .table col.col-funding { width: 11%; }
+    .table col.col-amount { width: 9%; }
+    .table col.col-status { width: 10%; }
+    .table col.col-due { width: 13%; }
 
     .table thead th {
       position: sticky;
@@ -537,6 +538,13 @@
     .cell-center { text-align: center; }
     .cell-index { font-size: 0.78rem; font-weight: 800; }
     .cell-contract { text-align: center; font-weight: 900; white-space: nowrap; }
+    .cell-borrower {
+      font-weight: 900;
+      white-space: nowrap;
+      word-break: keep-all;
+      overflow: visible;
+      text-overflow: clip;
+    }
     .cell-group { white-space: normal; line-height: 1.45; }
     .cell-funding { white-space: nowrap; font-size: 0.82rem; }
     .cell-amount { text-align: right; font-weight: 900; white-space: nowrap; color: var(--blue); }
@@ -614,6 +622,13 @@
       line-height: 1.35;
       color: var(--text);
       word-break: break-word;
+    }
+
+    .mobile-borrower {
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1.45;
+      color: var(--text);
     }
 
     .mobile-group {
@@ -719,6 +734,10 @@
       font-weight: 700;
     }
 
+    #introState {
+      min-height: 360px;
+    }
+
     .spinner {
       width: 24px;
       height: 24px;
@@ -729,9 +748,6 @@
     }
 
     .brand-footer {
-      margin-top: 8px;
-      padding: 14px 2px 0;
-      border-top: 1px solid var(--line);
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -740,6 +756,10 @@
       flex-wrap: wrap;
       color: var(--text-sub);
       text-align: center;
+    }
+
+    .brand-panel {
+      padding: 14px 18px;
     }
 
     .brand-footer img {
@@ -808,7 +828,7 @@
     <section class="panel header-panel">
       <div class="header-row">
         <div>
-          <h1 class="title">ตรวจสอบสัญญาเงินยืมของตนเอง</h1>
+          <h1 class="title">ตรวจสอบรายชื่อผู้ยืมเงิน</h1>
         </div>
         <button id="btnTheme" class="theme-btn" type="button" aria-label="สลับเป็นโหมดกลางคืน" title="สลับเป็นโหมดกลางคืน"><i class="bi bi-moon-stars"></i></button>
       </div>
@@ -871,6 +891,7 @@
             <colgroup>
               <col class="col-index">
               <col class="col-contract">
+              <col class="col-borrower">
               <col class="col-group">
               <col class="col-expense">
               <col class="col-funding">
@@ -882,6 +903,7 @@
               <tr>
                 <th>ลำดับ</th>
                 <th>เลขที่สัญญา</th>
+                <th>ผู้ยืม</th>
                 <th>กลุ่ม/ศูนย์</th>
                 <th>ประเภทค่าใช้จ่าย</th>
                 <th>แหล่งเงินยืม</th>
@@ -898,7 +920,9 @@
       <div id="mobileList" class="mobile-list"></div>
 
       <div id="truncateNote" class="meta-row hidden"></div>
+    </section>
 
+    <section class="panel brand-panel">
       <div class="brand-footer">
         <img src="https://ddc.moph.go.th/uploads/ckeditor2//files/logo-%E0%B8%81%E0%B8%A3%E0%B8%A1.png" alt="โลโก้กรมควบคุมโรค">
         <div class="brand-footer-text">กองโรคจากการประกอบอาชีพและสิ่งแวดล้อม : กลุ่มบริหารทั่วไป งานการเงินและบัญชี</div>
@@ -1158,6 +1182,7 @@
           html += '<tr class="row-' + escapeHtml(safeTrim(item.statusKey).toLowerCase()) + '">';
           html += '<td class="cell-center cell-index">' + escapeHtml(i + 1) + '</td>';
           html += '<td class="cell-contract">' + escapeHtml(item.contractNo || '-') + '</td>';
+          html += '<td class="cell-borrower">' + escapeHtml(item.borrowerName || '-') + '</td>';
           html += '<td class="cell-group">' + escapeHtml(item.groupCenter || '-') + '</td>';
           html += '<td>' + escapeHtml(item.expenseType || '-') + '</td>';
           html += '<td class="cell-funding">' + escapeHtml(item.fundingSource || '-') + '</td>';
@@ -1193,6 +1218,7 @@
           html += '<div class="mobile-contract">';
           html += '<div class="mobile-index">ลำดับ ' + escapeHtml(i + 1) + '</div>';
           html += '<div class="mobile-contract-no">' + escapeHtml(item.contractNo || '-') + '</div>';
+          html += '<div class="mobile-borrower">' + escapeHtml(item.borrowerName || '-') + '</div>';
           html += '<div class="mobile-group">' + escapeHtml(item.groupCenter || '-') + '</div>';
           html += '</div>';
           html += buildStatusPill(item);
