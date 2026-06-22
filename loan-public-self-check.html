@@ -631,7 +631,9 @@
     .cell-center   { text-align: center; }
     .cell-right    { text-align: right; }
     .cell-index    { font-size: 0.76rem; font-weight: 700; text-align: center; color: var(--text-muted); }
-    .cell-contract { text-align: center; font-weight: 800; font-size: 0.82rem; white-space: nowrap; }
+    .cell-contract { text-align: center; font-size: 0.82rem; white-space: nowrap; }
+    .contract-no { font-weight: 800; }
+    .contract-date { margin-top: 2px; color: var(--text-sub); font-size: 0.76rem; font-weight: 700; }
     .cell-borrower { font-weight: 800; }
     .cell-funding  { font-size: 0.80rem; }
     .cell-amount   { text-align: right; font-weight: 800; color: var(--navy-500); white-space: nowrap; }
@@ -707,6 +709,7 @@
     .mobile-contract { display: grid; gap: 3px; min-width: 0; }
     .mobile-index { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; }
     .mobile-contract-no { font-size: 0.95rem; font-weight: 800; word-break: break-word; }
+    .mobile-contract-date { color: var(--text-sub); font-size: 0.80rem; font-weight: 700; }
     .mobile-borrower { font-size: 1.05rem; font-weight: 800; }
     .mobile-group { font-size: 0.85rem; color: var(--text-sub); font-weight: 600; }
 
@@ -1522,6 +1525,16 @@
         return trackingDisplay || '-';
       }
 
+      function buildContractDisplay(item, mobile) {
+        var contractNo = safeTrim(item && item.contractNo || '') || '-';
+        var approveDate = safeTrim(item && item.approveDateDisplay || '');
+        var noClass = mobile ? 'mobile-contract-no' : 'contract-no';
+        var dateClass = mobile ? 'mobile-contract-date' : 'contract-date';
+        var html = '<div class="' + noClass + '">' + escapeHtml(contractNo) + '</div>';
+        if (approveDate) html += '<div class="' + dateClass + '">ลว. ' + escapeHtml(approveDate) + '</div>';
+        return html;
+      }
+
       function buildStatusPill(item) {
         var meta = getStatusMeta(item.statusKey);
         return '<span class="status-pill ' + escapeHtml(meta.cls) + '"><i class="bi ' + escapeHtml(meta.icon) + '"></i>' + escapeHtml(item && item.statusLabel || meta.label) + '</span>';
@@ -1568,7 +1581,7 @@
           var trackingDisplay = getTrackingDisplay(item);
           html += '<tr class="row-' + escapeHtml(safeTrim(item.statusKey).toLowerCase()) + '">';
           html += '<td class="cell-index">' + escapeHtml(i + 1) + '</td>';
-          html += '<td class="cell-contract">' + escapeHtml(item.contractNo || '-') + '</td>';
+          html += '<td class="cell-contract">' + buildContractDisplay(item, false) + '</td>';
           html += '<td class="cell-borrower">' + escapeHtml(item.borrowerName || '-') + '</td>';
           html += '<td>' + escapeHtml(item.groupCenter || '-') + '</td>';
           html += '<td>' + escapeHtml(item.expenseType || '-') + '</td>';
@@ -1602,7 +1615,7 @@
           html += '<div class="mobile-card-head">';
           html += '<div class="mobile-contract">';
           html += '<div class="mobile-index">ลำดับ ' + escapeHtml(i + 1) + '</div>';
-          html += '<div class="mobile-contract-no">' + escapeHtml(item.contractNo || '-') + '</div>';
+          html += buildContractDisplay(item, true);
           html += '<div class="mobile-borrower">' + escapeHtml(item.borrowerName || '-') + '</div>';
           html += '<div class="mobile-group">' + escapeHtml(item.groupCenter || '-') + '</div>';
           html += '</div>';
